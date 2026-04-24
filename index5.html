@@ -18861,7 +18861,7 @@ body.woodenSwordEquipped .player .sword{
   const PLACE_KEY='index5.equipmentSlotPlacement.v1';
   const SLOT_LABEL={right:'오른손',left:'왼손',head:'머리',body:'몸통',feet:'발',neck:'목걸이',ringL:'반지1',ringR:'반지2'};
   const SLOT_ORDER=['right','left','head','body','feet','neck','ringL','ringR'];
-  const ACCEPT={right:['woodenSword','ironSword'],ringL:['accuracyRing'],ringR:['accuracyRing']};
+  const ACCEPT={right:['woodenSword','ironSword'],left:['woodenSword','ironSword'],ringL:['accuracyRing'],ringR:['accuracyRing']};
   const DEFAULT_SLOT={woodenSword:'right',ironSword:'right',accuracyRing:'ringL'};
   const STAT_LABEL={pAtk:'물공',pDef:'물방',mAtk:'마공',mDef:'마방',hp:'HP',mp:'MP',acc:'명중',eva:'회피',crit:'치명'};
   const STAT_SUFFIX={acc:'%',eva:'%',crit:'%'};
@@ -18882,9 +18882,9 @@ body.woodenSwordEquipped .player .sword{
   function accepts(slot,kind){return Array.isArray(ACCEPT[slot])&&ACCEPT[slot].includes(kind)}
   function preferredSlot(kind){const p=readPlace()[kind];return accepts(p,kind)?p:DEFAULT_SLOT[kind]}
   function isEquipKind(kind){return !!DEFAULT_SLOT[kind]}
-  function ensureState(){setupIronSword();const s=readState();['woodenSword','ironSword','accuracyRing'].forEach(k=>{if(s[k]==null)s[k]=false;if(!own(k))s[k]=false});if(s.woodenSword&&s.ironSword)s.woodenSword=false;writeState(s);return s}
+  function ensureState(){setupIronSword();const s=readState();['woodenSword','ironSword','accuracyRing'].forEach(k=>{if(s[k]==null)s[k]=false;if(!own(k))s[k]=false});writeState(s);return s}
   function isEquipped(kind){const s=ensureState();return !!s[kind]&&own(kind)}
-  function setEquipped(kind,on,slot){if(!isEquipKind(kind)||!own(kind))return false;const s=ensureState();if(on){if(kind==='woodenSword'||kind==='ironSword'){s.woodenSword=false;s.ironSword=false}s[kind]=true;savePlace(kind,slot||preferredSlot(kind))}else{s[kind]=false}writeState(s);try{if(typeof applyEquipmentVisualState==='function')applyEquipmentVisualState()}catch(_){}syncEquipmentRows();refreshAbilities();return true}
+  function setEquipped(kind,on,slot){if(!isEquipKind(kind)||!own(kind))return false;const s=ensureState();if(on){let target=slot&&accepts(slot,kind)?slot:null;if(!target){const preferred=preferredSlot(kind);if(preferred&&accepts(preferred,kind)&&!Object.keys(s).some(other=>other!==kind&&s[other]&&preferredSlot(other)===preferred))target=preferred;}if(!target){const occupied=new Set();Object.keys(s).forEach(other=>{if(other!==kind&&s[other]){const otherSlot=preferredSlot(other);if(otherSlot)occupied.add(otherSlot);}});target=(['right','left']).find(candidate=>accepts(candidate,kind)&&!occupied.has(candidate))||preferredSlot(kind)||DEFAULT_SLOT[kind]||null;}if(!target)return false;Object.keys(s).forEach(other=>{if(other!==kind&&s[other]&&preferredSlot(other)===target)s[other]=false;});s[kind]=true;savePlace(kind,target)}else{s[kind]=false}writeState(s);try{if(typeof applyEquipmentVisualState==='function')applyEquipmentVisualState()}catch(_){}syncEquipmentRows();refreshAbilities();return true}
   function equipMap(){const m={};['woodenSword','ironSword','accuracyRing'].forEach(kind=>{if(isEquipped(kind)){const slot=preferredSlot(kind);if(accepts(slot,kind)&&!m[slot])m[slot]=kind}});return m}
   function currentKindForSlot(slot,map){return (map&&map[slot])||null}
   const prevIsEquippable=window.isEquippableItem,prevIsEquipped=window.isItemEquipped,prevSetEquipped=window.setItemEquipped;
@@ -18897,7 +18897,7 @@ body.woodenSwordEquipped .player .sword{
   function syncEquipmentRows(){try{if(typeof panelData!=='object'||!panelData)return;const m=equipMap();panelData.equipment=SLOT_ORDER.map(slot=>{const k=currentKindForSlot(slot,m);return [SLOT_LABEL[slot],k?itemName(k):'비어 있음',statText(statOf(k),'장비 없음')]})}catch(_){}}
   const prevSyncInventory=typeof syncInventoryData==='function'?syncInventoryData:null;if(prevSyncInventory&&!syncInventoryData.__patch196IronInventory){syncInventoryData=function(){const out=prevSyncInventory.apply(this,arguments);setupIronSword();try{if(Array.isArray(panelData?.inventory)&&own('ironSword')&&!panelData.inventory.some(r=>r&&r[0]==='철검'))panelData.inventory.push([itemDefs.ironSword.name,'x'+inventory.ironSword,itemDefs.ironSword.desc])}catch(_){}return out};syncInventoryData.__patch196IronInventory=true}
   function statLines(cur,next,eligible){const keys=statKeys(cur,eligible?next:{});if(!keys.length)return '<div class="eqStatLine"><span>능력치</span><strong>-</strong></div>';return keys.map(k=>{const c=cur?.[k]||0,n=eligible?(next?.[k]||0):c,d=n-c,suffix=STAT_SUFFIX[k]||'';if(eligible){const cls=d>0?'up':d<0?'down':'same',mark=d>0?`+${d}`:String(d);return `<div class="eqStatLine"><span>${esc(STAT_LABEL[k]||k)}</span><strong>${c}${suffix} → ${n}${suffix} <span class="eqDelta ${cls}">(${mark}${suffix})</span></strong></div>`}return `<div class="eqStatLine"><span>${esc(STAT_LABEL[k]||k)}</span><strong>+${c}${suffix}</strong></div>`}).join('')}
-  function statBox(slot,map){const curKind=currentKindForSlot(slot,map),cur=statOf(curKind),next=statOf(selectedKind),eligible=!!(selectedKind&&accepts(slot,selectedKind)),emptyName=curKind?itemName(curKind):'비어 있음',note=eligible?`비교: ${itemName(selectedKind)}`:(selectedKind?'교체 불가':'가방 아이템 클릭 시 비교');return `<div class="eqStatBox ${eligible?'compareOn':''}"><div class="eqStatTitle"><span>${esc(SLOT_LABEL[slot])}</span><em>${esc(emptyName)}</em></div><div class="eqStatLines">${statLines(cur,next,eligible)}</div><div class="eqCompareNote">${esc(note)}</div></div>`}
+  function statBox(slot,map){const curKind=currentKindForSlot(slot,map),cur=statOf(curKind),next=statOf(selectedKind),eligible=!!(selectedKind&&accepts(slot,selectedKind)&&selectedKind!==curKind),emptyName=curKind?itemName(curKind):'비어 있음',note=selectedKind===curKind?'현재 장착 중':(eligible?`비교: ${itemName(selectedKind)}`:(selectedKind?'교체 불가':'가방 아이템 클릭 시 비교'));return `<div class="eqStatBox ${eligible?'compareOn':''}"><div class="eqStatTitle"><span>${esc(SLOT_LABEL[slot])}</span><em>${esc(emptyName)}</em></div><div class="eqStatLines">${statLines(cur,next,eligible)}</div><div class="eqCompareNote">${esc(note)}</div></div>`}
   function itemCard(kind,opt={}){const count=inventory?.[kind]||0,on=isEquipped(kind)||!!opt.equipped;return `<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard tradeCard bagItemCard eqCard ${on?'equipped':''} ${opt.cls||''}" draggable="false" data-eq-kind="${esc(kind)}" data-item="${esc(kind)}" data-source="bag">${opt.noQty?'':`<span class="bagQtyBadge">x${esc(count)}</span>`}<i class="rewardMiniIcon itemIcon item-${esc(kind)}" aria-hidden="true"></i><b>${esc(itemName(kind))}</b><small>x${esc(count)}</small><em>${on?'장착중':'가방'}</em></button>`}
   function fixedBodyCard(){return `<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard eqFixedCard" disabled><i class="rewardMiniIcon equipBasicIcon">👕</i><b>천 옷</b></button>`}
   function equipSlot(slot,map){const kind=map[slot],fixed=slot==='body',inner=kind?itemCard(kind,{cls:'eqSlotCard',noQty:true,equipped:true}):(fixed?fixedBodyCard():'<div class="eqEmptyMark">＋</div>');return `<div class="eqEquipRow"><div class="eqEquipSlot ${kind||fixed?'occupied':'empty'} ${fixed?'fixed':''}" data-slot="${esc(slot)}"><span class="eqSlotLabel">${esc(SLOT_LABEL[slot])}</span>${inner}</div>${statBox(slot,map)}</div>`}
@@ -18912,7 +18912,7 @@ body.woodenSwordEquipped .player .sword{
   function markDrop(e){clearMarks();if(!drag?.active)return;const el=document.elementFromPoint(e.clientX,e.clientY),slot=el?.closest?.('.equipmentComparePanel .eqEquipSlot'),bag=el?.closest?.('.equipmentComparePanel .eqBagSlot,.equipmentComparePanel .eqBagGrid,.equipmentComparePanel .eqBagPane');if(slot)slot.classList.add(accepts(slot.dataset.slot,drag.kind)?'dropReady':'dropBad');else if(bag&&drag.from==='equip')bag.classList.add('dropReady')}
   function finishDrag(e){if(!drag)return;const d=drag;d.ghost?.remove();d.card?.classList.remove('eqDraggingSource');clearMarks();drag=null;if(!d.active)return;suppressClick=true;try{suppressTradeClick=true}catch(_){}const el=document.elementFromPoint(e.clientX,e.clientY),slot=el?.closest?.('.equipmentComparePanel .eqEquipSlot'),bag=el?.closest?.('.equipmentComparePanel .eqBagSlot,.equipmentComparePanel .eqBagGrid,.equipmentComparePanel .eqBagPane');if(slot){if(!accepts(slot.dataset.slot,d.kind)){if(typeof log==='function')log(`${itemName(d.kind)} 장착 실패: 맞지 않는 슬롯입니다.`,'system');return}setEquipped(d.kind,true,slot.dataset.slot);selectedKind=d.kind;if(typeof log==='function')log(`${itemName(d.kind)} ${SLOT_LABEL[slot.dataset.slot]||slot.dataset.slot} 슬롯 장착`,'system');setTimeout(()=>{if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')render()},0);return}if(bag&&d.from==='equip'){setEquipped(d.kind,false);if(typeof log==='function')log(`${itemName(d.kind)} 장착 해제`,'system');setTimeout(()=>{if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')render()},0)}}
   document.addEventListener('pointerdown',function(e){const panel=e.target.closest('.equipmentComparePanel');if(!panel)return;const card=e.target.closest('[data-eq-kind]');if(!card||card.disabled)return;const kind=card.dataset.eqKind;if(!kind||!own(kind))return;drag={kind,card,from:card.closest('.eqEquipSlot')?'equip':'bag',x:e.clientX,y:e.clientY,active:false,ghost:null};try{card.setPointerCapture?.(e.pointerId)}catch(_){}},true);
-  document.addEventListener('pointermove',function(e){if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.active&&Math.hypot(dx,dy)>7){drag.active=true;drag.card.classList.add('eqDraggingSource');drag.ghost=ghost(drag.kind)}if(drag.active){e.preventDefault();moveGhost(e);markDrop(e)}},true);
+  document.addEventListener('pointermove',function(e){if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.active&&Math.hypot(dx,dy)>7){drag.active=true;drag.card.classList.add('eqDraggingSource');drag.ghost=ghost(drag.kind);if(selectedKind!==drag.kind){selectedKind=drag.kind;render()}}if(drag.active){e.preventDefault();moveGhost(e);markDrop(e)}},true);
   document.addEventListener('pointerup',finishDrag,true);document.addEventListener('pointercancel',finishDrag,true);
   document.addEventListener('click',function(e){const panel=e.target.closest('.equipmentComparePanel');if(!panel)return;if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;return}const bagCard=e.target.closest('.eqBagSlot [data-eq-kind]');if(bagCard){e.preventDefault();e.stopImmediatePropagation();selectedKind=bagCard.dataset.eqKind;render()}},true);
   document.addEventListener('click',function(e){if(!e.target.closest('[data-bag-equip-toggle], [data-bag-discard]'))return;setTimeout(()=>{if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')render()},100)},true);
@@ -19203,7 +19203,7 @@ body.woodenSwordEquipped .player .sword{
   function statText(stats,empty){const keys=statKeys(stats,{});if(!keys.length)return empty||'-';return keys.map(function(k){return (STAT_LABEL[k]||k)+' +'+stats[k]+(STAT_SUFFIX[k]||'')}).join(' · ')}
   function syncEquipmentRows(){try{if(typeof panelData!=='object'||!panelData)return;const m=equipMap();panelData.equipment=SLOT_ORDER.map(function(slot){const k=currentKindForSlot(slot,m);return [SLOT_LABEL[slot],k?nameOf(k):'비어 있음',statText(statsOf(k),'장비 없음')]})}catch(_){}}
   function statLines(cur,next,eligible){const keys=statKeys(cur,eligible?next:{});if(!keys.length)return '<div class="eqStatLine"><span>능력치</span><strong>-</strong></div>';return keys.map(function(k){const c=cur?.[k]||0,n=eligible?(next?.[k]||0):c,d=n-c,suffix=STAT_SUFFIX[k]||'';if(eligible){const cls=d>0?'up':d<0?'down':'same',mark=d>0?'+'+d:String(d);return '<div class="eqStatLine"><span>'+esc(STAT_LABEL[k]||k)+'</span><strong>'+c+suffix+' → '+n+suffix+' <span class="eqDelta '+cls+'">('+mark+suffix+')</span></strong></div>'}return '<div class="eqStatLine"><span>'+esc(STAT_LABEL[k]||k)+'</span><strong>+'+c+suffix+'</strong></div>'}).join('')}
-  function statBox(slot,map){const curKind=currentKindForSlot(slot,map),cur=statsOf(curKind),next=statsOf(selectedKind),eligible=!!(selectedKind&&accepts(slot,selectedKind));const emptyName=curKind?nameOf(curKind):'비어 있음';const note=eligible?'교체 시: '+nameOf(selectedKind):(selectedKind?'교체 불가':'가방 아이템 클릭 시 비교');return '<div class="eqStatBox '+(eligible?'compareOn':'')+'"><div class="eqStatTitle"><span>'+esc(SLOT_LABEL[slot])+'</span><em>'+esc(emptyName)+'</em></div><div class="eqStatLines">'+statLines(cur,next,eligible)+'</div><div class="eqCompareNote">'+esc(note)+'</div></div>'}
+  function statBox(slot,map){const curKind=currentKindForSlot(slot,map),cur=statsOf(curKind),next=statsOf(selectedKind),selectedEquippedAny=!!(selectedKind&&map&&Object.keys(map).some(function(s){return map[s]===selectedKind;})),eligible=!!(selectedKind&&accepts(slot,selectedKind)&&selectedKind!==curKind&&!selectedEquippedAny);const emptyName=curKind?nameOf(curKind):'비어 있음';const note=selectedKind===curKind?'현재 장착 중':(selectedEquippedAny?'이미 다른 손에 장착 중':(eligible?'교체 시: '+nameOf(selectedKind):(selectedKind?'교체 불가':'가방 아이템 클릭 시 비교')));return '<div class="eqStatBox '+(eligible?'compareOn':'')+'"><div class="eqStatTitle"><span>'+esc(SLOT_LABEL[slot])+'</span><em>'+esc(emptyName)+'</em></div><div class="eqStatLines">'+statLines(cur,next,eligible)+'</div><div class="eqCompareNote">'+esc(note)+'</div></div>'}
   function equipItemCard(kind,opt){opt=opt||{};const count=inventory?.[kind]||0;return '<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard tradeCard bagItemCard eqCard '+(opt.cls||'')+'" draggable="false" data-eq199-kind="'+esc(kind)+'" data-item="'+esc(kind)+'">'+(opt.noQty?'':'<span class="bagQtyBadge">x'+esc(count)+'</span>')+'<i class="rewardMiniIcon itemIcon item-'+esc(kind)+'" aria-hidden="true"></i><b>'+esc(nameOf(kind))+'</b>'+(opt.noQty?'':'<small>x'+esc(count)+'</small>')+'</button>'}
   function fixedBodyCard(){return '<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard eqFixedCard" disabled><i class="rewardMiniIcon equipBasicIcon">👕</i><b>천 옷</b></button>'}
   function equipSlot(slot,map){const kind=map[slot];const inner=kind?equipItemCard(kind,{cls:'eqSlotCard',noQty:true}):'<div class="eqEmptyMark">＋</div>';return '<div class="eqEquipRow"><div class="eqEquipSlot '+(kind?'occupied':'empty')+'" data-eq199-slot="'+esc(slot)+'"><span class="eqSlotLabel">'+esc(SLOT_LABEL[slot])+'</span>'+inner+'</div>'+statBox(slot,map)+'</div>'}
@@ -19233,7 +19233,7 @@ body.woodenSwordEquipped .player .sword{
   function markEqDrop(e){clearEqMarks();if(!eqDrag?.active)return;const el=document.elementFromPoint(e.clientX,e.clientY),slot=el?.closest?.('.equipmentMovePanel199 .eqEquipSlot'),bagSlot=el?.closest?.('.equipmentMovePanel199 .eqBagSlot'),bagPane=el?.closest?.('.equipmentMovePanel199 .eqBagPane');if(slot){slot.classList.add(accepts(slot.dataset.eq199Slot,eqDrag.kind)?'dropReady':'dropBad');return}if(bagSlot){if(eqDrag.from==='equip'||eqDrag.from==='bag')bagSlot.classList.add('dropReady');return}if(eqDrag.from==='equip'&&bagPane)bagPane.classList.add('dropReady')}
   function finishEqDrag(e){if(!eqDrag)return;const d=eqDrag;d.ghost?.remove();d.card?.classList.remove('eqDraggingSource');clearEqMarks();eqDrag=null;if(!d.active)return;suppressEqClick=true;try{suppressTradeClick=true}catch(_){}const el=document.elementFromPoint(e.clientX,e.clientY),slot=el?.closest?.('.equipmentMovePanel199 .eqEquipSlot'),bagSlot=el?.closest?.('.equipmentMovePanel199 .eqBagSlot'),bagPane=el?.closest?.('.equipmentMovePanel199 .eqBagPane');if(slot){const slotName=slot.dataset.eq199Slot;if(!accepts(slotName,d.kind)){if(typeof log==='function')log(nameOf(d.kind)+' 장착 실패: 맞지 않는 슬롯입니다.','system');return}savePlace(d.kind,slotName);setEquippedLocal(d.kind,true,slotName);selectedKind=d.kind;if(typeof syncInventoryData==='function')syncInventoryData();if(typeof log==='function')log(nameOf(d.kind)+' '+(SLOT_LABEL[slotName]||slotName)+' 슬롯 장착','system');setTimeout(function(){if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')renderEquipment199()},0);return}if(d.from==='bag'&&bagSlot){const fromIndex=Number(d.fromIndex),toIndex=Number(bagSlot.dataset.eq199BagSlot);if(Number.isFinite(fromIndex)&&Number.isFinite(toIndex)&&fromIndex!==toIndex)moveBagSlot(fromIndex,toIndex);selectedKind=d.kind;if(typeof syncInventoryData==='function')syncInventoryData();setTimeout(function(){if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')renderEquipment199()},0);return}if(d.from==='equip'&&(bagSlot||bagPane)){setEquippedLocal(d.kind,false);placeInBag(d.kind,bagSlot?.dataset?.eq199BagSlot);if(typeof syncInventoryData==='function')syncInventoryData();if(typeof log==='function')log(nameOf(d.kind)+' 장착 해제','system');setTimeout(function(){if(document.querySelector('#panel.show')&&document.querySelector('#pTitle')?.textContent==='장비')renderEquipment199()},0)}}
   document.addEventListener('pointerdown',function(e){const panel=e.target.closest&&e.target.closest('.equipmentMovePanel199');if(!panel)return;const card=e.target.closest('[data-eq199-kind]');if(!card||card.disabled)return;const kind=card.dataset.eq199Kind;if(!kind||!own(kind))return;e.preventDefault();e.stopImmediatePropagation();eqDrag={kind,card,from:card.closest('.eqEquipSlot')?'equip':'bag',fromIndex:card.closest('.eqBagSlot')?.dataset?.eq199BagSlot??null,x:e.clientX,y:e.clientY,active:false,ghost:null};try{card.setPointerCapture?.(e.pointerId)}catch(_){ }},true);
-  document.addEventListener('pointermove',function(e){if(!eqDrag)return;const dx=e.clientX-eqDrag.x,dy=e.clientY-eqDrag.y;if(!eqDrag.active&&Math.hypot(dx,dy)>7){eqDrag.active=true;eqDrag.card.classList.add('eqDraggingSource');eqDrag.ghost=eqGhost(eqDrag.card,eqDrag.kind)}if(eqDrag.active){e.preventDefault();moveEqGhost(e);markEqDrop(e)}},true);
+  document.addEventListener('pointermove',function(e){if(!eqDrag)return;const dx=e.clientX-eqDrag.x,dy=e.clientY-eqDrag.y;if(!eqDrag.active&&Math.hypot(dx,dy)>7){eqDrag.active=true;eqDrag.card.classList.add('eqDraggingSource');eqDrag.ghost=eqGhost(eqDrag.card,eqDrag.kind);if(selectedKind!==eqDrag.kind){selectedKind=eqDrag.kind;renderEquipment199()}}if(eqDrag.active){e.preventDefault();moveEqGhost(e);markEqDrop(e)}},true);
   document.addEventListener('pointerup',finishEqDrag,true);document.addEventListener('pointercancel',finishEqDrag,true);
   /* future equipment item cards use the same popup buttons and equip state flow without per-item hardcoding */
   document.addEventListener('click',function(e){
@@ -21099,6 +21099,142 @@ body.woodenSwordEquipped .player .sword{
 }
 </style>
 
+
+
+<style id="patch301-left-arm-weapon-rightward">
+/* patch301: left arm pivots from shoulder toward the right; left-hand weapon pivots from hand toward the right */
+.player .arm.l{
+  left:11px!important;
+  top:33px!important;
+  z-index:6!important;
+  transform-origin:7px 4px!important;
+  transform:rotate(88deg)!important;
+}
+.player .charSword211.left{
+  left:24px!important;
+  top:-3px!important;
+  transform:rotate(90deg)!important;
+  transform-origin:10px 50px!important;
+}
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft301 .54s ease-out!important;
+}
+@keyframes charSwordCutLeft301{
+  0%{transform:rotate(90deg)}
+  45%{transform:rotate(28deg)}
+  100%{transform:rotate(90deg)}
+}
+</style>
+<script id="patch301-left-arm-weapon-rightward-marker">
+(function(){ window.__patch301LeftArmWeaponRightward=true; })();
+</script>
+
+
+
+<style id="patch302-left-arm-angle-correction">
+/* patch302: correct left arm direction - shoulder axis extends to the right, not left */
+.player .arm.l{
+  left:6px!important;
+  top:34px!important;
+  z-index:8!important;
+  transform-origin:7px 4px!important;
+  transform:rotate(-78deg)!important;
+}
+
+/* left-hand weapon follows the corrected hand axis and points rightward */
+.player .charSword211.left{
+  left:28px!important;
+  top:18px!important;
+  z-index:9!important;
+  transform-origin:10px 50px!important;
+  transform:rotate(78deg)!important;
+}
+
+/* left-hand attack animation from the corrected rightward hold position */
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft302 .54s ease-out!important;
+}
+
+@keyframes charSwordCutLeft302{
+  0%{transform:rotate(78deg)}
+  45%{transform:rotate(18deg)}
+  100%{transform:rotate(78deg)}
+}
+</style>
+<script id="patch302-left-arm-angle-correction-marker">
+(function(){ window.__patch302LeftArmAngleCorrection=true; })();
+</script>
+
+
+
+<style id="patch303-left-arm-match-right-angle">
+/* patch303: left arm matches the right arm angle */
+.player .arm.l{
+  left:1px!important;
+  top:33px!important;
+  z-index:4!important;
+  transform-origin:center center!important;
+  transform:rotate(-13deg)!important;
+}
+
+/* keep left-hand weapon visually aligned with the corrected left arm */
+.player .charSword211.left{
+  left:3px!important;
+  top:16px!important;
+  z-index:7!important;
+  transform-origin:10px 50px!important;
+  transform:rotate(-18deg)!important;
+}
+
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft303 .54s ease-out!important;
+}
+
+@keyframes charSwordCutLeft303{
+  0%{transform:rotate(-18deg)}
+  45%{transform:rotate(-70deg)}
+  100%{transform:rotate(-18deg)}
+}
+</style>
+<script id="patch303-left-arm-match-right-angle-marker">
+(function(){ window.__patch303LeftArmMatchRightAngle=true; })();
+</script>
+
+
+
+<style id="patch304-left-arm-attach-shoulder">
+/* patch304: move left arm inward/up so it attaches cleanly to the left shoulder */
+.player .arm.l{
+  left:4px!important;
+  top:31px!important;
+  z-index:5!important;
+  transform-origin:8px 4px!important;
+  transform:rotate(-13deg)!important;
+}
+</style>
+<script id="patch304-left-arm-attach-shoulder-marker">
+(function(){ window.__patch304LeftArmAttachShoulder=true; })();
+</script>
+
+
+
+<style id="patch305-left-arm-up-2px">
+/* patch305: move left arm up by 2px only */
+.player .arm.l{
+  left:4px!important;
+  top:29px!important;
+  z-index:5!important;
+  transform-origin:8px 4px!important;
+  transform:rotate(-13deg)!important;
+}
+</style>
+<script id="patch305-left-arm-up-2px-marker">
+(function(){ window.__patch305LeftArmUp2px=true; })();
+</script>
+
 </body>
 </html>
 
@@ -22697,5 +22833,2084 @@ body.weaponInLeftHand.ironSwordEquipped .player .sword:after{
   document.addEventListener('click',function(){setTimeout(syncLeftHandWeaponState,0);},true);
   document.addEventListener('pointerup',function(){setTimeout(syncLeftHandWeaponState,0);},true);
   document.addEventListener('pointercancel',function(){setTimeout(syncLeftHandWeaponState,0);},true);
+})();
+</script>
+
+
+<style id="patch202-dual-sword-both-hands">
+/* patch202: show sword weapons in both hands at the same time */
+.player > .sword{display:none!important}
+.player .dualSword202{
+  position:absolute;
+  display:none;
+  width:20px;
+  height:58px;
+  z-index:7;
+  overflow:visible;
+  border:0;
+  background:none;
+  filter:drop-shadow(1px 2px 0 #0007);
+  pointer-events:none;
+}
+.player .dualSword202:before,
+.player .dualSword202:after{
+  content:"";
+  position:absolute;
+  display:block;
+}
+.player .dualSword202.right{
+  left:46px;
+  top:16px;
+  transform:rotate(32deg);
+  transform-origin:10px 48px;
+}
+.player .dualSword202.left{
+  left:-9px;
+  top:14px;
+  transform:rotate(-32deg);
+  transform-origin:10px 48px;
+}
+body.hasRightWeapon202 .player .dualSword202.right{display:block!important}
+body.hasLeftWeapon202 .player .dualSword202.left{display:block!important}
+
+/* wooden sword */
+body.rightWooden202 .player .dualSword202.right,
+body.leftWooden202 .player .dualSword202.left{
+  background:
+    linear-gradient(#5b3821,#7a4a28) 7px 43px/6px 15px no-repeat,
+    linear-gradient(90deg,transparent 0 1px,#ffd36b 1px 19px,transparent 19px) 1px 40px/18px 5px no-repeat;
+}
+body.rightWooden202 .player .dualSword202.right:before,
+body.leftWooden202 .player .dualSword202.left:before{
+  left:7px;
+  top:1px;
+  width:6px;
+  height:42px;
+  background:linear-gradient(90deg,#f8feff 0 18%,#9fc9d4 19% 67%,#4d7180 68% 100%);
+  border:1px solid #355866;
+  clip-path:polygon(50% 0,88% 18%,65% 100%,35% 100%,12% 18%);
+}
+body.rightWooden202 .player .dualSword202.right:after,
+body.leftWooden202 .player .dualSword202.left:after{
+  left:6px;
+  top:55px;
+  width:8px;
+  height:5px;
+  border-radius:4px;
+  background:#ffd36b;
+  box-shadow:0 0 0 1px #6f4425;
+}
+
+/* iron sword */
+body.rightIron202 .player .dualSword202.right,
+body.leftIron202 .player .dualSword202.left{
+  top:0;
+}
+body.leftIron202 .player .dualSword202.left{
+  left:-10px;
+  top:4px;
+}
+body.rightIron202 .player .dualSword202.right:before,
+body.leftIron202 .player .dualSword202.left:before{
+  left:50%;
+  top:0;
+  width:9px;
+  height:41px;
+  transform:translateX(-50%);
+  transform-origin:50% 100%;
+  border:0;
+  border-radius:0;
+  clip-path:polygon(50% 0,100% 17%,68% 100%,32% 100%,0 17%);
+  background:linear-gradient(90deg,#24313b 0 9%,#6e8796 10% 32%,#f8fdff 33% 56%,#a9c0cc 57% 85%,#415763 86% 100%);
+  box-shadow:0 0 0 1px #26343d,inset 1px 0 0 rgba(255,255,255,.22),inset -1px 0 0 rgba(26,39,47,.35);
+}
+body.rightIron202 .player .dualSword202.right:after,
+body.leftIron202 .player .dualSword202.left:after{
+  left:50%;
+  top:37px;
+  width:20px;
+  height:21px;
+  transform:translateX(-50%);
+  transform-origin:50% 11px;
+  border:0;
+  border-radius:0;
+  background:
+    linear-gradient(90deg,transparent 0 1px,#22303a 1px 4px,#95adb9 4px 8px,#eff9fd 8px 12px,#95adb9 12px 16px,#22303a 16px 19px,transparent 19px) 50% 1px/20px 5px no-repeat,
+    linear-gradient(90deg,#2d180a 0 12%,#7c451e 13% 42%,#b97836 43% 62%,#5c3217 63% 88%,#2d180a 89% 100%) 50% 5px/6px 12px no-repeat,
+    linear-gradient(90deg,#405360,#dceaf0 48%,#405360) 50% 17px/8px 4px no-repeat;
+  filter:drop-shadow(1px 1px 0 #0008);
+}
+
+@keyframes dualSwordCutRight202{
+  0%{transform:rotate(20deg)}
+  45%{transform:rotate(76deg)}
+  100%{transform:rotate(32deg)}
+}
+@keyframes dualSwordCutLeft202{
+  0%{transform:rotate(-20deg)}
+  45%{transform:rotate(-76deg)}
+  100%{transform:rotate(-32deg)}
+}
+body.rightWooden202 .player.attacking .dualSword202.right,
+body.rightIron202 .player.attacking .dualSword202.right{
+  animation:dualSwordCutRight202 .54s ease-out!important;
+}
+body.leftWooden202 .player.attacking .dualSword202.left,
+body.leftIron202 .player.attacking .dualSword202.left{
+  animation:dualSwordCutLeft202 .54s ease-out!important;
+}
+</style>
+<script id="patch202-dual-sword-both-hands">
+(function(){
+  if(window.__patch202DualSwordBothHands)return;
+  window.__patch202DualSwordBothHands=true;
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var WEAPON_ORDER=['ironSword','woodenSword'];
+
+  function readPlace(){
+    try{
+      var saved=JSON.parse(localStorage.getItem(PLACE_KEY)||'{}');
+      return saved&&typeof saved==='object'?saved:{};
+    }catch(_){
+      return {};
+    }
+  }
+
+  function ensureWeaponHints(){
+    try{
+      if(!window.itemDefs)return;
+      ['woodenSword','ironSword'].forEach(function(kind){
+        if(!itemDefs[kind])return;
+        itemDefs[kind].equipSlot=['right','left'];
+        itemDefs[kind].slotType='weapon';
+        itemDefs[kind].equipType='weapon';
+        itemDefs[kind].position=['right','left'];
+      });
+    }catch(_){ }
+  }
+
+  function ensureSwordNodes(){
+    var player=document.getElementById('player');
+    if(!player)return;
+    if(!player.querySelector('.dualSword202.right')){
+      var right=document.createElement('i');
+      right.className='dualSword202 right';
+      right.setAttribute('aria-hidden','true');
+      player.insertBefore(right, player.firstChild);
+    }
+    if(!player.querySelector('.dualSword202.left')){
+      var left=document.createElement('i');
+      left.className='dualSword202 left';
+      left.setAttribute('aria-hidden','true');
+      player.insertBefore(left, player.firstChild);
+    }
+  }
+
+  function weaponInSlot(slot){
+    try{
+      var place=readPlace();
+      for(var i=0;i<WEAPON_ORDER.length;i++){
+        var kind=WEAPON_ORDER[i];
+        if(typeof window.isItemEquipped==='function' && window.isItemEquipped(kind) && place[kind]===slot){
+          return kind;
+        }
+      }
+      if(slot==='right'){
+        for(var j=0;j<WEAPON_ORDER.length;j++){
+          var fallback=WEAPON_ORDER[j];
+          if(typeof window.isItemEquipped==='function' && window.isItemEquipped(fallback) && !place[fallback]){
+            return fallback;
+          }
+        }
+      }
+    }catch(_){ }
+    return null;
+  }
+
+  function clearBodyClasses(){
+    document.body.classList.remove(
+      'hasRightWeapon202','hasLeftWeapon202',
+      'rightWooden202','rightIron202',
+      'leftWooden202','leftIron202'
+    );
+  }
+
+  function syncDualSwordState(){
+    ensureWeaponHints();
+    ensureSwordNodes();
+    var right=weaponInSlot('right');
+    var left=weaponInSlot('left');
+    clearBodyClasses();
+    if(right){
+      document.body.classList.add('hasRightWeapon202');
+      document.body.classList.add(right==='ironSword'?'rightIron202':'rightWooden202');
+    }
+    if(left){
+      document.body.classList.add('hasLeftWeapon202');
+      document.body.classList.add(left==='ironSword'?'leftIron202':'leftWooden202');
+    }
+  }
+
+  var prevApply=window.applyEquipmentVisualState;
+  window.applyEquipmentVisualState=function(){
+    try{ if(typeof prevApply==='function') prevApply.apply(this,arguments); }catch(_){ }
+    try{ syncDualSwordState(); }catch(_){ }
+  };
+
+  if(typeof window.setItemEquipped==='function' && !window.setItemEquipped.__patch202DualSwordWrap){
+    var prevSet=window.setItemEquipped;
+    var wrapped=function(kind,on){
+      var out=prevSet.apply(this,arguments);
+      try{ syncDualSwordState(); }catch(_){ }
+      return out;
+    };
+    wrapped.__patch202DualSwordWrap=true;
+    window.setItemEquipped=wrapped;
+  }
+
+  var syncSoon=function(){ setTimeout(syncDualSwordState,0); };
+  document.addEventListener('click',syncSoon,true);
+  document.addEventListener('pointerup',syncSoon,true);
+  document.addEventListener('pointercancel',syncSoon,true);
+  document.addEventListener('DOMContentLoaded',syncSoon,true);
+
+  try{ syncDualSwordState(); }catch(_){ }
+})();
+</script>
+
+
+<script id="patch203-dual-sword-equip-fix">
+(function(){
+  if(window.__patch203DualSwordEquipFix)return;
+  window.__patch203DualSwordEquipFix=true;
+
+  function refreshPanels(){
+    try{ if(typeof syncInventoryData==='function') syncInventoryData(); }catch(_){ }
+    try{ if(typeof applyEquipmentVisualState==='function') applyEquipmentVisualState(); }catch(_){ }
+    try{ if(typeof window.compactBagSlots227==='function') window.compactBagSlots227(); }catch(_){ }
+    try{
+      var title=document.querySelector('#panel.show #pTitle')?.textContent||'';
+      if(title==='장비' && typeof window.renderEquipmentComparePanel196==='function') window.renderEquipmentComparePanel196();
+      else if(title==='가방' && typeof window.renderInventoryPanel==='function') window.renderInventoryPanel();
+      else if(title==='잡화점' && typeof window.renderShopPanel==='function') window.renderShopPanel();
+    }catch(_){ }
+  }
+
+  function closePopupLayer(){
+    try{
+      document.querySelectorAll('.shopItemInfoPopupLayer').forEach(function(layer){ layer.classList.remove('show'); });
+    }catch(_){ }
+  }
+
+  document.addEventListener('click', function(ev){
+    var equipBtn=ev.target.closest && ev.target.closest('.shopItemInfoPopupLayer [data-bag-equip-toggle]');
+    if(equipBtn){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      if(equipBtn.disabled || equipBtn.getAttribute('aria-disabled')==='true') return;
+      var kind=equipBtn.dataset.item;
+      if(typeof window.setItemEquipped==='function' && window.setItemEquipped(kind,true)){
+        refreshPanels();
+        closePopupLayer();
+        try{ if(typeof log==='function') log((itemDefs?.[kind]?.name||kind)+' 장착','system'); }catch(_){ }
+      }
+      return;
+    }
+    var unequipBtn=ev.target.closest && ev.target.closest('.shopItemInfoPopupLayer [data-slot-unequip]');
+    if(unequipBtn){
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      if(unequipBtn.disabled || unequipBtn.getAttribute('aria-disabled')==='true') return;
+      var kind2=unequipBtn.dataset.item;
+      if(typeof window.setItemEquipped==='function' && window.setItemEquipped(kind2,false)){
+        refreshPanels();
+        closePopupLayer();
+        try{ if(typeof log==='function') log((itemDefs?.[kind2]?.name||kind2)+' 장착 해제','system'); }catch(_){ }
+      }
+    }
+  }, true);
+})();
+</script>
+
+
+<style id="patch204-left-hand-follow-delay">
+/* patch204: right hand attacks first, left hand follows 0.3s later */
+body.leftWooden202 .player.attacking .dualSword202.left,
+body.leftIron202 .player.attacking .dualSword202.left{
+  animation:none!important;
+}
+body.leftWooden202 .player.leftFollowAttack204 .dualSword202.left,
+body.leftIron202 .player.leftFollowAttack204 .dualSword202.left{
+  animation:dualSwordCutLeft202 .54s ease-out!important;
+}
+</style>
+<script id="patch204-left-hand-follow-delay">
+(function(){
+  if(window.__patch204LeftHandFollowDelay)return;
+  window.__patch204LeftHandFollowDelay=true;
+
+  var LEFT_DELAY_MS=300;
+  var LEFT_ANIM_MS=560;
+
+  function hasDualSwordReady(){
+    return document.body.classList.contains('hasRightWeapon202') && document.body.classList.contains('hasLeftWeapon202');
+  }
+
+  function triggerLeftFollowAnim(){
+    var node=document.getElementById('player')||document.querySelector('.player');
+    if(!node)return;
+    node.classList.remove('leftFollowAttack204');
+    void node.offsetWidth;
+    node.classList.add('leftFollowAttack204');
+    setTimeout(function(){
+      node.classList.remove('leftFollowAttack204');
+    }, LEFT_ANIM_MS);
+  }
+
+  function runLeftFollowAttack(seq){
+    if(seq!==battleSeq||respawn||!timer)return;
+    if(!hasDualSwordReady())return;
+    if(ehp<=0)return;
+
+    triggerLeftFollowAnim();
+
+    if(!chance(playerHitChance(currentMonster))){
+      spawnCombatText(slime,'빗나감','miss-text');
+      log('레몬에이드 왼손 공격(+0.30초): '+currentMonster.name+'에게 빗나감');
+      bars();
+      return;
+    }
+
+    var base=Math.max(1,playerAbilities.pAtk||4);
+    var d=Math.max(1,base+Math.floor(Math.random()*3));
+    var crit=chance(playerCritChance());
+    if(crit)d=Math.max(1,Math.round(d*(1.5+(playerAbilities.critDmg||0)/100)));
+
+    ehp=Math.max(0,ehp-d);
+    fx(slime,'target-hit',260);
+    spawnCombatFx(slime,'slime-hit-fx',520);
+    if(crit)spawnCombatText(slime,'치명타!','crit-text');
+    log('레몬에이드 왼손 공격(+0.30초): '+currentMonster.name+'에게 '+(crit?'치명타 ':'')+d+' 피해');
+    bars();
+    if(ehp<=0)defeatCurrentMonster();
+  }
+
+  if(typeof playerRealtimeAttack==='function' && !playerRealtimeAttack.__patch204Wrapped){
+    var prevPlayerRealtimeAttack=playerRealtimeAttack;
+    var wrappedPlayerRealtimeAttack=function(seq){
+      prevPlayerRealtimeAttack.apply(this,arguments);
+      if(!hasDualSwordReady())return;
+      setTimeout(function(){
+        runLeftFollowAttack(seq);
+      }, LEFT_DELAY_MS);
+    };
+    wrappedPlayerRealtimeAttack.__patch204Wrapped=true;
+    playerRealtimeAttack=wrappedPlayerRealtimeAttack;
+  }
+})();
+</script>
+
+<style id="patch205-character-sword-sync">
+/* patch205: keep equipped sword visuals anchored to the character hands */
+.player > .sword{display:none!important}
+.player .dualSword202{position:absolute!important;display:none!important;width:20px!important;height:58px!important;overflow:visible!important;border:0!important;background:none!important;z-index:7!important;pointer-events:none!important;filter:drop-shadow(1px 2px 0 #0007)!important;will-change:transform}
+.player .dualSword202.right{left:45px!important;top:14px!important;transform:rotate(32deg)!important;transform-origin:10px 50px!important}
+.player .dualSword202.left{left:-7px!important;top:13px!important;transform:rotate(-32deg)!important;transform-origin:10px 50px!important}
+body.hasRightWeapon202 .player .dualSword202.right{display:block!important}
+body.hasLeftWeapon202 .player .dualSword202.left{display:block!important}
+body:not(.hasRightWeapon202) .player .dualSword202.right,body:not(.hasLeftWeapon202) .player .dualSword202.left{display:none!important}
+body.rightWooden202 .player .dualSword202.right{left:45px!important;top:14px!important;transform:rotate(32deg)!important;transform-origin:10px 50px!important;background:linear-gradient(#5b3821,#7a4a28) 7px 43px/6px 15px no-repeat,linear-gradient(90deg,transparent 0 1px,#ffd36b 1px 19px,transparent 19px) 1px 40px/18px 5px no-repeat!important}
+body.leftWooden202 .player .dualSword202.left{left:-7px!important;top:13px!important;transform:rotate(-32deg)!important;transform-origin:10px 50px!important;background:linear-gradient(#5b3821,#7a4a28) 7px 43px/6px 15px no-repeat,linear-gradient(90deg,transparent 0 1px,#ffd36b 1px 19px,transparent 19px) 1px 40px/18px 5px no-repeat!important}
+body.rightWooden202 .player .dualSword202.right:before,body.leftWooden202 .player .dualSword202.left:before{content:""!important;position:absolute!important;left:7px!important;top:1px!important;width:6px!important;height:42px!important;transform:none!important;border:1px solid #355866!important;border-radius:0!important;clip-path:polygon(50% 0,88% 18%,65% 100%,35% 100%,12% 18%)!important;background:linear-gradient(90deg,#f8feff 0 18%,#9fc9d4 19% 67%,#4d7180 68% 100%)!important;box-shadow:none!important}
+body.rightWooden202 .player .dualSword202.right:after,body.leftWooden202 .player .dualSword202.left:after{content:""!important;position:absolute!important;left:6px!important;top:55px!important;width:8px!important;height:5px!important;transform:none!important;border-radius:4px!important;background:#ffd36b!important;box-shadow:0 0 0 1px #6f4425!important}
+body.rightIron202 .player .dualSword202.right{left:45px!important;top:14px!important;transform:rotate(32deg)!important;transform-origin:10px 50px!important;background:none!important}
+body.leftIron202 .player .dualSword202.left{left:-7px!important;top:13px!important;transform:rotate(-32deg)!important;transform-origin:10px 50px!important;background:none!important}
+body.rightIron202 .player .dualSword202.right:before,body.leftIron202 .player .dualSword202.left:before{content:""!important;position:absolute!important;left:50%!important;top:0!important;width:9px!important;height:41px!important;transform:translateX(-50%)!important;transform-origin:50% 100%!important;border:0!important;border-radius:0!important;clip-path:polygon(50% 0,100% 17%,68% 100%,32% 100%,0 17%)!important;background:linear-gradient(90deg,#24313b 0 9%,#6e8796 10% 32%,#f8fdff 33% 56%,#a9c0cc 57% 85%,#415763 86% 100%)!important;box-shadow:0 0 0 1px #26343d,inset 1px 0 0 rgba(255,255,255,.22),inset -1px 0 0 rgba(26,39,47,.35)!important}
+body.rightIron202 .player .dualSword202.right:after,body.leftIron202 .player .dualSword202.left:after{content:""!important;position:absolute!important;left:50%!important;top:37px!important;width:20px!important;height:21px!important;transform:translateX(-50%)!important;transform-origin:50% 11px!important;border:0!important;border-radius:0!important;background:linear-gradient(90deg,transparent 0 1px,#22303a 1px 4px,#95adb9 4px 8px,#eff9fd 8px 12px,#95adb9 12px 16px,#22303a 16px 19px,transparent 19px) 50% 1px/20px 5px no-repeat,linear-gradient(90deg,#2d180a 0 12%,#7c451e 13% 42%,#b97836 43% 62%,#5c3217 63% 88%,#2d180a 89% 100%) 50% 5px/6px 12px no-repeat,linear-gradient(90deg,#405360,#dceaf0 48%,#405360) 50% 17px/8px 4px no-repeat!important;box-shadow:none!important;filter:drop-shadow(1px 1px 0 #0008)!important}
+@keyframes dualSwordCutRight205{0%{transform:rotate(20deg)}44%{transform:rotate(76deg)}100%{transform:rotate(32deg)}}
+@keyframes dualSwordCutLeft205{0%{transform:rotate(-20deg)}44%{transform:rotate(-76deg)}100%{transform:rotate(-32deg)}}
+body.hasRightWeapon202 .player.attacking .dualSword202.right{animation:dualSwordCutRight205 .54s ease-out!important}
+body.hasLeftWeapon202 .player.attacking .dualSword202.left{animation:none!important}
+body.hasLeftWeapon202:not(.hasRightWeapon202) .player.attacking .dualSword202.left,body.hasLeftWeapon202 .player.leftFollowAttack204 .dualSword202.left{animation:dualSwordCutLeft205 .54s ease-out!important}
+</style>
+<script id="patch205-character-sword-sync">
+(function(){
+  if(window.__patch205CharacterSwordSync)return;
+  window.__patch205CharacterSwordSync=true;
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var WEAPONS=['ironSword','woodenSword'];
+  var CLASS_NAMES=['hasRightWeapon202','hasLeftWeapon202','rightWooden202','rightIron202','leftWooden202','leftIron202','woodenSwordEquipped','ironSwordEquipped','weaponInLeftHand','weaponInRightHand'];
+  function readJson(key){try{var raw=localStorage.getItem(key);if(!raw)return {};var parsed=JSON.parse(raw);return parsed&&typeof parsed==='object'?parsed:{}}catch(_){return {}}}
+  function itemEquipped(kind){try{if(typeof window.isItemEquipped==='function'&&window.isItemEquipped(kind))return true}catch(_){}try{return !!readJson(EQUIP_KEY)[kind]}catch(_){return false}}
+  function ensureWeaponHints(){try{if(!window.itemDefs)return;WEAPONS.forEach(function(kind){if(!window.itemDefs[kind])return;window.itemDefs[kind].equipSlot=['right','left'];window.itemDefs[kind].slotType='weapon';window.itemDefs[kind].equipType='weapon';window.itemDefs[kind].position=['right','left']})}catch(_){}}
+  function ensureSwordNode(slot){var player=document.getElementById('player')||document.querySelector('.player');if(!player)return null;var node=player.querySelector('.dualSword202.'+slot);if(!node){node=document.createElement('i');node.className='dualSword202 '+slot;node.setAttribute('aria-hidden','true');player.insertBefore(node,player.firstChild)}return node}
+  function computeSlots(){var place=readJson(PLACE_KEY);var slots={right:null,left:null};var unplaced=[];WEAPONS.forEach(function(kind){if(!itemEquipped(kind))return;var slot=place[kind];if((slot==='right'||slot==='left')&&!slots[slot])slots[slot]=kind;else unplaced.push(kind)});unplaced.forEach(function(kind){if(!slots.right)slots.right=kind;else if(!slots.left)slots.left=kind});return slots}
+  function clearWeaponClasses(){CLASS_NAMES.forEach(function(cls){document.body.classList.remove(cls)})}
+  function setNode(node,kind){if(!node)return;node.dataset.weapon=kind||'';node.classList.toggle('iron',kind==='ironSword');node.classList.toggle('wooden',kind==='woodenSword')}
+  function sync(){try{ensureWeaponHints();var rightNode=ensureSwordNode('right');var leftNode=ensureSwordNode('left');var slots=computeSlots();clearWeaponClasses();setNode(rightNode,slots.right);setNode(leftNode,slots.left);if(slots.right){document.body.classList.add('hasRightWeapon202','weaponInRightHand');document.body.classList.add(slots.right==='ironSword'?'rightIron202':'rightWooden202')}if(slots.left){document.body.classList.add('hasLeftWeapon202','weaponInLeftHand');document.body.classList.add(slots.left==='ironSword'?'leftIron202':'leftWooden202')}var visible=slots.right||slots.left;document.body.classList.toggle('ironSwordEquipped',visible==='ironSword');document.body.classList.toggle('woodenSwordEquipped',visible==='woodenSword')}catch(_){}}
+  window.syncCharacterSwordVisual205=sync;
+  var prevApply=window.applyEquipmentVisualState;
+  window.applyEquipmentVisualState=function(){try{if(typeof prevApply==='function')prevApply.apply(this,arguments)}catch(_){}sync()};
+  if(typeof window.setItemEquipped==='function'&&!window.setItemEquipped.__patch205CharacterSwordSync){var prevSet=window.setItemEquipped;var wrapped=function(){var out=prevSet.apply(this,arguments);sync();setTimeout(sync,0);setTimeout(sync,80);return out};wrapped.__patch205CharacterSwordSync=true;window.setItemEquipped=wrapped}
+  ['click','pointerup','pointercancel','drop','keyup','change','DOMContentLoaded'].forEach(function(type){document.addEventListener(type,function(){setTimeout(sync,0);setTimeout(sync,80)},true)});
+  window.addEventListener('storage',sync);
+  try{var mo=new MutationObserver(function(){sync()});mo.observe(document.documentElement,{childList:true,subtree:true})}catch(_){}
+  sync();setTimeout(sync,0);setTimeout(sync,120);setTimeout(sync,500);setInterval(sync,900);
+})();
+</script>
+
+<style id="patch206-sword-unequip-resync">
+/* patch206: stale equipped-sword cleanup after unequip/re-equip */
+.player > .sword,
+body.woodenSwordEquipped .player > .sword,
+body.ironSwordEquipped .player > .sword{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+}
+body:not(.hasRightWeapon202) .player .dualSword202.right,
+body:not(.hasLeftWeapon202) .player .dualSword202.left{
+  display:none!important;
+}
+</style>
+<script id="patch206-sword-unequip-resync">
+(function(){
+  if(window.__patch206SwordUnequipResync)return;
+  window.__patch206SwordUnequipResync=true;
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var WEAPONS=['ironSword','woodenSword'];
+  var VISUAL_CLASSES=[
+    'hasRightWeapon202','hasLeftWeapon202',
+    'rightWooden202','rightIron202','leftWooden202','leftIron202',
+    'woodenSwordEquipped','ironSwordEquipped',
+    'weaponInLeftHand','weaponInRightHand'
+  ];
+
+  function readJson(key){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return {};
+      var parsed=JSON.parse(raw);
+      return parsed&&typeof parsed==='object'?parsed:{};
+    }catch(_){return {};}
+  }
+  function writeJson(key,value){try{localStorage.setItem(key,JSON.stringify(value||{}));}catch(_){}}
+  function owns(kind){try{return typeof inventory!=='undefined' && inventory && (inventory[kind]||0)>0;}catch(_){return false;}}
+  function validSlot(slot){return slot==='right'||slot==='left';}
+  function clearVisualClasses(){VISUAL_CLASSES.forEach(function(cls){document.body.classList.remove(cls);});}
+  function swordNode(slot){
+    var player=document.getElementById('player')||document.querySelector('.player');
+    if(!player)return null;
+    var node=player.querySelector('.dualSword202.'+slot);
+    if(!node){
+      node=document.createElement('i');
+      node.className='dualSword202 '+slot;
+      node.setAttribute('aria-hidden','true');
+      player.insertBefore(node,player.firstChild);
+    }
+    return node;
+  }
+  function setNode(slot,kind){
+    var node=swordNode(slot);
+    if(!node)return;
+    node.dataset.weapon=kind||'';
+    node.classList.toggle('iron',kind==='ironSword');
+    node.classList.toggle('wooden',kind==='woodenSword');
+  }
+
+  function normalizeState(activeKind, activeOn){
+    var state=readJson(EQUIP_KEY);
+    var place=readJson(PLACE_KEY);
+
+    WEAPONS.forEach(function(kind){
+      if(!owns(kind)){
+        state[kind]=false;
+        delete place[kind];
+      }
+    });
+
+    if(activeKind && WEAPONS.indexOf(activeKind)>=0){
+      if(activeOn===false){
+        state[activeKind]=false;
+        delete place[activeKind];
+      }else if(activeOn===true && owns(activeKind)){
+        state[activeKind]=true;
+        if(!validSlot(place[activeKind])){
+          var otherSlot=null;
+          WEAPONS.forEach(function(other){
+            if(other!==activeKind && state[other] && validSlot(place[other]))otherSlot=place[other];
+          });
+          place[activeKind]=otherSlot==='right'?'left':'right';
+        }
+        WEAPONS.forEach(function(other){
+          if(other!==activeKind && state[other] && (!validSlot(place[other]) || place[other]===place[activeKind])){
+            state[other]=false;
+            delete place[other];
+          }
+        });
+      }
+    }
+
+    var used={right:null,left:null};
+    WEAPONS.forEach(function(kind){
+      if(!state[kind] || !owns(kind)){
+        state[kind]=false;
+        delete place[kind];
+        return;
+      }
+      var slot=validSlot(place[kind])?place[kind]:null;
+      if(!slot){
+        slot=!used.right?'right':(!used.left?'left':null);
+        if(slot)place[kind]=slot;
+      }
+      if(!slot || used[slot]){
+        state[kind]=false;
+        delete place[kind];
+      }else{
+        used[slot]=kind;
+      }
+    });
+
+    writeJson(EQUIP_KEY,state);
+    writeJson(PLACE_KEY,place);
+    try{window.__equipmentState=state;}catch(_){}
+    return {state:state,place:place};
+  }
+
+  function syncVisual(activeKind,activeOn){
+    try{
+      var normalized=normalizeState(activeKind,activeOn);
+      var state=normalized.state;
+      var place=normalized.place;
+      var slots={right:null,left:null};
+
+      WEAPONS.forEach(function(kind){
+        if(!state[kind] || !owns(kind))return;
+        var slot=validSlot(place[kind])?place[kind]:null;
+        if(slot && !slots[slot])slots[slot]=kind;
+      });
+
+      clearVisualClasses();
+      setNode('right',slots.right);
+      setNode('left',slots.left);
+
+      if(slots.right){
+        document.body.classList.add('hasRightWeapon202','weaponInRightHand');
+        document.body.classList.add(slots.right==='ironSword'?'rightIron202':'rightWooden202');
+      }
+      if(slots.left){
+        document.body.classList.add('hasLeftWeapon202','weaponInLeftHand');
+        document.body.classList.add(slots.left==='ironSword'?'leftIron202':'leftWooden202');
+      }
+
+      var visible=slots.right||slots.left;
+      document.body.classList.toggle('ironSwordEquipped',visible==='ironSword');
+      document.body.classList.toggle('woodenSwordEquipped',visible==='woodenSword');
+
+      var legacy=document.querySelector('.player > .sword');
+      if(legacy){
+        legacy.style.setProperty('display','none','important');
+        legacy.style.setProperty('visibility','hidden','important');
+        legacy.style.setProperty('opacity','0','important');
+      }
+    }catch(_){}
+  }
+
+  window.syncCharacterSwordVisual206=syncVisual;
+
+  var prevApply=window.applyEquipmentVisualState;
+  window.applyEquipmentVisualState=function(){
+    try{if(typeof prevApply==='function')prevApply.apply(this,arguments);}catch(_){}
+    syncVisual();
+  };
+
+  if(typeof window.setItemEquipped==='function' && !window.setItemEquipped.__patch206SwordUnequipResync){
+    var prevSet=window.setItemEquipped;
+    var wrapped=function(kind,on){
+      var out=prevSet.apply(this,arguments);
+      if(WEAPONS.indexOf(kind)>=0){
+        syncVisual(kind,!!on);
+        setTimeout(function(){syncVisual(kind,!!on);},0);
+        setTimeout(function(){syncVisual(kind,!!on);},90);
+      }else{
+        syncVisual();
+        setTimeout(syncVisual,0);
+      }
+      return out;
+    };
+    wrapped.__patch206SwordUnequipResync=true;
+    window.setItemEquipped=wrapped;
+  }
+
+  ['click','pointerup','pointercancel','drop','change','keyup','DOMContentLoaded'].forEach(function(type){
+    document.addEventListener(type,function(){setTimeout(syncVisual,0);setTimeout(syncVisual,90);},true);
+  });
+  window.addEventListener('storage',function(){syncVisual();});
+  syncVisual();
+  setTimeout(syncVisual,0);
+  setTimeout(syncVisual,150);
+  setTimeout(syncVisual,600);
+})();
+</script>
+
+<style id="patch207-single-sword-switch-cleanup">
+/* patch207: when switching swords, never let the previous sword remain on the character */
+.player > .sword,
+body.woodenSwordEquipped .player > .sword,
+body.ironSwordEquipped .player > .sword{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+}
+</style>
+<script id="patch207-single-sword-switch-cleanup">
+(function(){
+  if(window.__patch207SingleSwordSwitchCleanup)return;
+  window.__patch207SingleSwordSwitchCleanup=true;
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var LAST_KEY='index5.lastVisibleSword.v1';
+  var SWORDS=['ironSword','woodenSword'];
+  var CLASSES=['hasRightWeapon202','hasLeftWeapon202','rightWooden202','rightIron202','leftWooden202','leftIron202','woodenSwordEquipped','ironSwordEquipped','weaponInLeftHand','weaponInRightHand'];
+
+  function readJson(key){try{var raw=localStorage.getItem(key);if(!raw)return {};var v=JSON.parse(raw);return v&&typeof v==='object'?v:{}}catch(_){return {}}}
+  function writeJson(key,v){try{localStorage.setItem(key,JSON.stringify(v||{}))}catch(_){}}
+  function own(k){try{return typeof inventory!=='undefined'&&inventory&&(inventory[k]||0)>0}catch(_){return false}}
+  function slotOk(s){return s==='right'||s==='left'}
+  function clear(){CLASSES.forEach(function(c){document.body.classList.remove(c)})}
+  function node(slot){var p=document.getElementById('player')||document.querySelector('.player');if(!p)return null;var n=p.querySelector('.dualSword202.'+slot);if(!n){n=document.createElement('i');n.className='dualSword202 '+slot;n.setAttribute('aria-hidden','true');p.insertBefore(n,p.firstChild)}return n}
+  function markNode(slot,kind){var n=node(slot);if(!n)return;n.dataset.weapon=kind||'';n.classList.toggle('iron',kind==='ironSword');n.classList.toggle('wooden',kind==='woodenSword')}
+
+  function canonical(activeKind,activeOn){
+    var st=readJson(EQUIP_KEY), pl=readJson(PLACE_KEY), chosen=null;
+
+    SWORDS.forEach(function(k){if(!own(k)){st[k]=false;delete pl[k]}});
+
+    if(activeKind&&SWORDS.indexOf(activeKind)>=0){
+      if(activeOn){
+        chosen=activeKind;
+        st[activeKind]=true;
+        if(!slotOk(pl[activeKind]))pl[activeKind]='right';
+        try{localStorage.setItem(LAST_KEY,activeKind)}catch(_){}
+      }else{
+        st[activeKind]=false;
+        delete pl[activeKind];
+        try{if(localStorage.getItem(LAST_KEY)===activeKind)localStorage.removeItem(LAST_KEY)}catch(_){}
+      }
+    }
+
+    if(!chosen){
+      var last='';
+      try{last=localStorage.getItem(LAST_KEY)||''}catch(_){}
+      if(last&&st[last]&&own(last))chosen=last;
+    }
+    if(!chosen){
+      for(var i=0;i<SWORDS.length;i++){
+        var k=SWORDS[i];
+        if(st[k]&&own(k)){chosen=k;break}
+      }
+    }
+
+    SWORDS.forEach(function(k){
+      if(k!==chosen){
+        st[k]=false;
+        delete pl[k];
+      }
+    });
+    if(chosen){
+      st[chosen]=true;
+      if(!slotOk(pl[chosen]))pl[chosen]='right';
+    }
+
+    writeJson(EQUIP_KEY,st);
+    writeJson(PLACE_KEY,pl);
+    try{window.__equipmentState=st}catch(_){}
+    return {state:st,place:pl,chosen:chosen};
+  }
+
+  function sync(activeKind,activeOn){
+    try{
+      var c=canonical(activeKind,activeOn);
+      var kind=c.chosen;
+      var slot=kind?(slotOk(c.place[kind])?c.place[kind]:'right'):null;
+      clear();
+      markNode('right',slot==='right'?kind:null);
+      markNode('left',slot==='left'?kind:null);
+      if(kind&&slot){
+        if(slot==='right')document.body.classList.add('hasRightWeapon202','weaponInRightHand',kind==='ironSword'?'rightIron202':'rightWooden202');
+        if(slot==='left')document.body.classList.add('hasLeftWeapon202','weaponInLeftHand',kind==='ironSword'?'leftIron202':'leftWooden202');
+        document.body.classList.add(kind==='ironSword'?'ironSwordEquipped':'woodenSwordEquipped');
+      }
+      var legacy=document.querySelector('.player > .sword');
+      if(legacy){legacy.style.setProperty('display','none','important');legacy.style.setProperty('visibility','hidden','important');legacy.style.setProperty('opacity','0','important')}
+    }catch(_){}
+  }
+
+  window.syncCharacterSwordVisual207=sync;
+
+  var prevApply=window.applyEquipmentVisualState;
+  window.applyEquipmentVisualState=function(){try{if(typeof prevApply==='function')prevApply.apply(this,arguments)}catch(_){}sync()};
+
+  if(typeof window.setItemEquipped==='function'&&!window.setItemEquipped.__patch207SingleSwordSwitchCleanup){
+    var prevSet=window.setItemEquipped;
+    var wrapped=function(kind,on){
+      var out=prevSet.apply(this,arguments);
+      if(SWORDS.indexOf(kind)>=0){
+        sync(kind,!!on);
+        setTimeout(function(){sync(kind,!!on)},0);
+        setTimeout(function(){sync(kind,!!on)},100);
+      }else{
+        sync();
+        setTimeout(sync,0);
+      }
+      return out;
+    };
+    wrapped.__patch207SingleSwordSwitchCleanup=true;
+    window.setItemEquipped=wrapped;
+  }
+
+  ['click','pointerup','pointercancel','drop','change','keyup','DOMContentLoaded'].forEach(function(t){document.addEventListener(t,function(){setTimeout(sync,0);setTimeout(sync,100)},true)});
+  window.addEventListener('storage',function(){sync()});
+  sync();setTimeout(sync,0);setTimeout(sync,160);setTimeout(sync,650);
+})();
+</script>
+
+<style id="patch208-dual-hand-slot-independent-fix">
+/* patch208: keep left/right weapon slots independent after sword switching */
+.player > .sword{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+}
+</style>
+<script id="patch208-dual-hand-slot-independent-fix">
+(function(){
+  if(window.__patch208DualHandSlotIndependentFix)return;
+  window.__patch208DualHandSlotIndependentFix=true;
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var DUAL_KEY='index5.dualWeaponSlots.v2';
+  var KNOWN_WEAPONS=['woodenSword','ironSword'];
+  var VISUAL_CLASSES=[
+    'hasRightWeapon202','hasLeftWeapon202',
+    'rightWooden202','rightIron202','leftWooden202','leftIron202',
+    'woodenSwordEquipped','ironSwordEquipped',
+    'weaponInLeftHand','weaponInRightHand'
+  ];
+  var pendingDrag=null;
+
+  function readJson(key,fallback){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return fallback||{};
+      var v=JSON.parse(raw);
+      return v&&typeof v==='object'?v:(fallback||{});
+    }catch(_){return fallback||{};}
+  }
+  function writeJson(key,value){
+    try{localStorage.setItem(key,JSON.stringify(value||{}));}catch(_){}
+  }
+  function owns(kind){
+    try{return !!(kind && window.inventory && (inventory[kind]||0)>0 && window.itemDefs && itemDefs[kind]);}
+    catch(_){return false;}
+  }
+  function slotOk(slot){return slot==='right'||slot==='left';}
+  function otherSlot(slot){return slot==='right'?'left':'right';}
+  function textOf(value){
+    if(Array.isArray(value))return value.join(' ');
+    return String(value||'');
+  }
+  function weaponHints(kind){
+    try{
+      var item=(window.itemDefs&&itemDefs[kind])||{};
+      return [kind,item.name,item.desc,item.type,item.category,item.group,item.equipSlot,item.slot,item.slotType,item.equipmentSlot,item.slotName,item.equipType,item.position,item.part,item.wear].map(textOf).join(' ').toLowerCase();
+    }catch(_){return String(kind||'').toLowerCase();}
+  }
+  function isWeaponKind(kind){
+    if(!kind)return false;
+    if(KNOWN_WEAPONS.indexOf(kind)>=0)return true;
+    var t=weaponHints(kind);
+    return /(^|\s)(weapon|sword|blade|dagger|axe|bow|staff|wand|spear|mace|hammer|gun)(\s|$)/.test(t) || /무기|검|도|창|활|지팡이|방망이|도끼|총/.test(t) || /right|left|오른손|왼손|mainhand|offhand/.test(t);
+  }
+  function weaponKinds(){
+    var out=[];
+    function add(kind){
+      if(kind && out.indexOf(kind)<0 && isWeaponKind(kind))out.push(kind);
+    }
+    KNOWN_WEAPONS.forEach(add);
+    try{Object.keys(window.itemDefs||{}).forEach(add);}catch(_){}
+    try{Object.keys(window.inventory||{}).forEach(add);}catch(_){}
+    return out;
+  }
+  function sanitizeMap(map){
+    map=map&&typeof map==='object'?map:{};
+    var clean={right:null,left:null};
+    ['right','left'].forEach(function(slot){
+      var kind=map[slot];
+      if(kind && isWeaponKind(kind) && owns(kind) && clean[otherSlot(slot)]!==kind){
+        clean[slot]=kind;
+      }
+    });
+    return clean;
+  }
+  function seedFromEquipment(){
+    var state=readJson(EQUIP_KEY,{});
+    var place=readJson(PLACE_KEY,{});
+    var map={right:null,left:null};
+    weaponKinds().forEach(function(kind){
+      if(!state[kind] || !owns(kind))return;
+      var slot=slotOk(place[kind])?place[kind]:null;
+      if(slot && !map[slot])map[slot]=kind;
+    });
+    weaponKinds().forEach(function(kind){
+      if(!state[kind] || !owns(kind))return;
+      if(map.right===kind || map.left===kind)return;
+      if(!map.right)map.right=kind;
+      else if(!map.left)map.left=kind;
+    });
+    return sanitizeMap(map);
+  }
+  function readDualMap(){
+    var saved=sanitizeMap(readJson(DUAL_KEY,{}));
+    if(saved.right || saved.left)return saved;
+    return seedFromEquipment();
+  }
+  function saveDualMap(map){
+    map=sanitizeMap(map);
+    writeJson(DUAL_KEY,map);
+    return map;
+  }
+  function chooseSlot(kind,map,requestedSlot){
+    map=sanitizeMap(map);
+    if(slotOk(requestedSlot))return requestedSlot;
+    if(map.right===kind)return 'right';
+    if(map.left===kind)return 'left';
+    if(!map.right)return 'right';
+    if(!map.left)return 'left';
+    var saved=readJson(PLACE_KEY,{})[kind];
+    if(slotOk(saved))return saved;
+    return 'right';
+  }
+  function setMapSlot(kind,slot){
+    if(!isWeaponKind(kind) || !owns(kind) || !slotOk(slot))return false;
+    var map=readDualMap();
+    if(map.right===kind)map.right=null;
+    if(map.left===kind)map.left=null;
+    map[slot]=kind;
+    saveDualMap(map);
+    return true;
+  }
+  function removeMapKind(kind){
+    var map=readDualMap();
+    var changed=false;
+    if(map.right===kind){map.right=null;changed=true;}
+    if(map.left===kind){map.left=null;changed=true;}
+    if(changed)saveDualMap(map);
+    return changed;
+  }
+  function ensureNode(slot){
+    var player=document.getElementById('player')||document.querySelector('.player');
+    if(!player)return null;
+    var node=player.querySelector('.dualSword202.'+slot);
+    if(!node){
+      node=document.createElement('i');
+      node.className='dualSword202 '+slot;
+      node.setAttribute('aria-hidden','true');
+      player.insertBefore(node,player.firstChild);
+    }
+    return node;
+  }
+  function markNode(slot,kind){
+    var node=ensureNode(slot);
+    if(!node)return;
+    node.dataset.weapon=kind||'';
+    node.classList.toggle('iron',kind==='ironSword');
+    node.classList.toggle('wooden',kind==='woodenSword');
+  }
+  function clearVisualClasses(){
+    try{VISUAL_CLASSES.forEach(function(c){document.body.classList.remove(c);});}catch(_){}
+  }
+  function applyDualVisual(){
+    try{
+      var map=saveDualMap(readDualMap());
+      var state=readJson(EQUIP_KEY,{});
+      var place=readJson(PLACE_KEY,{});
+      var equippedWeaponSet={};
+
+      ['right','left'].forEach(function(slot){
+        var kind=map[slot];
+        if(kind && owns(kind)){
+          equippedWeaponSet[kind]=slot;
+          state[kind]=true;
+          place[kind]=slot;
+        }
+      });
+      weaponKinds().forEach(function(kind){
+        if(!equippedWeaponSet[kind]){
+          state[kind]=false;
+          delete place[kind];
+        }
+      });
+
+      writeJson(EQUIP_KEY,state);
+      writeJson(PLACE_KEY,place);
+      try{window.__equipmentState=state;}catch(_){}
+
+      clearVisualClasses();
+      markNode('right',map.right);
+      markNode('left',map.left);
+
+      if(map.right){
+        document.body.classList.add('hasRightWeapon202','weaponInRightHand');
+        document.body.classList.add(map.right==='ironSword'?'rightIron202':'rightWooden202');
+      }
+      if(map.left){
+        document.body.classList.add('hasLeftWeapon202','weaponInLeftHand');
+        document.body.classList.add(map.left==='ironSword'?'leftIron202':'leftWooden202');
+      }
+      document.body.classList.toggle('woodenSwordEquipped',map.right==='woodenSword'||map.left==='woodenSword');
+      document.body.classList.toggle('ironSwordEquipped',map.right==='ironSword'||map.left==='ironSword');
+
+      var legacy=document.querySelector('.player > .sword');
+      if(legacy){
+        legacy.style.setProperty('display','none','important');
+        legacy.style.setProperty('visibility','hidden','important');
+        legacy.style.setProperty('opacity','0','important');
+      }
+    }catch(_){}
+  }
+  function refreshAfterApply(){
+    try{if(typeof window.refreshEquipmentDerivedAbilities==='function')window.refreshEquipmentDerivedAbilities();}catch(_){}
+    try{if(typeof window.syncInventoryData==='function')window.syncInventoryData();}catch(_){}
+    try{if(typeof window.bars==='function')window.bars();}catch(_){}
+  }
+  function syncSoon(){
+    applyDualVisual();
+    setTimeout(applyDualVisual,0);
+    setTimeout(applyDualVisual,40);
+    setTimeout(applyDualVisual,120);
+    setTimeout(applyDualVisual,260);
+  }
+
+  var prevApply=window.applyEquipmentVisualState;
+  window.applyEquipmentVisualState=function(){
+    try{if(typeof prevApply==='function')prevApply.apply(this,arguments);}catch(_){}
+    applyDualVisual();
+  };
+
+  var prevSet=window.setItemEquipped;
+  window.setItemEquipped=function(kind,on){
+    if(isWeaponKind(kind)){
+      if(on){
+        var map=readDualMap();
+        var requested=slotOk(window.__patch208RequestedWeaponSlot)?window.__patch208RequestedWeaponSlot:null;
+        var slot=chooseSlot(kind,map,requested);
+        setMapSlot(kind,slot);
+      }else{
+        removeMapKind(kind);
+      }
+      applyDualVisual();
+      refreshAfterApply();
+      syncSoon();
+      return true;
+    }
+    return typeof prevSet==='function'?!!prevSet.apply(this,arguments):false;
+  };
+
+  window.syncCharacterSwordVisual208=applyDualVisual;
+  window.setCharacterWeaponSlot208=function(kind,slot){
+    var ok=setMapSlot(kind,slot);
+    applyDualVisual();
+    return ok;
+  };
+
+  function slotFromElement(el){
+    if(!el || !el.closest)return null;
+    var slotEl=el.closest('.equipmentMovePanel199 .eqEquipSlot,.equipmentComparePanel .eqEquipSlot,.equipmentLeftBag24Panel .equipSlot88,.equipSlot');
+    if(!slotEl)return null;
+    return slotEl.dataset.eq199Slot || slotEl.dataset.slot || null;
+  }
+  function bagTargetFromElement(el){
+    if(!el || !el.closest)return false;
+    return !!el.closest('.equipmentMovePanel199 .eqBagSlot,.equipmentMovePanel199 .eqBagPane,.equipmentComparePanel .eqBagSlot,.equipmentComparePanel .eqBagPane,.equipmentLeftBag24Panel .equipBagSlot88,.equipmentLeftBag24Panel .equipSimpleBagPane');
+  }
+  function kindFromCard(el){
+    if(!el || !el.closest)return null;
+    var card=el.closest('[data-eq199-kind],[data-eq-kind],[data-equip-kind2],[data-item]');
+    if(!card)return null;
+    return card.dataset.eq199Kind || card.dataset.eqKind || card.dataset.equipKind2 || card.dataset.item || null;
+  }
+
+  window.addEventListener('pointerdown',function(e){
+    var kind=kindFromCard(e.target);
+    if(!kind || !isWeaponKind(kind))return;
+    var fromSlot=slotFromElement(e.target);
+    pendingDrag={kind:kind,fromSlot:slotOk(fromSlot)?fromSlot:null,x:e.clientX,y:e.clientY};
+  },true);
+  window.addEventListener('pointerup',function(e){
+    if(!pendingDrag)return;
+    var d=pendingDrag;
+    pendingDrag=null;
+    var el=document.elementFromPoint(e.clientX,e.clientY);
+    var targetSlot=slotFromElement(el);
+    var moved=Math.hypot((e.clientX||d.x)-d.x,(e.clientY||d.y)-d.y)>6;
+    if(moved && slotOk(targetSlot)){
+      window.__patch208RequestedWeaponSlot=targetSlot;
+      setMapSlot(d.kind,targetSlot);
+      setTimeout(function(){window.__patch208RequestedWeaponSlot=null;applyDualVisual();},0);
+      setTimeout(applyDualVisual,120);
+      setTimeout(applyDualVisual,260);
+      return;
+    }
+    if(moved && d.fromSlot && bagTargetFromElement(el)){
+      removeMapKind(d.kind);
+      setTimeout(applyDualVisual,0);
+      setTimeout(applyDualVisual,120);
+      return;
+    }
+    setTimeout(applyDualVisual,0);
+    setTimeout(applyDualVisual,120);
+  },true);
+
+  document.addEventListener('click',function(e){
+    var equipBtn=e.target.closest&&e.target.closest('[data-bag-equip-toggle]');
+    var unequipBtn=e.target.closest&&e.target.closest('[data-slot-unequip]');
+    if(equipBtn){
+      var k=equipBtn.dataset.item;
+      if(isWeaponKind(k)){
+        var map=readDualMap();
+        window.__patch208RequestedWeaponSlot=chooseSlot(k,map,null);
+        setTimeout(function(){window.__patch208RequestedWeaponSlot=null;applyDualVisual();},0);
+        setTimeout(applyDualVisual,120);
+        setTimeout(applyDualVisual,260);
+      }
+    }
+    if(unequipBtn){
+      var k2=unequipBtn.dataset.item;
+      if(isWeaponKind(k2)){
+        removeMapKind(k2);
+        setTimeout(applyDualVisual,0);
+        setTimeout(applyDualVisual,120);
+      }
+    }
+  },true);
+
+  ['click','pointerup','pointercancel','drop','change','keyup','DOMContentLoaded'].forEach(function(type){
+    document.addEventListener(type,function(){syncSoon();},true);
+  });
+  window.addEventListener('storage',syncSoon);
+
+  applyDualVisual();
+  setTimeout(applyDualVisual,0);
+  setTimeout(applyDualVisual,160);
+  setTimeout(applyDualVisual,700);
+})();
+</script>
+
+<!-- patch209: expose lexical item/inventory references so weapon equip sync can detect ownership correctly -->
+<script id="patch209-weapon-equip-ownership-fix">
+(function(){
+  if(window.__patch209WeaponEquipOwnershipFix)return;
+  window.__patch209WeaponEquipOwnershipFix=true;
+
+  try{
+    if(typeof itemDefs==='object' && itemDefs) window.itemDefs=itemDefs;
+  }catch(_){ }
+  try{
+    if(typeof inventory==='object' && inventory) window.inventory=inventory;
+  }catch(_){ }
+  try{
+    if(typeof bagStock!=='undefined' && Array.isArray(bagStock)) window.bagStock=bagStock;
+  }catch(_){ }
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var DUAL_KEY='index5.dualWeaponSlots.v2';
+  var WEAPONS=['woodenSword','ironSword'];
+
+  function readJson(key,fallback){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return fallback||{};
+      var value=JSON.parse(raw);
+      return value&&typeof value==='object'?value:(fallback||{});
+    }catch(_){return fallback||{};}
+  }
+  function writeJson(key,value){
+    try{localStorage.setItem(key,JSON.stringify(value||{}));}catch(_){ }
+  }
+  function owns(kind){
+    try{return !!(kind && typeof inventory==='object' && inventory && (inventory[kind]||0)>0 && typeof itemDefs==='object' && itemDefs && itemDefs[kind]);}
+    catch(_){return false;}
+  }
+  function slotOk(slot){return slot==='right'||slot==='left';}
+  function currentDual(){
+    var dual=readJson(DUAL_KEY,{});
+    var place=readJson(PLACE_KEY,{});
+    var state=readJson(EQUIP_KEY,{});
+    var map={right:null,left:null};
+
+    ['right','left'].forEach(function(slot){
+      var kind=dual[slot];
+      if(WEAPONS.indexOf(kind)>=0 && owns(kind) && !map[slot])map[slot]=kind;
+    });
+    WEAPONS.forEach(function(kind){
+      if(!owns(kind) || !state[kind])return;
+      var slot=slotOk(place[kind])?place[kind]:null;
+      if(slot && !map[slot] && map.right!==kind && map.left!==kind)map[slot]=kind;
+    });
+    return map;
+  }
+  function saveDual(map){
+    var clean={right:null,left:null};
+    ['right','left'].forEach(function(slot){
+      var kind=map&&map[slot];
+      if(WEAPONS.indexOf(kind)>=0 && owns(kind) && clean[slot]!==kind && clean[slot==='right'?'left':'right']!==kind)clean[slot]=kind;
+    });
+    writeJson(DUAL_KEY,clean);
+    return clean;
+  }
+  function refreshPanels(){
+    try{if(typeof window.syncInventoryData==='function')window.syncInventoryData();}catch(_){ }
+    try{if(typeof window.refreshEquipmentDerivedAbilities==='function')window.refreshEquipmentDerivedAbilities();}catch(_){ }
+    try{if(typeof window.bars==='function')window.bars();}catch(_){ }
+    try{
+      if(document.querySelector('#panel.show') && document.querySelector('#pTitle') && document.querySelector('#pTitle').textContent==='장비'){
+        if(typeof window.renderEquipmentComparePanel196==='function')window.renderEquipmentComparePanel196();
+        else if(typeof window.renderEquipmentLeftBag24Panel==='function')window.renderEquipmentLeftBag24Panel();
+        else if(typeof window.renderEquipmentPanel==='function')window.renderEquipmentPanel();
+      }
+    }catch(_){ }
+  }
+  function syncVisual(){
+    try{
+      var map=saveDual(currentDual());
+      var state=readJson(EQUIP_KEY,{});
+      var place=readJson(PLACE_KEY,{});
+      WEAPONS.forEach(function(kind){
+        state[kind]=false;
+        delete place[kind];
+      });
+      ['right','left'].forEach(function(slot){
+        var kind=map[slot];
+        if(!kind)return;
+        state[kind]=true;
+        place[kind]=slot;
+      });
+      writeJson(EQUIP_KEY,state);
+      writeJson(PLACE_KEY,place);
+      try{window.__equipmentState=state;}catch(_){ }
+      try{if(typeof window.syncCharacterSwordVisual208==='function')window.syncCharacterSwordVisual208();}catch(_){ }
+      document.body.classList.toggle('woodenSwordEquipped',map.right==='woodenSword'||map.left==='woodenSword');
+      document.body.classList.toggle('ironSwordEquipped',map.right==='ironSword'||map.left==='ironSword');
+    }catch(_){ }
+  }
+  function pickSlot(kind,requested){
+    if(slotOk(requested))return requested;
+    var map=currentDual();
+    if(map.right===kind)return 'right';
+    if(map.left===kind)return 'left';
+    if(!map.right)return 'right';
+    if(!map.left)return 'left';
+    var saved=readJson(PLACE_KEY,{})[kind];
+    return slotOk(saved)?saved:'right';
+  }
+  function putWeapon(kind,slot){
+    if(WEAPONS.indexOf(kind)<0 || !owns(kind) || !slotOk(slot))return false;
+    var map=currentDual();
+    if(map.right===kind)map.right=null;
+    if(map.left===kind)map.left=null;
+    map[slot]=kind;
+    saveDual(map);
+    syncVisual();
+    return true;
+  }
+  function removeWeapon(kind){
+    if(WEAPONS.indexOf(kind)<0)return false;
+    var map=currentDual();
+    var changed=false;
+    if(map.right===kind){map.right=null;changed=true;}
+    if(map.left===kind){map.left=null;changed=true;}
+    saveDual(map);
+    syncVisual();
+    return changed;
+  }
+
+  var prevSet=window.setItemEquipped;
+  window.setItemEquipped=function(kind,on){
+    if(WEAPONS.indexOf(kind)>=0){
+      var ok=on ? putWeapon(kind,pickSlot(kind,window.__patch208RequestedWeaponSlot||window.__patch209RequestedWeaponSlot)) : removeWeapon(kind);
+      if(ok){
+        refreshPanels();
+        setTimeout(syncVisual,0);
+        setTimeout(syncVisual,120);
+      }
+      return ok;
+    }
+    return typeof prevSet==='function'?!!prevSet.apply(this,arguments):false;
+  };
+
+  window.setCharacterWeaponSlot209=function(kind,slot){
+    var old=window.__patch209RequestedWeaponSlot;
+    window.__patch209RequestedWeaponSlot=slot;
+    var ok=putWeapon(kind,slot);
+    window.__patch209RequestedWeaponSlot=old;
+    refreshPanels();
+    return ok;
+  };
+
+  document.addEventListener('pointerup',function(e){
+    var card=e.target && e.target.closest && e.target.closest('[data-eq199-kind],[data-eq-kind],[data-equip-kind2],[data-item]');
+    if(!card)return;
+    var kind=card.dataset.eq199Kind||card.dataset.eqKind||card.dataset.equipKind2||card.dataset.item;
+    if(WEAPONS.indexOf(kind)<0)return;
+    var el=document.elementFromPoint(e.clientX,e.clientY);
+    var slotEl=el&&el.closest&&el.closest('.equipmentMovePanel199 .eqEquipSlot,.equipmentComparePanel .eqEquipSlot,.equipmentLeftBag24Panel .equipSlot88,.equipSlot');
+    var slot=slotEl&&(slotEl.dataset.eq199Slot||slotEl.dataset.slot);
+    if(slotOk(slot)){
+      window.__patch209RequestedWeaponSlot=slot;
+      putWeapon(kind,slot);
+      window.__patch209RequestedWeaponSlot=null;
+      refreshPanels();
+    }
+  },true);
+
+  syncVisual();
+  setTimeout(syncVisual,0);
+  setTimeout(syncVisual,160);
+})();
+</script>
+
+
+<style id="patch211-sword-visual-node-reset">
+/* patch211: retire stale legacy sword nodes and redraw only the currently equipped hand weapons */
+.player > .sword,
+.player .dualSword202{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.player .charSword211{
+  position:absolute!important;
+  display:block!important;
+  width:20px!important;
+  height:58px!important;
+  overflow:visible!important;
+  border:0!important;
+  background:none!important;
+  z-index:7!important;
+  pointer-events:none!important;
+  filter:drop-shadow(1px 2px 0 #0007)!important;
+  will-change:transform;
+}
+.player .charSword211.right{
+  left:45px!important;
+  top:14px!important;
+  transform:rotate(32deg)!important;
+  transform-origin:10px 50px!important;
+}
+.player .charSword211.left{
+  left:-7px!important;
+  top:13px!important;
+  transform:rotate(-32deg)!important;
+  transform-origin:10px 50px!important;
+}
+.player .charSword211.wooden{
+  background:
+    linear-gradient(#5b3821,#7a4a28) 7px 43px/6px 15px no-repeat,
+    linear-gradient(90deg,transparent 0 1px,#ffd36b 1px 19px,transparent 19px) 1px 40px/18px 5px no-repeat!important;
+}
+.player .charSword211.wooden:before{
+  content:""!important;
+  position:absolute!important;
+  left:7px!important;
+  top:1px!important;
+  width:6px!important;
+  height:42px!important;
+  transform:none!important;
+  border:1px solid #355866!important;
+  border-radius:0!important;
+  clip-path:polygon(50% 0,88% 18%,65% 100%,35% 100%,12% 18%)!important;
+  background:linear-gradient(90deg,#f8feff 0 18%,#9fc9d4 19% 67%,#4d7180 68% 100%)!important;
+  box-shadow:none!important;
+}
+.player .charSword211.wooden:after{
+  content:""!important;
+  position:absolute!important;
+  left:6px!important;
+  top:55px!important;
+  width:8px!important;
+  height:5px!important;
+  transform:none!important;
+  border-radius:4px!important;
+  background:#ffd36b!important;
+  box-shadow:0 0 0 1px #6f4425!important;
+}
+.player .charSword211.iron{
+  background:none!important;
+}
+.player .charSword211.iron:before{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:0!important;
+  width:9px!important;
+  height:41px!important;
+  transform:translateX(-50%)!important;
+  transform-origin:50% 100%!important;
+  border:0!important;
+  border-radius:0!important;
+  clip-path:polygon(50% 0,100% 17%,68% 100%,32% 100%,0 17%)!important;
+  background:linear-gradient(90deg,#24313b 0 9%,#6e8796 10% 32%,#f8fdff 33% 56%,#a9c0cc 57% 85%,#415763 86% 100%)!important;
+  box-shadow:0 0 0 1px #26343d,inset 1px 0 0 rgba(255,255,255,.22),inset -1px 0 0 rgba(26,39,47,.35)!important;
+}
+.player .charSword211.iron:after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:37px!important;
+  width:20px!important;
+  height:21px!important;
+  transform:translateX(-50%)!important;
+  transform-origin:50% 11px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:
+    linear-gradient(90deg,transparent 0 1px,#22303a 1px 4px,#95adb9 4px 8px,#eff9fd 8px 12px,#95adb9 12px 16px,#22303a 16px 19px,transparent 19px) 50% 1px/20px 5px no-repeat,
+    linear-gradient(90deg,#2d180a 0 12%,#7c451e 13% 42%,#b97836 43% 62%,#5c3217 63% 88%,#2d180a 89% 100%) 50% 5px/6px 12px no-repeat,
+    linear-gradient(90deg,#405360,#dceaf0 48%,#405360) 50% 17px/8px 4px no-repeat!important;
+  box-shadow:none!important;
+  filter:drop-shadow(1px 1px 0 #0008)!important;
+}
+.player.attacking .charSword211.right{
+  animation:charSwordCutRight211 .54s ease-out!important;
+}
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft211 .54s ease-out!important;
+}
+@keyframes charSwordCutRight211{
+  0%{transform:rotate(20deg)}
+  45%{transform:rotate(76deg)}
+  100%{transform:rotate(32deg)}
+}
+@keyframes charSwordCutLeft211{
+  0%{transform:rotate(-20deg)}
+  45%{transform:rotate(-76deg)}
+  100%{transform:rotate(-32deg)}
+}
+</style>
+<script id="patch211-sword-visual-node-reset">
+(function(){
+  if(window.__patch211SwordVisualNodeReset)return;
+  window.__patch211SwordVisualNodeReset=true;
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var DUAL_KEY='index5.dualWeaponSlots.v2';
+  var WEAPONS=['woodenSword','ironSword'];
+  var VISUAL_CLASSES=[
+    'hasRightWeapon202','hasLeftWeapon202',
+    'rightWooden202','rightIron202','leftWooden202','leftIron202',
+    'woodenSwordEquipped','ironSwordEquipped',
+    'weaponInLeftHand','weaponInRightHand'
+  ];
+  var pendingPointer=null;
+  var prevSetItemEquipped=window.setItemEquipped;
+  var prevIsItemEquipped=window.isItemEquipped;
+
+  function readJson(key,fallback){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return fallback||{};
+      var parsed=JSON.parse(raw);
+      return parsed&&typeof parsed==='object'?parsed:(fallback||{});
+    }catch(_){return fallback||{};}
+  }
+  function writeJson(key,value){
+    try{localStorage.setItem(key,JSON.stringify(value||{}));}catch(_){ }
+  }
+  function owns(kind){
+    try{
+      var inv=(typeof inventory==='object'&&inventory)||window.inventory||{};
+      var defs=(typeof itemDefs==='object'&&itemDefs)||window.itemDefs||{};
+      return !!(kind && inv && (inv[kind]||0)>0 && defs && defs[kind]);
+    }catch(_){return false;}
+  }
+  function slotOk(slot){return slot==='right'||slot==='left';}
+  function otherSlot(slot){return slot==='right'?'left':'right';}
+  function isWeapon(kind){return WEAPONS.indexOf(kind)>=0;}
+  function itemName(kind){
+    try{return ((typeof itemDefs==='object'&&itemDefs)||window.itemDefs||{})[kind]?.name || kind;}catch(_){return kind;}
+  }
+  function sanitizeMap(map,allowLoose){
+    map=map&&typeof map==='object'?map:{};
+    var state=readJson(EQUIP_KEY,{});
+    var clean={right:null,left:null};
+    ['right','left'].forEach(function(slot){
+      var kind=map[slot];
+      if(!isWeapon(kind) || !owns(kind))return;
+      if(!allowLoose && state[kind]!==true)return;
+      if(clean[otherSlot(slot)]===kind)return;
+      clean[slot]=kind;
+    });
+    return clean;
+  }
+  function seedFromState(){
+    var state=readJson(EQUIP_KEY,{});
+    var place=readJson(PLACE_KEY,{});
+    var map={right:null,left:null};
+    WEAPONS.forEach(function(kind){
+      if(state[kind]!==true || !owns(kind))return;
+      var slot=slotOk(place[kind])?place[kind]:null;
+      if(slot && !map[slot])map[slot]=kind;
+    });
+    WEAPONS.forEach(function(kind){
+      if(state[kind]!==true || !owns(kind))return;
+      if(map.right===kind || map.left===kind)return;
+      if(!map.right)map.right=kind;
+      else if(!map.left)map.left=kind;
+    });
+    return sanitizeMap(map,true);
+  }
+  function readMapLoose(){
+    var saved=sanitizeMap(readJson(DUAL_KEY,{}),true);
+    if(saved.right || saved.left)return saved;
+    return seedFromState();
+  }
+  function readMapStrict(){
+    var saved=sanitizeMap(readJson(DUAL_KEY,{}),false);
+    if(saved.right || saved.left)return saved;
+    return seedFromState();
+  }
+  function saveMap(map){
+    map=sanitizeMap(map,true);
+    var state=readJson(EQUIP_KEY,{});
+    var place=readJson(PLACE_KEY,{});
+    WEAPONS.forEach(function(kind){
+      state[kind]=false;
+      delete place[kind];
+    });
+    ['right','left'].forEach(function(slot){
+      var kind=map[slot];
+      if(!kind)return;
+      state[kind]=true;
+      place[kind]=slot;
+    });
+    writeJson(DUAL_KEY,map);
+    writeJson(EQUIP_KEY,state);
+    writeJson(PLACE_KEY,place);
+    try{window.__equipmentState=state;}catch(_){ }
+    return map;
+  }
+  function chooseSlot(kind,requested){
+    if(slotOk(requested))return requested;
+    var map=readMapLoose();
+    if(map.right===kind)return 'right';
+    if(map.left===kind)return 'left';
+    if(!map.right)return 'right';
+    if(!map.left)return 'left';
+    var saved=readJson(PLACE_KEY,{})[kind];
+    return slotOk(saved)?saved:'right';
+  }
+  function equipWeapon(kind,slot){
+    if(!isWeapon(kind) || !owns(kind))return false;
+    var map=readMapLoose();
+    if(map.right===kind)map.right=null;
+    if(map.left===kind)map.left=null;
+    map[slotOk(slot)?slot:chooseSlot(kind,null)]=kind;
+    saveMap(map);
+    redraw(true);
+    return true;
+  }
+  function unequipWeapon(kind){
+    if(!isWeapon(kind))return false;
+    var map=readMapLoose();
+    var changed=false;
+    if(map.right===kind){map.right=null;changed=true;}
+    if(map.left===kind){map.left=null;changed=true;}
+    var state=readJson(EQUIP_KEY,{}), place=readJson(PLACE_KEY,{});
+    state[kind]=false;
+    delete place[kind];
+    writeJson(EQUIP_KEY,state);
+    writeJson(PLACE_KEY,place);
+    saveMap(map);
+    redraw(true);
+    return changed;
+  }
+  function player(){return document.getElementById('player')||document.querySelector('.player');}
+  function killLegacy(){
+    var p=player();
+    if(!p)return;
+    p.querySelectorAll(':scope > .sword,.dualSword202').forEach(function(n){
+      n.style.setProperty('display','none','important');
+      n.style.setProperty('visibility','hidden','important');
+      n.style.setProperty('opacity','0','important');
+      n.setAttribute('data-retired-by-patch211','1');
+    });
+  }
+  function ensureNode(slot){
+    var p=player();
+    if(!p)return null;
+    var node=p.querySelector('.charSword211.'+slot);
+    if(!node){
+      node=document.createElement('i');
+      node.setAttribute('aria-hidden','true');
+      p.insertBefore(node,p.firstChild);
+    }
+    return node;
+  }
+  function setVisual(slot,kind,hasOther){
+    var p=player();
+    if(!p)return;
+    var existing=p.querySelector('.charSword211.'+slot);
+    if(!kind){
+      if(existing)existing.remove();
+      return;
+    }
+    var node=existing||ensureNode(slot);
+    if(!node)return;
+    node.className='charSword211 '+slot+' '+(kind==='ironSword'?'iron':'wooden')+(slot==='left'&&!hasOther?' onlyLeft':'');
+    node.dataset.weapon=kind;
+  }
+  function clearClasses(){
+    try{VISUAL_CLASSES.forEach(function(c){document.body.classList.remove(c);});}catch(_){ }
+  }
+  function redraw(persist){
+    try{
+      killLegacy();
+      var map=persist ? saveMap(readMapLoose()) : readMapStrict();
+      clearClasses();
+      setVisual('right',map.right,!!map.left);
+      setVisual('left',map.left,!!map.right);
+      if(map.right){
+        document.body.classList.add('hasRightWeapon202','weaponInRightHand');
+        document.body.classList.add(map.right==='ironSword'?'rightIron202':'rightWooden202');
+      }
+      if(map.left){
+        document.body.classList.add('hasLeftWeapon202','weaponInLeftHand');
+        document.body.classList.add(map.left==='ironSword'?'leftIron202':'leftWooden202');
+      }
+      document.body.classList.toggle('woodenSwordEquipped',map.right==='woodenSword'||map.left==='woodenSword');
+      document.body.classList.toggle('ironSwordEquipped',map.right==='ironSword'||map.left==='ironSword');
+      if(!map.right && !map.left){
+        var p=player();
+        if(p)p.querySelectorAll('.charSword211').forEach(function(n){n.remove();});
+      }
+    }catch(_){ }
+  }
+  function refreshPanels(){
+    try{if(typeof window.syncInventoryData==='function')window.syncInventoryData();}catch(_){ }
+    try{if(typeof window.refreshEquipmentDerivedAbilities==='function')window.refreshEquipmentDerivedAbilities();}catch(_){ }
+    try{if(typeof window.bars==='function')window.bars();}catch(_){ }
+    try{
+      var open=document.querySelector('#panel.show');
+      var title=document.querySelector('#pTitle');
+      if(open && title && title.textContent==='장비'){
+        if(typeof window.renderEquipmentComparePanel196==='function')window.renderEquipmentComparePanel196();
+        else if(typeof window.renderEquipmentLeftBag24Panel==='function')window.renderEquipmentLeftBag24Panel();
+        else if(typeof window.renderEquipmentPanel==='function')window.renderEquipmentPanel();
+      }
+    }catch(_){ }
+  }
+  function syncSoon(){
+    redraw(true);
+    setTimeout(function(){redraw(true);},0);
+    setTimeout(function(){redraw(true);},60);
+    setTimeout(function(){redraw(true);},160);
+    setTimeout(function(){redraw(true);},360);
+  }
+  function slotFromElement(el){
+    if(!el || !el.closest)return null;
+    var slotEl=el.closest('.equipmentMovePanel199 .eqEquipSlot,.equipmentComparePanel .eqEquipSlot,.equipmentLeftBag24Panel .equipSlot88,.equipSlot');
+    if(!slotEl)return null;
+    return slotEl.dataset.eq199Slot || slotEl.dataset.slot || null;
+  }
+  function kindFromElement(el){
+    if(!el || !el.closest)return null;
+    var card=el.closest('[data-eq199-kind],[data-eq-kind],[data-equip-kind2],[data-item]');
+    if(!card)return null;
+    return card.dataset.eq199Kind || card.dataset.eqKind || card.dataset.equipKind2 || card.dataset.item || null;
+  }
+  function bagTarget(el){
+    if(!el || !el.closest)return false;
+    return !!el.closest('.equipmentMovePanel199 .eqBagSlot,.equipmentMovePanel199 .eqBagPane,.equipmentComparePanel .eqBagSlot,.equipmentComparePanel .eqBagPane,.equipmentLeftBag24Panel .equipBagSlot88,.equipmentLeftBag24Panel .equipSimpleBagPane');
+  }
+
+  window.isItemEquipped=function(kind){
+    if(isWeapon(kind)){
+      var map=readMapStrict();
+      return map.right===kind || map.left===kind;
+    }
+    return typeof prevIsItemEquipped==='function'?!!prevIsItemEquipped.apply(this,arguments):false;
+  };
+  window.setItemEquipped=function(kind,on){
+    if(isWeapon(kind)){
+      var ok=on ? equipWeapon(kind,chooseSlot(kind,window.__patch211RequestedWeaponSlot||window.__patch209RequestedWeaponSlot||window.__patch208RequestedWeaponSlot)) : unequipWeapon(kind);
+      refreshPanels();
+      syncSoon();
+      try{if(typeof log==='function')log(itemName(kind)+(on?' 장착':' 장착 해제'),'system');}catch(_){ }
+      return !!ok || on===false;
+    }
+    var out=typeof prevSetItemEquipped==='function'?!!prevSetItemEquipped.apply(this,arguments):false;
+    syncSoon();
+    return out;
+  };
+  window.syncCharacterSwordVisual211=function(){redraw(true);};
+  window.syncCharacterSwordVisual209=window.syncCharacterSwordVisual211;
+  window.syncCharacterSwordVisual208=window.syncCharacterSwordVisual211;
+  window.syncCharacterSwordVisual207=window.syncCharacterSwordVisual211;
+  window.syncCharacterSwordVisual206=window.syncCharacterSwordVisual211;
+  window.syncCharacterSwordVisual205=window.syncCharacterSwordVisual211;
+  window.setCharacterWeaponSlot211=function(kind,slot){
+    var old=window.__patch211RequestedWeaponSlot;
+    window.__patch211RequestedWeaponSlot=slot;
+    var ok=equipWeapon(kind,slot);
+    window.__patch211RequestedWeaponSlot=old;
+    refreshPanels();
+    syncSoon();
+    return ok;
+  };
+
+  window.addEventListener('pointerdown',function(e){
+    var kind=kindFromElement(e.target);
+    if(!isWeapon(kind))return;
+    pendingPointer={kind:kind,x:e.clientX||0,y:e.clientY||0,fromSlot:slotFromElement(e.target)};
+  },true);
+  window.addEventListener('pointerup',function(e){
+    if(!pendingPointer){setTimeout(syncSoon,0);return;}
+    var d=pendingPointer;
+    pendingPointer=null;
+    var moved=Math.hypot((e.clientX||0)-d.x,(e.clientY||0)-d.y)>6;
+    var target=document.elementFromPoint(e.clientX,e.clientY);
+    var slot=slotFromElement(target);
+    if(moved && slotOk(slot)){
+      window.__patch211RequestedWeaponSlot=slot;
+      equipWeapon(d.kind,slot);
+      window.__patch211RequestedWeaponSlot=null;
+      refreshPanels();
+      syncSoon();
+      return;
+    }
+    if(moved && slotOk(d.fromSlot) && bagTarget(target)){
+      unequipWeapon(d.kind);
+      refreshPanels();
+      syncSoon();
+      return;
+    }
+    setTimeout(syncSoon,0);
+  },true);
+  document.addEventListener('click',function(e){
+    var equipBtn=e.target.closest&&e.target.closest('[data-bag-equip-toggle]');
+    var unequipBtn=e.target.closest&&e.target.closest('[data-slot-unequip]');
+    if(equipBtn && isWeapon(equipBtn.dataset.item)){
+      setTimeout(syncSoon,0);
+      setTimeout(syncSoon,120);
+    }
+    if(unequipBtn && isWeapon(unequipBtn.dataset.item)){
+      unequipWeapon(unequipBtn.dataset.item);
+      refreshPanels();
+      syncSoon();
+    }
+  },true);
+  ['click','pointerup','pointercancel','drop','change','keyup','DOMContentLoaded','visibilitychange'].forEach(function(type){
+    document.addEventListener(type,function(){setTimeout(syncSoon,0);},true);
+  });
+  window.addEventListener('storage',syncSoon);
+
+  syncSoon();
+  setInterval(function(){redraw(false);killLegacy();},250);
+})();
+</script>
+
+
+<style id="patch300-dual-attack-03s-wood-sword-fix">
+/* patch300: final override - dual-hand follow attack delay is 0.3s; wooden sword is visibly wooden */
+#player .charSword211.wooden,
+.player .charSword211.wooden{
+  width:20px!important;
+  height:58px!important;
+  background:
+    linear-gradient(#5b3821,#7a4a28) 7px 43px/6px 15px no-repeat,
+    linear-gradient(90deg,transparent 0 1px,#c58a43 1px 19px,transparent 19px) 1px 40px/18px 5px no-repeat!important;
+}
+#player .charSword211.wooden:before,
+.player .charSword211.wooden:before{
+  content:""!important;
+  position:absolute!important;
+  left:7px!important;
+  top:2px!important;
+  width:7px!important;
+  height:42px!important;
+  transform:none!important;
+  transform-origin:50% 100%!important;
+  border:1px solid #3b210f!important;
+  border-radius:3px 3px 2px 2px!important;
+  clip-path:polygon(50% 0,86% 18%,69% 100%,31% 100%,14% 18%)!important;
+  background:
+    linear-gradient(90deg,#3b210f 0 10%,#8d5528 11% 38%,#d29a54 39% 58%,#a96b34 59% 86%,#402310 87% 100%)!important;
+  box-shadow:inset 1px 0 0 rgba(255,230,164,.26),inset -1px 0 0 rgba(45,24,10,.45),0 1px 0 rgba(0,0,0,.55)!important;
+  filter:none!important;
+}
+#player .charSword211.wooden:after,
+.player .charSword211.wooden:after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:38px!important;
+  width:19px!important;
+  height:20px!important;
+  transform:translateX(-50%)!important;
+  transform-origin:50% 11px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:
+    linear-gradient(90deg,#3a200e 0 7%,#8f5728 8% 36%,#d8a25a 37% 61%,#8f5728 62% 92%,#3a200e 93% 100%) 50% 1px/18px 5px no-repeat,
+    linear-gradient(90deg,#2d180a 0 12%,#7c451e 13% 42%,#b97836 43% 62%,#5c3217 63% 88%,#2d180a 89% 100%) 50% 5px/6px 12px no-repeat,
+    linear-gradient(90deg,#3a200e,#c28a46 48%,#3a200e) 50% 17px/8px 4px no-repeat!important;
+  box-shadow:none!important;
+  filter:drop-shadow(1px 1px 0 #0008)!important;
+}
+</style>
+<script id="patch300-dual-attack-03s-marker">
+(function(){
+  window.__dualHandFollowDelayMs=300;
+})();
+</script>
+
+<style id="patch306-left-weapon-same-direction-as-right">
+/* patch306: keep left-hand weapon position, but make its facing/attack direction match the right-hand weapon */
+.player .charSword211.left{
+  transform:rotate(32deg)!important;
+  transform-origin:10px 50px!important;
+}
+
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft306 .54s ease-out!important;
+}
+
+@keyframes charSwordCutLeft306{
+  0%{transform:rotate(20deg)}
+  45%{transform:rotate(76deg)}
+  100%{transform:rotate(32deg)}
+}
+</style>
+<script id="patch306-left-weapon-same-direction-as-right-marker">
+(function(){ window.__patch306LeftWeaponSameDirectionAsRight=true; })();
+</script>
+
+<style id="patch307-both-hand-weapons-up-15px">
+/* patch307: move both equipped hand weapons 15px upward; keep direction, size, and attack animation unchanged */
+.player .charSword211.right{
+  top:-1px!important;
+}
+.player .charSword211.left{
+  top:-2px!important;
+}
+</style>
+<script id="patch307-both-hand-weapons-up-15px-marker">
+(function(){ window.__patch307BothHandWeaponsUp15px=true; })();
+</script>
+
+<style id="patch308-left-hand-weapon-right-15px">
+/* patch308: move only the left-hand equipped weapon 15px to the right; keep height, direction, and attack animation unchanged */
+.player .charSword211.left{
+  left:8px!important;
+}
+</style>
+<script id="patch308-left-hand-weapon-right-15px-marker">
+(function(){ window.__patch308LeftHandWeaponRight15px=true; })();
+</script>
+
+
+<style id="patch309-left-hand-weapon-angle-down-5deg">
+/* patch309: lower only the left-hand equipped weapon angle by 5deg; keep position and size unchanged */
+.player .charSword211.left{
+  transform:rotate(37deg)!important;
+}
+
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft309 .54s ease-out!important;
+}
+
+@keyframes charSwordCutLeft309{
+  0%{transform:rotate(25deg)}
+  45%{transform:rotate(81deg)}
+  100%{transform:rotate(37deg)}
+}
+</style>
+<script id="patch309-left-hand-weapon-angle-down-5deg-marker">
+(function(){ window.__patch309LeftHandWeaponAngleDown5deg=true; })();
+</script>
+
+
+<style id="patch310-left-hand-weapon-angle-down-2deg-more">
+/* patch310: lower only the left-hand equipped weapon angle by 2deg more; keep position and size unchanged */
+.player .charSword211.left{
+  transform:rotate(39deg)!important;
+}
+
+.player.attacking .charSword211.left.onlyLeft,
+.player.leftFollowAttack204 .charSword211.left{
+  animation:charSwordCutLeft310 .54s ease-out!important;
+}
+
+@keyframes charSwordCutLeft310{
+  0%{transform:rotate(27deg)}
+  45%{transform:rotate(83deg)}
+  100%{transform:rotate(39deg)}
+}
+</style>
+<script id="patch310-left-hand-weapon-angle-down-2deg-more-marker">
+(function(){ window.__patch310LeftHandWeaponAngleDown2degMore=true; })();
+</script>
+
+
+<script id="patch311-hide-equipment-compare-after-equipped-marker">
+(function(){ window.__patch311HideEquipmentCompareAfterEquipped=true; })();
+</script>
+
+
+<script id="patch312-hide-weapon-compare-if-equipped-any-hand-marker">
+(function(){ window.__patch312HideWeaponCompareIfEquippedAnyHand=true; })();
+</script>
+
+<script id="patch313-dual-hand-separate-damage">
+(function(){
+  if(window.__patch313DualHandSeparateDamage)return;
+  window.__patch313DualHandSeparateDamage=true;
+
+  var DUAL_KEY='index5.dualWeaponSlots.v2';
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var KNOWN_WEAPONS=['woodenSword','ironSword'];
+  var FALLBACK_WEAPON_STATS={
+    woodenSword:{pAtk:2,acc:5},
+    ironSword:{pAtk:5,acc:8}
+  };
+  var LEFT_DELAY_MS=300;
+  var LEFT_ANIM_MS=560;
+
+  function readJson(key,fallback){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return fallback||{};
+      var parsed=JSON.parse(raw);
+      return parsed&&typeof parsed==='object'?parsed:(fallback||{});
+    }catch(_){return fallback||{};}
+  }
+  function owns(kind){
+    try{
+      var inv=(typeof inventory==='object'&&inventory)||window.inventory||{};
+      var defs=(typeof itemDefs==='object'&&itemDefs)||window.itemDefs||{};
+      return !!(kind && inv && (inv[kind]||0)>0 && defs && defs[kind]);
+    }catch(_){return false;}
+  }
+  function isWeapon(kind){return KNOWN_WEAPONS.indexOf(kind)>=0;}
+  function weaponName(kind){
+    try{return ((typeof itemDefs==='object'&&itemDefs)||window.itemDefs||{})[kind]?.name || kind || '맨손';}
+    catch(_){return kind||'맨손';}
+  }
+  function itemStats(kind){
+    try{
+      var defs=(typeof itemDefs==='object'&&itemDefs)||window.itemDefs||{};
+      return Object.assign({},FALLBACK_WEAPON_STATS[kind]||{},(defs[kind]&&defs[kind].stats)||{});
+    }catch(_){return Object.assign({},FALLBACK_WEAPON_STATS[kind]||{});}
+  }
+  function cleanMap(map,loose){
+    map=map&&typeof map==='object'?map:{};
+    var state=readJson(EQUIP_KEY,{});
+    var out={right:null,left:null};
+    ['right','left'].forEach(function(slot){
+      var kind=map[slot];
+      if(!isWeapon(kind) || !owns(kind))return;
+      if(!loose && state[kind]!==true)return;
+      if(out.right===kind || out.left===kind)return;
+      out[slot]=kind;
+    });
+    return out;
+  }
+  function mapFromDom(){
+    var p=document.getElementById('player')||document.querySelector('.player');
+    var out={right:null,left:null};
+    if(!p)return out;
+    var r=p.querySelector('.charSword211.right');
+    var l=p.querySelector('.charSword211.left');
+    if(r && isWeapon(r.dataset.weapon) && owns(r.dataset.weapon))out.right=r.dataset.weapon;
+    if(l && isWeapon(l.dataset.weapon) && owns(l.dataset.weapon) && l.dataset.weapon!==out.right)out.left=l.dataset.weapon;
+    return out;
+  }
+  function mapFromState(){
+    var state=readJson(EQUIP_KEY,{});
+    var place=readJson(PLACE_KEY,{});
+    var out={right:null,left:null};
+    KNOWN_WEAPONS.forEach(function(kind){
+      if(state[kind]!==true || !owns(kind))return;
+      var slot=place[kind];
+      if((slot==='right'||slot==='left') && !out[slot])out[slot]=kind;
+    });
+    KNOWN_WEAPONS.forEach(function(kind){
+      if(state[kind]!==true || !owns(kind))return;
+      if(out.right===kind || out.left===kind)return;
+      if(!out.right)out.right=kind;
+      else if(!out.left)out.left=kind;
+    });
+    return out;
+  }
+  function weaponMap(){
+    var saved=cleanMap(readJson(DUAL_KEY,{}),false);
+    var dom=mapFromDom();
+    if(dom.right || dom.left)return dom;
+    if(saved.right || saved.left)return saved;
+    return cleanMap(mapFromState(),true);
+  }
+  function characterBasePAtk(){
+    try{
+      if(typeof getJobStats==='function'){
+        var s=getJobStats();
+        return Math.max(1,Math.round(2+(s.str||0)*1.2+(s.agi||0)*0.2));
+      }
+    }catch(_){ }
+    try{
+      var total=(playerAbilities&&playerAbilities.pAtk)||4;
+      var map=weaponMap();
+      var remove=0;
+      if(map.right)remove+=(itemStats(map.right).pAtk||0);
+      if(map.left)remove+=(itemStats(map.left).pAtk||0);
+      return Math.max(1,total-remove);
+    }catch(_){return 4;}
+  }
+  function handPAtk(slot){
+    var map=weaponMap();
+    var kind=slot==='left'?map.left:map.right;
+    if(!kind && slot==='right' && map.left && !map.right)kind=map.left;
+    var base=characterBasePAtk();
+    var add=kind?(itemStats(kind).pAtk||0):0;
+    return Math.max(1,base+add);
+  }
+  function handLabel(slot){
+    var map=weaponMap();
+    var kind=slot==='left'?map.left:map.right;
+    if(!kind && slot==='right' && map.left && !map.right)kind=map.left;
+    return (slot==='left'?'왼손':'오른손')+(kind?'['+weaponName(kind)+']':'[맨손]');
+  }
+  function rollDamage(slot){
+    return Math.max(1,handPAtk(slot)+Math.floor(Math.random()*3));
+  }
+  function hasLeftFollow(){
+    var map=weaponMap();
+    return !!(map.right && map.left);
+  }
+  function triggerLeftFollowAnim(){
+    var node=document.getElementById('player')||document.querySelector('.player');
+    if(!node)return;
+    node.classList.remove('leftFollowAttack204');
+    void node.offsetWidth;
+    node.classList.add('leftFollowAttack204');
+    setTimeout(function(){node.classList.remove('leftFollowAttack204');},LEFT_ANIM_MS);
+  }
+  function applyPlayerHit(slot,labelPrefix){
+    if(!chance(playerHitChance(currentMonster))){
+      if(slot==='right')pAtk({miss:true});
+      else {
+        triggerLeftFollowAnim();
+        spawnCombatText(slime,'빗나감','miss-text');
+      }
+      log('레몬에이드 '+labelPrefix+' 공격: '+currentMonster.name+'에게 빗나감');
+      bars();
+      return false;
+    }
+    var d=rollDamage(slot);
+    var crit=chance(playerCritChance());
+    if(crit)d=Math.max(1,Math.round(d*(1.5+(playerAbilities.critDmg||0)/100)));
+    ehp=Math.max(0,ehp-d);
+    if(slot==='right'){
+      pAtk({crit:crit});
+    }else{
+      triggerLeftFollowAnim();
+      fx(slime,'target-hit',260);
+      spawnCombatFx(slime,'slime-hit-fx',520);
+      if(crit)spawnCombatText(slime,'치명타!','crit-text');
+    }
+    log('레몬에이드 '+labelPrefix+' 공격: '+currentMonster.name+'에게 '+(crit?'치명타 ':'')+d+' 피해');
+    bars();
+    if(ehp<=0)defeatCurrentMonster();
+    return true;
+  }
+
+  playerRealtimeAttack=function(seq){
+    if(seq!==battleSeq||respawn||!timer)return;
+    var map=weaponMap();
+    var mainSlot=map.right?'right':(map.left?'left':'right');
+    var mainLabel=handLabel(mainSlot);
+    applyPlayerHit(mainSlot,mainLabel);
+    if(!hasLeftFollow())return;
+    setTimeout(function(){
+      if(seq!==battleSeq||respawn||!timer)return;
+      if(ehp<=0)return;
+      applyPlayerHit('left','왼손['+weaponName(weaponMap().left)+']');
+    },LEFT_DELAY_MS);
+  };
+})();
+</script>
+
+
+<script id="patch311-clean-battle-log-time-and-drag-compare-marker">
+(function(){
+  if(window.__patch311CleanBattleLogTimeAndDragCompare)return;
+  window.__patch311CleanBattleLogTimeAndDragCompare=true;
+
+  function cleanBattleLogTimeText(v){
+    var s=String(v==null?'':v);
+
+    // Remove attack interval labels: "공격(1.23초)" -> "공격"
+    s=s.replace(/공격\(\s*\d+(?:\.\d+)?초\s*\)/g,'공격');
+
+    // Remove left-follow timing labels: "(+0.30초)" or " +0.30초"
+    s=s.replace(/\(\s*\+\s*\d+(?:\.\d+)?초\s*\)/g,'');
+    s=s.replace(/\s+\+\s*\d+(?:\.\d+)?초/g,'');
+
+    // Remove battle-start interval text: "레몬에이드 1.23초 / 슬라임 1.80초"
+    s=s.replace(/실시간 자동전투 시작:\s*레몬에이드\s+\d+(?:\.\d+)?초\s*\/\s*([^\s:]+)\s+\d+(?:\.\d+)?초/g,'실시간 자동전투 시작: 레몬에이드 / $1');
+
+    // Normalize accidental double spaces before colons after removal.
+    s=s.replace(/\s+:/g,':').replace(/\s{2,}/g,' ').trim();
+    return s;
+  }
+
+  try{
+    if(typeof window.log==='function' && !window.log.__patch311CleanBattleLogTime){
+      var prevLog=window.log;
+      var wrapped=function(t,mode){
+        return prevLog.call(this,cleanBattleLogTimeText(t),mode);
+      };
+      wrapped.__patch311CleanBattleLogTime=true;
+      window.log=wrapped;
+      try{ log=wrapped; }catch(_){}
+    }
+  }catch(_){}
+
+  try{
+    if(typeof logs!=='undefined' && logs){
+      Object.keys(logs).forEach(function(k){
+        if(Array.isArray(logs[k])){
+          for(var i=0;i<logs[k].length;i++){
+            logs[k][i]=cleanBattleLogTimeText(logs[k][i]);
+          }
+        }
+      });
+      if(typeof renderLog==='function')renderLog(typeof activeLogMode==='function'?activeLogMode():'battle');
+    }
+  }catch(_){}
+
+  window.__cleanBattleLogTimeText311=cleanBattleLogTimeText;
 })();
 </script>
