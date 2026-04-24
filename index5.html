@@ -10098,7 +10098,7 @@ const itemDefs={
   hpPotion:{name:'소형 HP포션',icon:'🧪',buy:2,sell:1,desc:'HP 30 회복. 초반 자동사냥 유지용 기본 포션'},
   mpPotion:{name:'소형 MP포션',icon:'🔷',buy:5,sell:2,desc:'MP 20 회복. 스킬 사용 대비용 포션'},
   slimeJelly:{name:'슬라임 젤리',icon:'🟢',buy:null,sell:1,desc:'슬라임 계열이 낮은 확률로 드랍하는 판매용 잡템'},
-  woodenSword:{name:'나무검',icon:'🗡️',buy:null,sell:null,desc:'명중률 +10%, 물리 방어력 +2'}
+  woodenSword:{name:'나무검',icon:'🗡️',buy:null,sell:null,desc:', 물리 방어력 +2'}
 };
 const inventory={hpPotion:0,mpPotion:0,slimeJelly:0,woodenSword:1};
 function syncInventoryData(){
@@ -11294,7 +11294,7 @@ bars();
       icon:'💍',
       buy:null,
       sell:null,
-      desc:'초보자를 위한 최고의 조력자 보상. 명중률 +10%, 물리 방어력 +2'
+      desc:'초보자를 위한 최고의 조력자 보상. , 물리 방어력 +2'
     };
   }
   if(typeof inventory==='object' && inventory && inventory.accuracyRing==null){
@@ -11363,7 +11363,7 @@ bars();
       ['천 옷','장착','모험가 기본 방어구']
     ];
     if(hasRing()){
-      panelData.equipment.push(['명중의 반지','장착','명중률 +10%, 물리 방어력 +2']);
+      panelData.equipment.push(['명중의 반지','장착',', 물리 방어력 +2']);
     }else{
       panelData.equipment.push(['반지','비어 있음','마을회관 장로의 서브퀘스트 보상 슬롯']);
     }
@@ -11455,7 +11455,7 @@ bars();
         <div>
           <h3>명중의 반지</h3>
           <p>초보자를 위한 최고의 조력자 보상 장신구입니다.</p>
-          <small>명중률 +10%, 물리 방어력 +2</small>
+          <small>, 물리 방어력 +2</small>
         </div>
       </div>
       <div class="detailMeta">
@@ -11758,7 +11758,7 @@ bars();
 
   function ensureEquipState(){
     const state=readEquipState();
-    if(state.woodenSword == null)state.woodenSword=false;
+    if(state.woodenSword == null)state.woodenSword=true;
     if(typeof inventory!=='undefined' && inventory && (inventory.accuracyRing||0)>0 && state.accuracyRing == null)state.accuracyRing=true;
     Object.keys(equipSlots).forEach(kind=>{
       if(typeof inventory!=='undefined' && inventory && (inventory[kind]||0)<=0)state[kind]=false;
@@ -11848,7 +11848,7 @@ bars();
       meta.push(item.sell != null ? `판매가 ${item.sell}G` : '판매불가');
     }
     if(allowBagActions && isEquippableItem(kind))meta.push(isItemEquipped(kind)?'장착중':'미장착');
-    if(kind === 'accuracyRing')meta.push('명중률 +10%');
+    if(kind === 'accuracyRing')meta.push('');
     if(kind === 'accuracyRing')meta.push('물리 방어력 +2');
     return meta;
   }
@@ -14060,8 +14060,8 @@ bars();
 <script>
 /* patch: wooden sword gains real equipment stats and feeds combat/stat panels */
 (function(){
-  const WOODEN_SWORD_STATS={pAtk:2,acc:5};
-  const WOODEN_SWORD_STAT_TEXT='물리 공격력 +2, 명중률 +5%';
+  const WOODEN_SWORD_STATS={pAtk:2,acc:0};
+  const WOODEN_SWORD_STAT_TEXT='';
 
   function hasOwned(kind){
     try{return !!(typeof inventory!=='undefined' && inventory && (inventory[kind]||0)>0);}catch(_){return false;}
@@ -14081,14 +14081,14 @@ bars();
     try{
       if(typeof itemDefs!=='undefined' && itemDefs && itemDefs.woodenSword){
         itemDefs.woodenSword.stats=Object.assign({},WOODEN_SWORD_STATS);
-        itemDefs.woodenSword.desc=WOODEN_SWORD_STAT_TEXT+' · 초보자가 쓰는 기본 목검';
+        itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검';
         if(itemDefs.woodenSword.sell==null)itemDefs.woodenSword.sell=1;
       }
     }catch(_){ }
     try{
       if(typeof panelData!=='undefined' && panelData && Array.isArray(panelData.inventory)){
         const row=panelData.inventory.find(x=>x&&x[0]==='나무검');
-        if(row)row[2]=WOODEN_SWORD_STAT_TEXT+' · 초보 장비템';
+        if(row)row[2]='초보 장비템';
       }
     }catch(_){ }
   }
@@ -14133,8 +14133,8 @@ bars();
       if(isEquipped('woodenSword') && data && Array.isArray(data.abilityCards)){
         data.abilityCards=data.abilityCards.map(row=>{
           if(!row)return row;
-          if(row[0]==='물리 공격력')return [row[0],row[1],row[2]+' · 장비: 나무검 +2'];
-          if(row[0]==='명중률')return [row[0],row[1],row[2]+' · 장비: 나무검 +5%'];
+          if(row[0]==='물리 공격력')return [row[0],row[1],row[2]+' · '];
+          if(row[0]==='명중률')return [row[0],row[1],row[2]+' · '];
           return row;
         });
       }
@@ -14168,7 +14168,7 @@ bars();
       const weaponRow=[
         '무기',
         equipped?'나무검 장착':'비어 있음',
-        hasWood?(equipped?`나무검 장착 중 · ${WOODEN_SWORD_STAT_TEXT}`:`나무검 보유 중 · 미장착 · ${WOODEN_SWORD_STAT_TEXT}`):'무기 없음'
+        hasWood?(equipped?'나무검 장착 중':'나무검 보유 중 · 미장착'):'무기 없음'
       ];
       if(!Array.isArray(panelData.equipment))panelData.equipment=[];
       const i=panelData.equipment.findIndex(row=>row&&row[0]==='무기');
@@ -14190,7 +14190,7 @@ bars();
       const cnt=weapon.querySelector('.cnt');
       const desc=weapon.querySelector('.idesc');
       if(cnt)cnt.textContent=equipped?'나무검 장착':'비어 있음';
-      if(desc)desc.textContent=hasWood?(equipped?`나무검 장착 중 · ${WOODEN_SWORD_STAT_TEXT}`:`나무검 보유 중 · 미장착 · ${WOODEN_SWORD_STAT_TEXT}`):'무기 없음';
+      if(desc)desc.textContent=hasWood?(equipped?'나무검 장착 중':'나무검 보유 중 · 미장착'):'무기 없음';
     }catch(_){ }
   }
 
@@ -14202,10 +14202,10 @@ bars();
       const title=(popup.querySelector('h3')?.textContent||'').trim();
       if(title!=='나무검')return;
       const small=popup.querySelector('.popupHead small');
-      if(small)small.textContent=WOODEN_SWORD_STAT_TEXT+' · 초보자가 쓰는 기본 목검';
+      if(small)small.textContent='초보자가 쓰는 기본 목검';
       const meta=popup.querySelector('.detailMeta');
-      if(meta && !meta.querySelector('[data-wooden-sword-stat]')){
-        meta.insertAdjacentHTML('beforeend',`<span data-wooden-sword-stat>물리 공격력 +2</span><span data-wooden-sword-stat>명중률 +5%</span>`);
+      if(meta){
+        meta.querySelectorAll('[data-wooden-sword-stat]').forEach(function(n){n.remove();});
       }
     }catch(_){ }
   }
@@ -17700,9 +17700,9 @@ body.woodenSwordEquipped .player .sword{
           ${slotHTML('neck','목걸이',null,'목걸이 없음','장신구')}
           ${slotHTML('left','왼손',null,'방패 없음','보조 장비')}
           ${slotHTML('body','몸통',null,'천 옷','기본 방어구','fixed')}
-          ${slotHTML('right','오른손',swordOn?'woodenSword':null,swordOwned?'나무검 보유':'무기 없음',swordOn?'명중률 +10%, 물리 방어력 +2':'무기 슬롯')}
+          ${slotHTML('right','오른손',swordOn?'woodenSword':null,swordOwned?'나무검 보유':'무기 없음',swordOn?', 물리 방어력 +2':'무기 슬롯')}
           ${slotHTML('feet','발',null,'신발 없음','발 장비')}
-          ${slotHTML('ringL','반지',ringOn?'accuracyRing':null,ringOwned?'반지 보유':'반지 없음',ringOn?'명중률 +10%, 물리 방어력 +2':'반지 슬롯')}
+          ${slotHTML('ringL','반지',ringOn?'accuracyRing':null,ringOwned?'반지 보유':'반지 없음',ringOn?', 물리 방어력 +2':'반지 슬롯')}
           ${slotHTML('ringR','반지',null,'반지 없음','예비 반지 슬롯')}
         </div>
         <div class="equipSummary"><span>장착 ${equippedCount} / 8</span><span>보유 장비 ${ownedEquipCount}</span></div>
@@ -17965,7 +17965,18 @@ body.woodenSwordEquipped .player .sword{
   function pref(kind){const o=read(),s=o[kind];return accepts(s,kind)?s:DEF[kind]}
   function save(kind,slot){const o=read();slot?o[kind]=slot:delete o[kind];write(o)}
   function map(){const m={}; if(own('woodenSword')&&on('woodenSword'))m[pref('woodenSword')]='woodenSword'; if(own('accuracyRing')&&on('accuracyRing'))m[pref('accuracyRing')]='accuracyRing'; return m}
-  function kinds(){const a=[],add=k=>{if(k&&!a.includes(k)&&own(k)&&itemDefs?.[k])a.push(k)};try{(Array.isArray(bagStock)?bagStock:[]).forEach(add);Object.keys(inventory||{}).forEach(add)}catch(_){} return a}
+  function equipBagCategory(kind){
+    if(kind === 'woodenSword' || kind === 'ironSword')return 'weapon';
+    if(kind === 'accuracyRing')return 'armor';
+    try{
+      const item=itemDefs?.[kind]||{};
+      const text=String([kind,item.name,item.desc,item.type,item.category,item.group,item.slot,item.slotType,item.equipType,item.equipSlot,item.position].filter(Boolean).join(' ')).toLowerCase();
+      if(text.includes('weapon')||text.includes('sword')||text.includes('무기')||text.includes('검'))return 'weapon';
+      if(text.includes('armor')||text.includes('armour')||text.includes('ring')||text.includes('neck')||text.includes('helm')||text.includes('boots')||text.includes('방어구')||text.includes('장신구')||text.includes('반지')||text.includes('목걸이')||text.includes('갑옷')||text.includes('투구')||text.includes('신발'))return 'armor';
+    }catch(_){}
+    return 'etc';
+  }
+  function kinds(){const a=[],add=k=>{if(k&&!a.includes(k)&&own(k)&&itemDefs?.[k]&&['weapon','armor'].includes(equipBagCategory(k)))a.push(k)};try{(Array.isArray(bagStock)?bagStock:[]).forEach(add);Object.keys(inventory||{}).forEach(add)}catch(_){} return a}
   function card(kind,opt={}){const c=inventory?.[kind]||0,e=on(kind)||opt.equipped;return `<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard tradeCard bagItemCard equipBagItemCard equipMiniCard ${e?'equipped':''} ${opt.cls||''}" draggable="false" data-shop-card data-source="bag" data-item="${esc(kind)}" data-equip-kind="${esc(kind)}"><span class="equipBadge" style="${e?'':'display:none!important'}">E</span>${opt.noQty?'':`<span class="bagQtyBadge">x${esc(c)}</span>`}<i class="rewardMiniIcon itemIcon item-${esc(kind)}" aria-hidden="true"></i><b>${esc(name(kind))}</b><small>x${esc(c)}</small><em>${e?'장착중':'가방'}</em></button>`}
   function fixed(){return `<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard equipMiniCard equipFixedCard" disabled><i class="rewardMiniIcon equipBasicIcon">👕</i><b>천 옷</b></button>`}
   function slot(s,m){const k=m[s],fx=s==='body';const inner=k?card(k,{cls:'equipSlotMiniCard',noQty:true,equipped:true}):(fx?fixed():'<div class="equipSlotEmptyCard">＋</div>');return `<div class="equipSlot ${k||fx?'occupied':'empty'} ${fx?'fixed':''}" data-slot="${esc(s)}"><span class="equipSlotLabel">${esc(LABEL[s]||s)}</span><div class="equipSlotCardWrap">${inner}</div></div>`}
@@ -18865,7 +18876,7 @@ body.woodenSwordEquipped .player .sword{
   const DEFAULT_SLOT={woodenSword:'right',ironSword:'right',accuracyRing:'ringL'};
   const STAT_LABEL={pAtk:'물공',pDef:'물방',mAtk:'마공',mDef:'마방',hp:'HP',mp:'MP',acc:'명중',eva:'회피',crit:'치명'};
   const STAT_SUFFIX={acc:'%',eva:'%',crit:'%'};
-  const EQUIP_STATS={woodenSword:{pAtk:2,acc:5},ironSword:{pAtk:5,acc:8},accuracyRing:{acc:10,pDef:2},basicCloth:{pDef:1}};
+  const EQUIP_STATS={woodenSword:{pAtk:2,acc:0},ironSword:{pAtk:5,acc:3},accuracyRing:{acc:10,pDef:2},basicCloth:{pDef:1}};
   const EQUIP_NAME={basicCloth:'천 옷'};
   let selectedKind=null,drag=null,suppressClick=false;
   const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
@@ -18873,7 +18884,7 @@ body.woodenSwordEquipped .player .sword{
   const itemName=kind=>EQUIP_NAME[kind]||itemDefs?.[kind]?.name||kind;
   const statOf=kind=>Object.assign({},EQUIP_STATS[kind]||itemDefs?.[kind]?.stats||{});
   const statKeys=(a,b)=>Array.from(new Set([...Object.keys(a||{}),...Object.keys(b||{})])).filter(k=>(a?.[k]||0)!==0 || (b?.[k]||0)!==0);
-  function setupIronSword(){try{if(typeof itemDefs==='object'&&itemDefs){itemDefs.ironSword={name:'철검',icon:'⚔️',buy:null,sell:4,desc:'나무검보다 단단한 초급 무기. 물리 공격력 +5, 명중률 +8%',stats:Object.assign({},EQUIP_STATS.ironSword)};if(itemDefs.woodenSword){itemDefs.woodenSword.stats=Object.assign({},EQUIP_STATS.woodenSword);itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검. 물리 공격력 +2, 명중률 +5%'}if(itemDefs.accuracyRing)itemDefs.accuracyRing.stats=Object.assign({},EQUIP_STATS.accuracyRing)}if(typeof inventory==='object'&&inventory&&inventory.ironSword==null)inventory.ironSword=1;if(typeof bagStock!=='undefined'&&Array.isArray(bagStock)&&!bagStock.includes('ironSword'))bagStock.push('ironSword')}catch(_){}}
+  function setupIronSword(){try{if(typeof itemDefs==='object'&&itemDefs){itemDefs.ironSword={name:'철검',icon:'⚔️',buy:null,sell:4,desc:'나무검보다 단단한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:Object.assign({},EQUIP_STATS.ironSword)};if(itemDefs.woodenSword){itemDefs.woodenSword.stats=Object.assign({},EQUIP_STATS.woodenSword);itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검'}if(itemDefs.accuracyRing)itemDefs.accuracyRing.stats=Object.assign({},EQUIP_STATS.accuracyRing)}if(typeof inventory==='object'&&inventory&&inventory.ironSword==null)inventory.ironSword=1;if(typeof bagStock!=='undefined'&&Array.isArray(bagStock)&&!bagStock.includes('ironSword'))bagStock.push('ironSword')}catch(_){}}
   function readState(){try{const s=JSON.parse(localStorage.getItem(EQUIP_KEY)||'{}');return s&&typeof s==='object'?s:{}}catch(_){return {}}}
   function writeState(s){try{localStorage.setItem(EQUIP_KEY,JSON.stringify(s||{}));window.__equipmentState=s||{}}catch(_){}}
   function readPlace(){try{const p=JSON.parse(localStorage.getItem(PLACE_KEY)||'{}');return p&&typeof p==='object'?p:{}}catch(_){return {}}}
@@ -19093,13 +19104,13 @@ body.woodenSwordEquipped .player .sword{
   };
   const STAT_LABEL={pAtk:'물공',pDef:'물방',mAtk:'마공',mDef:'마방',hp:'HP',mp:'MP',acc:'명중',eva:'회피',crit:'치명'};
   const STAT_SUFFIX={acc:'%',eva:'%',crit:'%'};
-  const EQUIP_STATS={woodenSword:{pAtk:2,acc:5},ironSword:{pAtk:5,acc:8},accuracyRing:{acc:10,pDef:2},basicCloth:{pDef:1}};
+  const EQUIP_STATS={woodenSword:{pAtk:2,acc:0},ironSword:{pAtk:5,acc:3},accuracyRing:{acc:10,pDef:2},basicCloth:{pDef:1}};
   const BAG_TABS=[{id:'all',label:'전체'},{id:'weapon',label:'무기'},{id:'armor',label:'방어구'},{id:'potion',label:'포션'},{id:'craft',label:'제작'},{id:'quest',label:'퀘스트'},{id:'etc',label:'기타'}];
   window.__menuBagActiveTab=window.__menuBagActiveTab||'all';
   if(typeof window.__menuBagSelectedSlot==='undefined')window.__menuBagSelectedSlot=null;
   let selectedKind=null,eqDrag=null,bagDrag=null,suppressEqClick=false,suppressMenuBagClick=false;
   function esc(v){return String(v??'').replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];});}
-  function setupItems(){try{if(typeof itemDefs==='object'&&itemDefs){itemDefs.ironSword={name:'철검',icon:'⚔️',buy:null,sell:4,desc:'나무검보다 단단한 초급 무기. 물리 공격력 +5, 명중률 +8%',stats:Object.assign({},EQUIP_STATS.ironSword),equipSlot:['right','left'],slotType:'weapon',equipType:'weapon',position:['right','left']};if(itemDefs.woodenSword){itemDefs.woodenSword.stats=Object.assign({},EQUIP_STATS.woodenSword);itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검. 물리 공격력 +2, 명중률 +5%';itemDefs.woodenSword.equipSlot=['right','left'];itemDefs.woodenSword.slotType='weapon';itemDefs.woodenSword.equipType='weapon';itemDefs.woodenSword.position=['right','left'];}if(itemDefs.accuracyRing)itemDefs.accuracyRing.stats=Object.assign({},EQUIP_STATS.accuracyRing)}if(typeof inventory==='object'&&inventory&&inventory.ironSword==null)inventory.ironSword=1;if(typeof bagStock!=='undefined'&&Array.isArray(bagStock)&&!bagStock.includes('ironSword'))bagStock.push('ironSword')}catch(_){}}
+  function setupItems(){try{if(typeof itemDefs==='object'&&itemDefs){itemDefs.ironSword={name:'철검',icon:'⚔️',buy:null,sell:4,desc:'나무검보다 단단한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:Object.assign({},EQUIP_STATS.ironSword),equipSlot:['right','left'],slotType:'weapon',equipType:'weapon',position:['right','left']};if(itemDefs.woodenSword){itemDefs.woodenSword.stats=Object.assign({},EQUIP_STATS.woodenSword);itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검';itemDefs.woodenSword.equipSlot=['right','left'];itemDefs.woodenSword.slotType='weapon';itemDefs.woodenSword.equipType='weapon';itemDefs.woodenSword.position=['right','left'];}if(itemDefs.accuracyRing)itemDefs.accuracyRing.stats=Object.assign({},EQUIP_STATS.accuracyRing)}if(typeof inventory==='object'&&inventory&&inventory.ironSword==null)inventory.ironSword=1;if(typeof bagStock!=='undefined'&&Array.isArray(bagStock)&&!bagStock.includes('ironSword'))bagStock.push('ironSword')}catch(_){}}
   function own(kind){try{return !!(inventory&&(inventory[kind]||0)>0&&itemDefs&&itemDefs[kind])}catch(_){return false}}
   function nameOf(kind){return kind==='basicCloth'?'천 옷':(itemDefs?.[kind]?.name||kind)}
   function statsOf(kind){return Object.assign({},EQUIP_STATS[kind]||itemDefs?.[kind]?.stats||{})}
@@ -19225,8 +19236,31 @@ body.woodenSwordEquipped .player .sword{
   function normalizeBagSlots(minSlots,cols,save){minSlots=minSlots||MENU_BAG_BASE;cols=cols||4;if(save!==false)save=true;const visible=visibleBagOwnedKinds(),visibleSet=new Set(visible),seen=new Set();let slots=readBagSlots().map(function(k){if(!k||!visibleSet.has(k)||seen.has(k))return null;seen.add(k);return k});const needed=Math.max(minSlots,Math.ceil(Math.max(visible.length,1)/cols)*cols);while(slots.length<needed)slots.push(null);visible.forEach(function(k){if(seen.has(k))return;let idx=slots.indexOf(null);if(idx<0){idx=slots.length;slots.push(null)}slots[idx]=k;seen.add(k)});const finalLen=Math.max(needed,Math.ceil(slots.length/cols)*cols);while(slots.length<finalLen)slots.push(null);if(save)writeBagSlots(slots);return slots}
   function placeInBag(kind,targetIndex){if(!kind||!own(kind))return;let slots=normalizeBagSlots(MENU_BAG_BASE,4,false);slots=slots.map(function(k){return k===kind?null:k});let idx=Number(targetIndex);if(!Number.isFinite(idx)||idx<0)idx=slots.indexOf(null);if(idx<0){idx=slots.length;slots.push(null)}if(slots[idx]){const empty=slots.indexOf(null);idx=empty>=0?empty:slots.length}slots[idx]=kind;writeBagSlots(slots)}
   function moveBagSlot(fromIndex,toIndex){const slots=normalizeBagSlots(MENU_BAG_BASE,4,false);fromIndex=Number(fromIndex);toIndex=Number(toIndex);if(!Number.isFinite(fromIndex)||!Number.isFinite(toIndex)||fromIndex<0||toIndex<0||fromIndex>=slots.length||toIndex>=slots.length||fromIndex===toIndex)return false;if(!slots[fromIndex])return false;const tmp=slots[toIndex]||null;slots[toIndex]=slots[fromIndex];slots[fromIndex]=tmp;writeBagSlots(slots);return true}
-  function bagSlotsForEquipment(){const slots=normalizeBagSlots(EQ_BAG_COUNT,2,true).slice(0,EQ_BAG_COUNT);let html='';for(let i=0;i<EQ_BAG_COUNT;i++){const k=slots[i];html+=k?'<div class="eqBagSlot filled '+(selectedKind===k?'selected':'')+'" data-eq199-bag-slot="'+i+'">'+equipItemCard(k)+'</div>':'<div class="eqBagSlot empty" data-eq199-bag-slot="'+i+'" aria-hidden="true"></div>'}return html}
-  function renderEquipment199(){setupItems();syncEquipmentRows();const body=document.querySelector('#pBody'),title=document.querySelector('#pTitle');if(!body||!title)return;const map=equipMap();title.textContent='장비';body.innerHTML='<div class="equipmentSimple88Panel equipmentLeftBag24Panel equipmentComparePanel equipmentMovePanel199"><section class="eqPane eqEquipPane"><div class="eqHead"><b>장비슬롯</b><span>'+(selectedKind?'비교 중: '+esc(nameOf(selectedKind)):'각 슬롯 능력치')+'</span></div><div class="eqEquipList">'+SLOT_ORDER.map(function(s){return equipSlot(s,map)}).join('')+'</div></section><section class="eqPane eqBagPane"><div class="eqHead"><b>장비가방</b><span>2열 × 8줄 · 장착 아이템 제외</span></div><div class="eqBagGrid">'+bagSlotsForEquipment()+'</div></section></div>';if(typeof showOverlay==='function')showOverlay('panel')}
+  function isEquipmentBagKind(kind){const c=category(kind);return c==='weapon'||c==='armor'}
+  function bagSlotsForEquipment(){
+    const raw=normalizeBagSlots(MENU_BAG_BASE,4,true);
+    const entries=[];
+    const emptyIndexes=[];
+    raw.forEach(function(kind,index){
+      if(kind){
+        if(isEquipmentBagKind(kind))entries.push({kind:kind,index:index});
+      }else{
+        emptyIndexes.push(index);
+      }
+    });
+    let html='';
+    for(let i=0;i<EQ_BAG_COUNT;i++){
+      const entry=entries[i];
+      if(entry&&entry.kind){
+        html+='<div class="eqBagSlot filled '+(selectedKind===entry.kind?'selected':'')+'" data-eq199-bag-slot="'+entry.index+'">'+equipItemCard(entry.kind)+'</div>';
+      }else{
+        const emptyIndex=emptyIndexes.length?emptyIndexes.shift():(raw.length+i);
+        html+='<div class="eqBagSlot empty" data-eq199-bag-slot="'+emptyIndex+'" aria-hidden="true"></div>';
+      }
+    }
+    return html;
+  }
+  function renderEquipment199(){setupItems();syncEquipmentRows();const body=document.querySelector('#pBody'),title=document.querySelector('#pTitle');if(!body||!title)return;const map=equipMap();title.textContent='장비';body.innerHTML='<div class="equipmentSimple88Panel equipmentLeftBag24Panel equipmentComparePanel equipmentMovePanel199"><section class="eqPane eqEquipPane"><div class="eqHead"><b>장비슬롯</b><span>'+(selectedKind?'비교 중: '+esc(nameOf(selectedKind)):'각 슬롯 능력치')+'</span></div><div class="eqEquipList">'+SLOT_ORDER.map(function(s){return equipSlot(s,map)}).join('')+'</div></section><section class="eqPane eqBagPane"><div class="eqHead"><b>장비가방</b><span>무기·방어구만</span></div><div class="eqBagGrid">'+bagSlotsForEquipment()+'</div></section></div>';if(typeof showOverlay==='function')showOverlay('panel')}
   function clearEqMarks(){document.querySelectorAll('.equipmentMovePanel199 .dropReady,.equipmentMovePanel199 .dropBad').forEach(function(x){x.classList.remove('dropReady','dropBad')})}
   function eqGhost(card,kind){const rect=card?.getBoundingClientRect?.();const g=document.createElement('div');g.className='eqDragGhost199';if(rect&&rect.width&&rect.height){g.style.width=rect.width+'px';g.style.height=rect.height+'px'}const clone=(card&&card.cloneNode)?card.cloneNode(true):null;if(clone){clone.classList.remove('selected','eqDraggingSource');clone.removeAttribute('id');clone.disabled=true;clone.tabIndex=-1;clone.style.width='100%';clone.style.height='100%';clone.style.margin='0';g.appendChild(clone)}else{g.innerHTML='<button type="button" class="rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard eqCard"><i class="rewardMiniIcon itemIcon item-'+esc(kind)+'"></i><b>'+esc(nameOf(kind))+'</b></button>'}document.body.appendChild(g);return g}
   function moveEqGhost(e){if(!eqDrag?.ghost)return;eqDrag.ghost.style.left=(e.clientX||eqDrag.x)+'px';eqDrag.ghost.style.top=(e.clientY||eqDrag.y)+'px'}
@@ -21235,9 +21269,6 @@ body.woodenSwordEquipped .player .sword{
 (function(){ window.__patch305LeftArmUp2px=true; })();
 </script>
 
-</body>
-</html>
-
 
 <!-- patch219: move equipment slot/bag inner icon boxes up by 5px -->
 <style id="patch219-equipment-inner-box-up-5px">
@@ -21264,9 +21295,9 @@ body.woodenSwordEquipped .player .sword{
 
   function itemMetaExtras(kind){
     switch(kind){
-      case 'woodenSword': return ['물리 공격력 +2','명중률 +5%'];
-      case 'ironSword': return ['물리 공격력 +5','명중률 +8%'];
-      case 'accuracyRing': return ['명중률 +10%','물리 방어력 +2'];
+      case 'woodenSword': return [];
+      case 'ironSword': return ['명중률 +3%'];
+      case 'accuracyRing': return ['','물리 방어력 +2'];
       default: return [];
     }
   }
@@ -24693,8 +24724,8 @@ body.ironSwordEquipped .player > .sword{
   var PLACE_KEY='index5.equipmentSlotPlacement.v1';
   var KNOWN_WEAPONS=['woodenSword','ironSword'];
   var FALLBACK_WEAPON_STATS={
-    woodenSword:{pAtk:2,acc:5},
-    ironSword:{pAtk:5,acc:8}
+    woodenSword:{pAtk:2,acc:0},
+    ironSword:{pAtk:5,acc:3}
   };
   var LEFT_DELAY_MS=300;
   var LEFT_ANIM_MS=560;
@@ -24914,3 +24945,594 @@ body.ironSwordEquipped .player > .sword{
   window.__cleanBattleLogTimeText311=cleanBattleLogTimeText;
 })();
 </script>
+
+<style id="patch316-edge-light-weapon-options-left-arm">
+/* patch316: Edge-safe final override. No heavy DOM observer. */
+body:not(.hasLeftWeapon202) .player .arm.l,
+body:not(.leftWooden202):not(.leftIron202) .player .arm.l{
+  left:1px!important;
+  top:33px!important;
+  z-index:4!important;
+  transform-origin:center center!important;
+  transform:rotate(13deg)!important;
+}
+body.hasLeftWeapon202 .player .arm.l,
+body.leftWooden202 .player .arm.l,
+body.leftIron202 .player .arm.l{
+  left:4px!important;
+  top:29px!important;
+  z-index:5!important;
+  transform-origin:8px 4px!important;
+  transform:rotate(-13deg)!important;
+}
+</style>
+<script id="patch316-edge-light-weapon-options-left-arm">
+(function(){
+  if(window.__patch316EdgeLightWeaponOptionsLeftArm)return;
+  window.__patch316EdgeLightWeaponOptionsLeftArm=true;
+
+  function normalizeWeaponDefs316(){
+    try{
+      if(typeof itemDefs==='object' && itemDefs){
+        if(itemDefs.woodenSword){
+          itemDefs.woodenSword.stats=Object.assign({}, itemDefs.woodenSword.stats||{}, {pAtk:2, acc:0});
+          itemDefs.woodenSword.desc='초보자가 쓰는 기본 목검';
+          itemDefs.woodenSword.equipSlot=['right','left'];
+          itemDefs.woodenSword.slotType='weapon';
+          itemDefs.woodenSword.equipType='weapon';
+          itemDefs.woodenSword.position=['right','left'];
+        }
+        if(itemDefs.ironSword){
+          itemDefs.ironSword.stats=Object.assign({}, itemDefs.ironSword.stats||{}, {pAtk:5, acc:3});
+          itemDefs.ironSword.desc='나무검보다 단단한 초급 무기. 명중률 +3%';
+          itemDefs.ironSword.equipSlot=['right','left'];
+          itemDefs.ironSword.slotType='weapon';
+          itemDefs.ironSword.equipType='weapon';
+          itemDefs.ironSword.position=['right','left'];
+        }
+      }
+    }catch(e){}
+    try{
+      if(typeof panelData==='object' && panelData && Array.isArray(panelData.inventory)){
+        for(var i=0;i<panelData.inventory.length;i++){
+          var r=panelData.inventory[i];
+          if(!r)continue;
+          if(r[0]==='나무검')r[2]='초보 장비템';
+          if(r[0]==='철검')r[2]='명중률 +3%';
+        }
+      }
+    }catch(e){}
+  }
+
+  function cleanText316(s){
+    s=String(s==null?'':s);
+    s=s.replace(/명중률 \+8%/g,'명중률 +3%');
+    s=s.replace(/명중률 \+5%/g,'');
+    s=s.replace(/명중률 \+10%/g,'');
+    s=s.replace(/초보자가 쓰는 기본 목검\.\s*물리 공격력 \+2/g,'초보자가 쓰는 기본 목검');
+    s=s.replace(/물리 공격력 \+2\s*·\s*초보자가 쓰는 기본 목검/g,'초보자가 쓰는 기본 목검');
+    s=s.replace(/물리 공격력 \+2\s*·\s*초보 장비템/g,'초보 장비템');
+    s=s.replace(/나무검 장착 중\s*·\s*물리 공격력 \+2/g,'나무검 장착 중');
+    s=s.replace(/나무검 보유 중\s*·\s*미장착\s*·\s*물리 공격력 \+2/g,'나무검 보유 중 · 미장착');
+    s=s.replace(/장비:\s*나무검 \+5%/g,'');
+    s=s.replace(/장비:\s*나무검 \+2/g,'');
+    s=s.replace(/물리 공격력 \+5,\s*명중률 \+3%/g,'명중률 +3%');
+    s=s.replace(/물리 공격력 \+5\s*·\s*명중률 \+3%/g,'명중률 +3%');
+    s=s.replace(/,\s*,/g,',').replace(/·\s*·/g,'·').replace(/\s{2,}/g,' ').replace(/,\s*$/g,'').replace(/·\s*$/g,'').trim();
+    return s;
+  }
+
+  function cleanVisible316(root){
+    try{
+      root=root||document;
+      var list=root.querySelectorAll('.shopItemInfoPopupLayer, .tradePopup, .equipmentMovePanel199, .menuInventoryPanel, .mbody, .modal');
+      for(var i=0;i<list.length;i++){
+        var walker=document.createTreeWalker(list[i],NodeFilter.SHOW_TEXT,null);
+        var nodes=[];
+        while(walker.nextNode())nodes.push(walker.currentNode);
+        for(var j=0;j<nodes.length;j++){
+          var n=nodes[j], t=cleanText316(n.nodeValue);
+          if(t!==n.nodeValue)n.nodeValue=t;
+        }
+      }
+    }catch(e){}
+  }
+
+  function refresh316(){
+    normalizeWeaponDefs316();
+    cleanVisible316(document);
+    try{ if(typeof playerAbilities!=='undefined' && typeof getAbilities==='function')playerAbilities=getAbilities(); }catch(e){}
+    try{ if(typeof bars==='function')bars(); }catch(e){}
+  }
+
+  function wrap316(name){
+    try{
+      var fn=window[name];
+      if(typeof fn==='function' && !fn.__patch316EdgeLight){
+        var wrapped=function(){
+          normalizeWeaponDefs316();
+          var out=fn.apply(this,arguments);
+          setTimeout(refresh316,0);
+          return out;
+        };
+        wrapped.__patch316EdgeLight=true;
+        window[name]=wrapped;
+        try{ if(typeof eval==='function')eval(name+'=window[name]'); }catch(e){}
+      }
+    }catch(e){}
+  }
+
+  ['showShopItemInfoPopup','renderEquipmentComparePanel196','renderEquipmentLeftBag24Panel','renderEquipmentSimple88Panel','renderDecoratedEquipmentPanel','renderPolishedEquipmentPanel','renderInventoryPanel','renderShopPanel','openPanel'].forEach(wrap316);
+  document.addEventListener('DOMContentLoaded',refresh316);
+  document.addEventListener('click',function(){setTimeout(refresh316,0);},true);
+  document.addEventListener('pointerup',function(){setTimeout(refresh316,0);},true);
+  refresh316();
+})();
+</script>
+
+
+<style id="patch317-empty-left-hand-arm-up-5px">
+/* patch317: when no left-hand weapon is equipped, move only the bare left arm 5px upward. */
+body:not(.hasLeftWeapon202):not(.leftWooden202):not(.leftIron202) .player .arm.l{
+  top:28px!important;
+}
+</style>
+<script id="patch317-empty-left-hand-arm-up-5px-marker">
+(function(){ window.__patch317EmptyLeftHandArmUp5px=true; })();
+</script>
+
+
+
+<style id="patch318-empty-left-hand-arm-right-2px">
+/* patch318: when no left-hand weapon is equipped, move only the bare left arm 2px to the right. */
+body:not(.hasLeftWeapon202):not(.leftWooden202):not(.leftIron202) .player .arm.l{
+  left:3px!important;
+  top:28px!important;
+}
+</style>
+<script id="patch318-empty-left-hand-arm-right-2px-marker">
+(function(){ window.__patch318EmptyLeftHandArmRight2px=true; })();
+</script>
+
+
+<script id="patch319-equipment-bag-weapon-armor-only-marker">
+(function(){ window.__patch319EquipmentBagWeaponArmorOnly=true; })();
+</script>
+
+
+<style id="patch320-birds-higher-less-prominent">
+/* patch320: raise low-flying birds higher in both field and town, and reduce bird prominence */
+.game.field-bg .birdsys-flock,
+.game.field-bg .birdsys-brawl,
+.game.town-bg .birdsys-flock,
+.game.town-bg .birdsys-brawl{
+  margin-top:-58px!important;
+}
+
+.birdsys-flock .birdsys-bird,
+.birdsys-brawl .birdsys-bird{
+  filter:drop-shadow(0 1px 1px #0004)!important;
+}
+
+.birdsys-flock .birdsys-bird{
+  width:24px!important;
+  height:14px!important;
+  opacity:.72!important;
+}
+.birdsys-flock .birdsys-bird:before,
+.birdsys-flock .birdsys-bird:after{
+  top:7px!important;
+  width:12px!important;
+  height:7px!important;
+  border-top-width:2px!important;
+}
+.birdsys-flock .birdsys-bird.small{
+  width:20px!important;
+  height:11px!important;
+  opacity:.58!important;
+}
+.birdsys-flock .birdsys-bird.small:before,
+.birdsys-flock .birdsys-bird.small:after{
+  top:6px!important;
+  width:10px!important;
+  height:6px!important;
+  border-top-width:2px!important;
+}
+
+
+/* keep fallback bird system aligned too */
+.flock{top:86px!important;height:84px!important;transform:scale(.82)!important;transform-origin:center center!important}
+.flock.f2{top:112px!important}
+.flock.f3{top:98px!important}
+.game.town-bg .sky-brawl,
+.game.town-bg .sky-brawl.brawl-fall,
+.game.field-bg .sky-brawl,
+.game.field-bg .sky-brawl.brawl-fall{
+  top:84px!important;
+}
+.game.town-bg .sky-brawl.brawl-fall,
+.game.field-bg .sky-brawl.brawl-fall{
+  top:118px!important;
+}
+
+@media(max-height:690px){
+  .game.field-bg .birdsys-flock,
+  .game.field-bg .birdsys-brawl,
+  .game.town-bg .birdsys-flock,
+  .game.town-bg .birdsys-brawl{
+    margin-top:-46px!important;
+  }
+}
+</style>
+<script id="patch320-birds-higher-less-prominent-marker">
+(function(){ window.__patch320BirdsHigherLessProminent=true; })();
+</script>
+
+
+<style id="patch321-town-birds-front-back-by-wall-height">
+/* patch321: in town, birds above the wall fly behind it; birds below the wall fly in front of it */
+.birdsys-rear-layer{z-index:1!important}
+.birdsys-front-layer{z-index:3!important}
+.game.field-bg .birdsys-rear-layer,
+.game.field-bg .birdsys-front-layer{z-index:2!important}
+.game.town-bg .birdsys-rear-layer{z-index:1!important}
+.game.town-bg .birdsys-front-layer{z-index:3!important}
+</style>
+<script id="patch321-town-birds-front-back-by-wall-height-script">
+(function(){
+  if(window.__patch321TownBirdsFrontBackByWallHeight) return;
+  window.__patch321TownBirdsFrontBackByWallHeight = true;
+  function ready(fn){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+  ready(function(){
+    var game = document.querySelector('.game');
+    if(!game) return;
+    function layers(){
+      return {
+        rear: game.querySelector('.birdsys-rear-layer'),
+        front: game.querySelector('.birdsys-front-layer')
+      };
+    }
+    function getWallTop(){
+      if(!game.classList.contains('town-bg')) return null;
+      var wall = game.querySelector('.town-wall');
+      if(!wall) return null;
+      var gameRect = game.getBoundingClientRect();
+      var wallRect = wall.getBoundingClientRect();
+      return wallRect.top - gameRect.top;
+    }
+    function getVisualTop(el){
+      var top = parseFloat(el.style.top || '0') || 0;
+      var marginTop = parseFloat(window.getComputedStyle(el).marginTop || '0') || 0;
+      var adjust = el.classList.contains('birdsys-brawl') ? 18 : 8;
+      return top + marginTop + adjust;
+    }
+    function placeBird(el){
+      if(!el || !el.classList) return;
+      if(!el.matches('.birdsys-flock, .birdsys-brawl')) return;
+      var ls = layers();
+      if(!ls.rear || !ls.front) return;
+      if(!game.classList.contains('town-bg')){
+        if(el.parentNode !== ls.front) ls.front.appendChild(el);
+        return;
+      }
+      var wallTop = getWallTop();
+      if(wallTop == null){
+        if(el.parentNode !== ls.front) ls.front.appendChild(el);
+        return;
+      }
+      var target = getVisualTop(el) < wallTop ? ls.rear : ls.front;
+      if(el.parentNode !== target) target.appendChild(el);
+    }
+    function placeAllBirds(){
+      var all = game.querySelectorAll('.birdsys-flock, .birdsys-brawl');
+      for(var i=0;i<all.length;i++) placeBird(all[i]);
+    }
+    placeAllBirds();
+    var mo = new MutationObserver(function(mutations){
+      var needsRefresh = false;
+      for(var i=0;i<mutations.length;i++){
+        var m = mutations[i];
+        if(m.type === 'childList'){
+          for(var j=0;j<m.addedNodes.length;j++){
+            var node = m.addedNodes[j];
+            if(!node || node.nodeType !== 1) continue;
+            if(node.matches && node.matches('.birdsys-flock, .birdsys-brawl')) placeBird(node);
+            else if(node.querySelectorAll){
+              var found = node.querySelectorAll('.birdsys-flock, .birdsys-brawl');
+              for(var k=0;k<found.length;k++) placeBird(found[k]);
+            }
+          }
+        }else if(m.type === 'attributes'){
+          if(m.target && m.target.matches && m.target.matches('.birdsys-flock, .birdsys-brawl')) placeBird(m.target);
+          else needsRefresh = true;
+        }
+      }
+      if(needsRefresh) placeAllBirds();
+    });
+    mo.observe(game, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style','class']
+    });
+    window.addEventListener('resize', placeAllBirds);
+    setInterval(placeAllBirds, 1200);
+  });
+})();
+</script>
+
+
+<style id="patch322-hide-iron-sword-current-build">
+/* patch322: keep ironSword data for future expansion, but remove it from the current UI/build. */
+[data-item="ironSword"],
+[data-kind="ironSword"],
+.item-ironSword,
+body.rightIron202 .player .charSword211.right,
+body.leftIron202 .player .charSword211.left,
+.player .charSword211[data-weapon="ironSword"],
+.player .charSword211.iron{
+  display:none!important;
+}
+</style>
+<script id="patch322-hide-iron-sword-current-build">
+(function(){
+  if(window.__patch322HideIronSwordCurrentBuild) return;
+  window.__patch322HideIronSwordCurrentBuild = true;
+
+  var HIDDEN_KIND = 'ironSword';
+  var HIDDEN_NAME = '철검';
+  var EQUIP_KEY = 'index5.equipmentState.v2';
+  var PLACE_KEY = 'index5.equipmentSlotPlacement.v1';
+  var hooked = false;
+
+  function readJson(key){
+    try{
+      var raw = localStorage.getItem(key);
+      if(!raw) return {};
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    }catch(_){ return {}; }
+  }
+  function writeJson(key,obj){
+    try{ localStorage.setItem(key, JSON.stringify(obj || {})); }catch(_){ }
+  }
+  function removeFromArray(arr, value){
+    if(!Array.isArray(arr)) return;
+    for(var i = arr.length - 1; i >= 0; i--){
+      if(arr[i] === value) arr.splice(i, 1);
+    }
+  }
+  function stripPanelRows(){
+    try{
+      if(typeof panelData === 'object' && panelData){
+        Object.keys(panelData).forEach(function(key){
+          if(!Array.isArray(panelData[key])) return;
+          panelData[key] = panelData[key].filter(function(row){
+            return !(row && (row[0] === HIDDEN_NAME || row[1] === HIDDEN_NAME || row[2] === HIDDEN_NAME));
+          });
+        });
+      }
+    }catch(_){ }
+  }
+  function stripIronState(){
+    try{
+      var state = readJson(EQUIP_KEY);
+      if(state[HIDDEN_KIND] !== false){
+        state[HIDDEN_KIND] = false;
+        writeJson(EQUIP_KEY, state);
+      }
+      window.__equipmentState = Object.assign({}, window.__equipmentState || {}, {ironSword:false});
+    }catch(_){ }
+    try{
+      var place = readJson(PLACE_KEY);
+      if(place && Object.prototype.hasOwnProperty.call(place, HIDDEN_KIND)){
+        delete place[HIDDEN_KIND];
+        writeJson(PLACE_KEY, place);
+      }
+    }catch(_){ }
+  }
+  function stripIronFromRuntimeData(){
+    try{
+      if(typeof itemDefs === 'object' && itemDefs && itemDefs[HIDDEN_KIND]){
+        itemDefs[HIDDEN_KIND].hidden = true;
+        itemDefs[HIDDEN_KIND].disabled = true;
+        itemDefs[HIDDEN_KIND].buy = null;
+        itemDefs[HIDDEN_KIND].sell = null;
+        itemDefs[HIDDEN_KIND].showInBag = false;
+        itemDefs[HIDDEN_KIND].showInShop = false;
+        itemDefs[HIDDEN_KIND].showInEquipmentBag = false;
+      }
+    }catch(_){ }
+    try{
+      if(typeof inventory === 'object' && inventory){
+        inventory[HIDDEN_KIND] = 0;
+      }
+    }catch(_){ }
+    try{
+      if(typeof bagStock !== 'undefined' && Array.isArray(bagStock)) removeFromArray(bagStock, HIDDEN_KIND);
+    }catch(_){ }
+    stripPanelRows();
+    stripIronState();
+  }
+  function clearIronBodyState(){
+    try{
+      var b = document.body;
+      if(!b) return;
+      var hadRightIron = b.classList.contains('rightIron202');
+      var hadLeftIron = b.classList.contains('leftIron202');
+      b.classList.remove('rightIron202','leftIron202','ironSwordEquipped');
+      if(hadRightIron && !b.classList.contains('rightWooden202')){
+        b.classList.remove('hasRightWeapon202','weaponInRightHand');
+      }
+      if(hadLeftIron && !b.classList.contains('leftWooden202')){
+        b.classList.remove('hasLeftWeapon202','weaponInLeftHand');
+      }
+    }catch(_){ }
+  }
+  function removeNode(node){
+    try{ if(node && node.parentNode) node.parentNode.removeChild(node); }catch(_){ }
+  }
+  function removeIronNodes(root){
+    try{
+      root = root || document;
+      var direct = root.querySelectorAll ? root.querySelectorAll('[data-item="ironSword"],[data-kind="ironSword"],.player .charSword211[data-weapon="ironSword"],.player .charSword211.iron') : [];
+      for(var i=0;i<direct.length;i++){
+        var el = direct[i];
+        var removable = el.closest && el.closest('.eqBagSlot,.bagSlot,.tradeCard,.eqCard,.item,.card,.tradeItem,.rewardMiniCard,.popupItemCard,.shopInfoMiniCard,.tradePopup') || el;
+        removeNode(removable);
+      }
+      var iconOnly = root.querySelectorAll ? root.querySelectorAll('.item-ironSword,.tradeIcon.item-ironSword,.rewardMiniIcon.item-ironSword,.detailIcon.item-ironSword') : [];
+      for(var j=0;j<iconOnly.length;j++){
+        var icon = iconOnly[j];
+        var owner = icon.closest && icon.closest('[data-item="ironSword"],.tradeCard,.eqCard,.item,.card,.popupItemCard,.shopInfoMiniCard');
+        if(owner && /철검|ironSword/.test(owner.textContent || owner.getAttribute('data-item') || '')) removeNode(owner);
+      }
+      var panels = root.querySelectorAll ? root.querySelectorAll('.equipmentMovePanel199,.equipmentSimple88Panel,.equipmentLeftBag24Panel,.equipmentComparePanel,.menuInventoryPanel,.shopPanel,.tradeShop,.tradeShelf,.tradePopup,.shopItemInfoPopupLayer,.mbody,.modal') : [];
+      for(var p=0;p<panels.length;p++){
+        var cards = panels[p].querySelectorAll('.tradeCard,.eqCard,.eqBagSlot,.bagSlot,.item,.card,.popupItemCard,.shopInfoMiniCard');
+        for(var c=0;c<cards.length;c++){
+          var card = cards[c];
+          if((card.textContent || '').indexOf(HIDDEN_NAME) >= 0 || card.getAttribute('data-item') === HIDDEN_KIND){
+            removeNode(card);
+          }
+        }
+      }
+    }catch(_){ }
+    clearIronBodyState();
+  }
+  function refreshHiddenIron(){
+    stripIronFromRuntimeData();
+    clearIronBodyState();
+    removeIronNodes(document);
+    try{ if(typeof playerAbilities !== 'undefined' && typeof getAbilities === 'function') playerAbilities = getAbilities(); }catch(_){ }
+    try{ if(typeof bars === 'function') bars(); }catch(_){ }
+  }
+  function wrapFunction(name){
+    try{
+      var fn = window[name];
+      if(typeof fn !== 'function' || fn.__patch322HideIronSword) return;
+      var wrapped = function(){
+        stripIronFromRuntimeData();
+        var out = fn.apply(this, arguments);
+        setTimeout(refreshHiddenIron, 0);
+        return out;
+      };
+      wrapped.__patch322HideIronSword = true;
+      window[name] = wrapped;
+      try{ eval(name + ' = window[name]'); }catch(_){ }
+    }catch(_){ }
+  }
+  function hookRenderers(){
+    if(hooked) return;
+    hooked = true;
+    [
+      'setupIronSword','setupItems','syncInventoryData','renderInventoryPanel','renderShopPanel',
+      'renderEquipmentComparePanel196','renderEquipmentMovePanel199','renderEquipmentLeftBag24Panel',
+      'renderEquipmentSimple88Panel','renderDecoratedEquipmentPanel','renderPolishedEquipmentPanel',
+      'showShopItemInfoPopup','openPanel','setItemEquipped','syncDualSword202','syncCharSword211'
+    ].forEach(wrapFunction);
+  }
+
+  stripIronFromRuntimeData();
+  hookRenderers();
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ hookRenderers(); refreshHiddenIron(); });
+  }else{
+    refreshHiddenIron();
+  }
+  document.addEventListener('click', function(){ setTimeout(refreshHiddenIron, 0); }, true);
+  document.addEventListener('pointerup', function(){ setTimeout(refreshHiddenIron, 0); }, true);
+  try{
+    var mo = new MutationObserver(function(mutations){
+      var should = false;
+      for(var i=0;i<mutations.length;i++){
+        if(mutations[i].addedNodes && mutations[i].addedNodes.length){ should = true; break; }
+        if(mutations[i].type === 'attributes'){ should = true; break; }
+      }
+      if(should) setTimeout(function(){ hookRenderers(); refreshHiddenIron(); }, 0);
+    });
+    mo.observe(document.body || document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','data-item','data-kind']});
+  }catch(_){ }
+})();
+</script>
+
+
+<script id="patch323-start-with-wooden-sword">
+/* patch323: first start defaults to wooden sword equipped in the right hand; later manual unequip is preserved. */
+(function(){
+  if(window.__patch323StartWithWoodenSword) return;
+  window.__patch323StartWithWoodenSword = true;
+
+  var EQUIP_KEY = 'index5.equipmentState.v2';
+  var PLACE_KEY = 'index5.equipmentSlotPlacement.v1';
+  var STARTER_KEY = 'index5.starterWoodenSwordApplied.v1';
+
+  function readJson(key){
+    try{
+      var raw = localStorage.getItem(key);
+      if(!raw) return {};
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    }catch(_){ return {}; }
+  }
+  function writeJson(key,obj){
+    try{ localStorage.setItem(key, JSON.stringify(obj || {})); }catch(_){ }
+  }
+  function hasWoodenSword(){
+    try{
+      if(typeof inventory !== 'undefined' && inventory){
+        if((inventory.woodenSword || 0) <= 0) inventory.woodenSword = 1;
+        return (inventory.woodenSword || 0) > 0;
+      }
+    }catch(_){ }
+    return false;
+  }
+  function applyStarterWoodenSword(){
+    try{
+      if(localStorage.getItem(STARTER_KEY) === '1') return;
+      if(!hasWoodenSword()) return;
+
+      var state = readJson(EQUIP_KEY);
+      state.woodenSword = true;
+      state.ironSword = false;
+      writeJson(EQUIP_KEY, state);
+      try{ window.__equipmentState = Object.assign({}, window.__equipmentState || {}, state); }catch(_){ }
+
+      var place = readJson(PLACE_KEY);
+      place.woodenSword = 'right';
+      delete place.ironSword;
+      writeJson(PLACE_KEY, place);
+
+      try{ localStorage.setItem(STARTER_KEY, '1'); }catch(_){ }
+
+      try{ if(typeof applyEquipmentVisualState === 'function') applyEquipmentVisualState(); }catch(_){ }
+      try{ if(typeof syncDualSword202 === 'function') syncDualSword202(); }catch(_){ }
+      try{ if(typeof syncCharSword211 === 'function') syncCharSword211(); }catch(_){ }
+      try{ if(typeof syncInventoryData === 'function') syncInventoryData(); }catch(_){ }
+      try{ if(typeof playerAbilities !== 'undefined' && typeof getAbilities === 'function') playerAbilities = getAbilities(); }catch(_){ }
+      try{ if(typeof bars === 'function') bars(); }catch(_){ }
+
+      if(document.body){
+        document.body.classList.add('hasRightWeapon202','rightWooden202','weaponInRightHand','woodenSwordEquipped');
+        document.body.classList.remove('hasLeftWeapon202','leftWooden202','leftIron202','rightIron202','weaponInLeftHand','ironSwordEquipped');
+      }
+    }catch(_){ }
+  }
+
+  applyStarterWoodenSword();
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      applyStarterWoodenSword();
+      setTimeout(applyStarterWoodenSword, 0);
+    });
+  }else{
+    setTimeout(applyStarterWoodenSword, 0);
+  }
+})();
+</script>
+
+</body>
+</html>
