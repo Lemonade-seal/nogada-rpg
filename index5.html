@@ -9871,6 +9871,47 @@
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 0 1px rgba(107,231,255,.10),0 2px 7px rgba(0,0,0,.26)!important;
 }
 
+
+
+/* patch096: place top clock on the same row as nickname */
+.profile .row{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  min-width:0!important;
+}
+.profile .row .namebox{
+  flex:1 1 auto!important;
+  min-width:0!important;
+}
+.profile .row .day-clock{
+  order:0!important;
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+}
+.profile .gold{
+  width:max-content!important;
+}
+@media(max-width:380px){
+  .profile .row{gap:5px!important}
+  .profile .row .day-clock{
+    height:18px!important;
+    min-height:18px!important;
+    padding:2px 5px 2px 4px!important;
+    gap:3px!important;
+  }
+  .profile .row .day-clock b{font-size:9px!important}
+  .profile .row .day-clock .dayIcon{
+    flex-basis:12px!important;
+    width:12px!important;
+    height:12px!important;
+    font-size:9px!important;
+    line-height:12px!important;
+  }
+}
+
 </style>
 
 <style id="birdsys-visible-edge-patch">
@@ -9993,10 +10034,61 @@
     max-height:44px!important;
   }
 }
+
+
+/* patch098: align top clock with gold line and pin it to the far right */
+.avatar-wrap{
+  position:relative!important;
+  overflow:visible!important;
+}
+.profile .gold{
+  width:100%!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  margin-top:5px!important;
+  min-width:0!important;
+}
+.profile .gold .day-clock{
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  order:99!important;
+  flex:0 0 auto!important;
+  margin-left:auto!important;
+  margin-right:0!important;
+  height:18px!important;
+  min-height:18px!important;
+  padding:2px 6px 2px 5px!important;
+  gap:3px!important;
+  z-index:auto!important;
+}
+.profile .gold .day-clock b{
+  font-size:9px!important;
+}
+.profile .gold .day-clock .dayIcon{
+  flex:0 0 12px!important;
+  width:12px!important;
+  height:12px!important;
+  font-size:9px!important;
+  line-height:12px!important;
+}
+.profile .row .day-clock{
+  margin-left:0!important;
+}
+@media(max-height:690px){
+  .profile .gold .day-clock{
+    height:18px!important;
+    min-height:18px!important;
+  }
+}
 </style>
 </head><body>
 <main class="phone">
-<header class="top"><div class="avatar"></div><section class="profile"><div class="row"><span class="badge">Lv. 1</span><div class="namebox"><div class="name">모험가 레몬에이드</div></div></div><div class="gold"><span class="day-clock" id="dayClock"><span class="dayIcon" id="dayIcon">☀️</span><b id="dayTime">00:00</b></span><span class="coin"></span><b id="goldText">0</b></div></section><button class="menubtn" data-open="menu" aria-label="메뉴 열기"><span class="ham"></span></button></header>
+<header class="top"><div class="avatar-wrap"><div class="avatar"></div></div><section class="profile"><div class="row"><span class="badge">Lv. 1</span><div class="namebox"><div class="name">모험가 레몬에이드</div></div></div><div class="gold"><span class="coin"></span><b id="goldText">0</b><span class="day-clock" id="dayClock"><span class="dayIcon" id="dayIcon">☀️</span><b id="dayTime">00:00</b></span></div></section><button class="menubtn" data-open="menu" aria-label="메뉴 열기"><span class="ham"></span></button></header>
 <section class="game town-bg"><div class="stars" aria-hidden="true"></div><div class="sun"></div><div class="moon" aria-hidden="true"></div><div class="sky-horizon-mask" aria-hidden="true"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="flock"><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i></div><div class="flock f2"><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i></div><div class="flock f3"><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i><i class="bird"></i></div><div class="sky-brawl brawl-run" aria-hidden="true"><i class="duel-bird victor"></i><i class="duel-bird runner"></i><i class="brawl-spark"></i></div><div class="sky-brawl brawl-fall" aria-hidden="true"><i class="duel-bird victor"></i><i class="duel-bird faller"></i><i class="brawl-spark"></i></div>
 <div class="map"><div class="town-scene" aria-hidden="true"><div class="town-wall"></div><div class="town-castle"><i class="clock-tower" id="clockTower" aria-hidden="true"><span class="clock-face"><b class="clock-hand clock-hour"></b><b class="clock-hand clock-minute"></b></span></i></div><div class="town-house shop micro h-shop"></div><div class="town-house guild micro h-guild"></div><div class="town-house academy micro h-academy"></div><div class="town-house inn micro h-inn"></div><div class="town-house half cottage h-half-1"></div><div class="town-house half amber h-half-2"></div><div class="town-house half violet h-half-3"></div><div class="town-house half tan h-half-4"></div><div class="town-house two-third red h-two-1"></div><div class="town-house two-third blue h-two-2"></div><div class="town-fountain"></div><div class="town-road"></div><div class="town-tree t1"></div><div class="town-tree t2"></div><div class="town-tree extra t3"></div><div class="town-tree extra t4"></div><div class="town-tree extra t5"></div><div class="town-tree extra t6"></div><div class="town-tree extra t7"></div><div class="town-tree extra t8"></div><div class="flower-bed fb1"></div><div class="flower-bed fb2"></div><div class="flower-bed fb3"></div><div class="flower-bed fb4"></div><div class="town-animal chicken chicken-a"><i></i></div><div class="town-animal chicken chicken-b"><i></i></div><div class="town-animal dog dog-a"><i></i></div></div><div class="hill h1"></div><div class="hill h2"></div><div class="ground"></div><div class="player-status"><div class="pGauge hp"><span>HP</span><strong id="hpText">50/50</strong><div class="pMeter"><i id="hpBar" style="width:100%"></i></div></div><div class="pGauge mp"><span>MP</span><strong id="mpText">20/20</strong><div class="pMeter"><i id="mpBar" style="width:100%"></i></div></div><div class="pGauge xp"><span>EXP</span><strong id="xpText">0/100</strong><div class="pMeter"><i id="xpBar" style="width:0%"></i></div></div></div><div class="obj player" id="player"><i class="sword"></i><i class="hair"></i><i class="head"></i><i class="body"></i><i class="arm l"></i><i class="arm r"></i><i class="leg l"></i><i class="leg r"></i><i class="impact-fx"></i></div><div class="char-label player-label"><span>Lv. 1</span><b>모험가 레몬에이드</b></div><div class="obj slime monster m-slime" id="slime"><i class="mouth"></i><i class="slash-fx"></i></div><div class="char-label slime-label grade-normal"><span>Lv. 1</span><b><em class="gradeMark grade-normal">[일반]</em> 슬라임</b></div><div class="monster-question" id="monsterQuestion">?</div></div>
 <div class="enemy"><div class="eGauge hp"><span>HP</span><strong id="eText">18/18</strong><div class="eBar"><i id="eBar"></i></div></div></div>
@@ -10007,6 +10099,95 @@
 <section class="overlay" id="menu"><div class="modal"><div class="mhead"><h2 class="mtitle">메뉴</h2><button class="close" data-close>X</button></div><div class="mbody"><div class="grid" id="menugrid"></div></div></div></section>
 <section class="overlay" id="panel"><div class="modal"><div class="mhead"><h2 class="mtitle" id="pTitle">정보</h2><button class="close" data-close>X</button></div><div class="mbody" id="pBody"></div></div></section>
 </main>
+
+
+<script id="patch113-storage-availability-guard">
+/* patch113: storage availability guard; normal localStorage behavior is left untouched */
+(function(){
+  if(window.__index5StorageAvailabilityGuard)return;
+  window.__index5StorageAvailabilityGuard=true;
+  var report={available:false,fallback:false,error:''};
+  function makeFallback(){
+    var data={};
+    return {
+      getItem:function(key){key=String(key);return Object.prototype.hasOwnProperty.call(data,key)?data[key]:null;},
+      setItem:function(key,value){data[String(key)]=String(value);},
+      removeItem:function(key){delete data[String(key)];},
+      clear:function(){data={};},
+      key:function(index){var keys=Object.keys(data);return keys[index]||null;},
+      get length(){return Object.keys(data).length;}
+    };
+  }
+  try{
+    var s=window.localStorage;
+    var probe='__index5_storage_probe__';
+    s.setItem(probe,'1');
+    s.removeItem(probe);
+    report.available=true;
+  }catch(e){
+    report.error=String(e&&e.message||e||'storage unavailable');
+    try{
+      var fallback=makeFallback();
+      Object.defineProperty(window,'localStorage',{value:fallback,configurable:true});
+      report.fallback=true;
+    }catch(_){
+      report.fallback=false;
+    }
+  }
+  window.__index5StorageAvailabilityReport=function(){
+    return {
+      available:!!report.available,
+      fallback:!!report.fallback,
+      error:report.error
+    };
+  };
+})();
+</script>
+<script id="patch112-storage-preflight-guard">
+/* patch112: early storage preflight only; preserves valid data and has no UI/gameplay mutation */
+(function(){
+  if(window.__index5StoragePreflightGuard)return;
+  window.__index5StoragePreflightGuard=true;
+  var checked=[];
+  var repaired=[];
+  var specs={
+    'index5.equipmentState.v2':'object',
+    'index5.equipmentSlotPlacement.v1':'object',
+    'index5.dualWeaponSlots.v2':'object',
+    'index5.autoPotionSlots.v1':'object',
+    'index5.equipmentEnhanceLevels.v103':'object',
+    'index5.townFacilityOrder.v1':'array',
+    'index5.mainMenuCardOrder.v1':'array',
+    'index5.bagSlotOrder.v1':'array'
+  };
+  function valid(value,type){
+    if(type==='array')return Array.isArray(value);
+    return value&&typeof value==='object'&&!Array.isArray(value);
+  }
+  function backupAndClear(key,raw,reason){
+    try{
+      var bak='index5.corruptBackup.'+key+'.'+Date.now();
+      localStorage.setItem(bak,String(raw));
+    }catch(_){ }
+    try{localStorage.removeItem(key);}catch(_){ }
+    repaired.push({key:key,reason:reason});
+  }
+  Object.keys(specs).forEach(function(key){
+    try{
+      var raw=localStorage.getItem(key);
+      if(raw==null||raw==='')return;
+      checked.push(key);
+      var parsed=JSON.parse(raw);
+      if(!valid(parsed,specs[key]))backupAndClear(key,raw,'type');
+    }catch(_){
+      try{backupAndClear(key,localStorage.getItem(key),'parse');}catch(__){ }
+    }
+  });
+  window.__index5StoragePreflightReport=function(){
+    return {checked:checked.slice(),repaired:repaired.slice()};
+  };
+})();
+</script>
 <script>
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const menuItems=['정보','스탯','가방','장비','스킬','퀘스트','도감','길드','이벤트','출석체크','우편함','설정'];const ids=['info','stats','inventory','equipment','skill','quest','codex','guild','event','attendance','mail','settings'];
@@ -16213,7 +16394,7 @@ body.woodenSwordEquipped .player .sword{
 </style>
 
 
-<style id="patch175-bag-drag-slot-move">
+<style id="patch175-bag-drag-slot-move-style">
 /* patch175: inventory slot drag/move inside bag only */
 .menuInventoryPanel.bookBagPanel.bagFullPanel .bagSlotGrid.bagSlotDragReady .bagSlot{
   touch-action:none!important;
@@ -16230,7 +16411,7 @@ body.woodenSwordEquipped .player .sword{
 .bagSlotMoveGhost .tradeCard{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;pointer-events:none!important}
 @media(max-height:690px){.bagSlotMoveGhost{transform:scale(1.035)!important}}
 </style>
-<script id="patch175-bag-drag-slot-move">
+<script id="patch175-bag-drag-slot-move-script">
 /* patch175: bag items can be dragged between inventory slots; shop trade drag is left untouched */
 (function(){
   const SLOT_KEY='index5.bagSlotOrder.v1';
@@ -17270,7 +17451,7 @@ body.woodenSwordEquipped .player .sword{
 
 
 
-<style id="patch188-equipment-layout">
+<style id="patch188-equipment-layout-style">
 /* patch188: decorated equipment window - left character slot board + right bag-style item shelf */
 #panel.show:has(.equipmentLayoutPanel) .modal{
   height:min(88vh,720px)!important;
@@ -17600,7 +17781,7 @@ body.woodenSwordEquipped .player .sword{
 }
 </style>
 
-<script id="patch188-equipment-layout">
+<script id="patch188-equipment-layout-script">
 /* patch188: replace equipment list with character-shaped slot board and a bag-style item shelf */
 (function(){
   const BASE_EQUIP_BAG_SLOTS = 18;
@@ -17918,7 +18099,7 @@ body.woodenSwordEquipped .player .sword{
 }
 </style>
 
-<style id="patch191-equipment-uniform-drag">
+<style id="patch191-equipment-uniform-drag-style">
 /* patch191: 장비창 카드 통일 + 드래그 장착 */
 #panel.show:has(.equipmentLayoutPanel) .modal{height:min(90vh,720px)!important;max-height:min(90vh,720px)!important}
 #panel.show:has(.equipmentLayoutPanel) #pBody{padding:8px!important;overflow:hidden!important}
@@ -17948,7 +18129,7 @@ body.woodenSwordEquipped .player .sword{
 .equipSummary{display:none!important}.equipDragGhostCard{position:fixed!important;z-index:99999!important;pointer-events:none!important;width:72px!important;height:72px!important;opacity:.96!important;transform:translate(-50%,-50%) scale(1.06)!important;filter:drop-shadow(0 14px 24px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(107,231,255,.38))!important}.equipDraggingSource{opacity:.34!important;filter:saturate(.7)!important}
 @media(max-width:390px), (max-height:690px){#panel.show:has(.equipmentLayoutPanel) #pBody{padding:6px!important}.equipmentLayoutPanel{gap:6px!important}.equipDollPane,.equipBagPane{padding:6px!important}.equipPaneTitle{padding:5px 6px!important;margin-bottom:4px!important}.equipDollGrid{gap:4px!important;padding:2px 5px 4px!important}.equipSlot{padding:3px!important;grid-template-rows:12px minmax(0,1fr)!important}.equipSlotLabel{font-size:8px!important;line-height:12px!important}.equipMiniCard b{font-size:7.1px!important}.equipMiniCard .rewardMiniIcon,.equipMiniCard .tradeIcon.itemIcon,.equipMiniCard .itemIcon{max-width:34px!important;max-height:34px!important}.equipBagGrid{gap:4px!important}.equipBagSlot{padding:3px!important}}
 </style>
-<script id="patch191-equipment-uniform-drag">
+<script id="patch191-equipment-uniform-drag-script">
 (function(){
   const BASE=18, KEY='index5.equipmentSlotPlacement.v1';
   const LABEL={head:'머리',neck:'목걸이',left:'왼손',body:'몸통',right:'오른손',feet:'발',ringL:'반지',ringR:'반지'};
@@ -18435,7 +18616,7 @@ body.woodenSwordEquipped .player .sword{
 </style>
 
 
-<style id="patch194-equipment-8-8-grid">
+<style id="patch194-equipment-8-8-grid-style">
 /* patch194: simplify equipment window to exactly 8 equipment slots + 8 bag slots */
 #panel.show:has(.equipmentSimple88Panel) .modal{height:min(90vh,720px)!important;max-height:min(90vh,720px)!important;display:grid!important;grid-template-rows:auto minmax(0,1fr)!important}
 #panel.show:has(.equipmentSimple88Panel) #pBody{height:100%!important;max-height:none!important;min-height:0!important;overflow:hidden!important;padding:8px!important}
@@ -18469,7 +18650,7 @@ body.woodenSwordEquipped .player .sword{
 @media(max-width:390px),(max-height:690px){#panel.show:has(.equipmentSimple88Panel) #pBody{padding:6px!important}.equipmentSimple88Panel{gap:6px!important}.equipmentSimple88Panel .equipPane{padding:6px!important;border-radius:16px!important}.equipmentSimple88Panel .equipPaneTitle{min-height:25px!important;margin-bottom:5px!important;padding:4px 6px!important}.equipmentSimple88Panel .equipPaneTitle b{font-size:11px!important}.equipmentSimple88Panel .equipPaneTitle span{font-size:7.4px!important;max-width:132px!important}.equipGrid88,.equipBagGrid88{gap:5px!important}.equipSlot88,.equipBagSlot88{padding:3px!important;border-radius:12px!important}.equipSlot88Label{left:6px!important;top:6px!important;font-size:9.2px!important}.equipmentSimple88Panel .equipMiniCard,.equipmentSimple88Panel .tradeCard.bagItemCard.equipMiniCard,.equipmentSimple88Panel .equipFixedCard{padding:9px 6px 10px!important;row-gap:6px!important;border-radius:12px!important}.equipmentSimple88Panel .equipMiniCard .rewardMiniIcon,.equipmentSimple88Panel .equipMiniCard .tradeIcon.itemIcon,.equipmentSimple88Panel .equipMiniCard .itemIcon,.equipmentSimple88Panel .equipFixedCard .rewardMiniIcon{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;max-width:50px!important;max-height:50px!important;border-radius:15px!important}.equipmentSimple88Panel .equipMiniCard b,.equipmentSimple88Panel .equipFixedCard b{font-size:8.4px!important}}
 </style>
 
-<script id="patch194-equipment-8-8-grid">
+<script id="patch194-equipment-8-8-grid-script">
 /* patch194: render equipment as 8 fixed equipment cells and 8 bag cells */
 (function(){
   const PLACE_KEY='index5.equipmentSlotPlacement.v1';
@@ -18513,7 +18694,7 @@ body.woodenSwordEquipped .player .sword{
 
 
 
-<style id="patch195-equipment-left-bag-3x8">
+<style id="patch195-equipment-left-bag-3x8-style">
 /* patch195: equipment left 1-column list, bag right 3x8 grid */
 #panel.show:has(.equipmentLeftBag24Panel) .modal{
   height:min(90vh,720px)!important;
@@ -18782,7 +18963,7 @@ body.woodenSwordEquipped .player .sword{
 }
 </style>
 
-<script id="patch195-equipment-left-bag-3x8">
+<script id="patch195-equipment-left-bag-3x8-script">
 /* patch195: render equipment left vertical 8 slots and bag right 3 columns x 8 rows */
 (function(){
   const PLACE_KEY='index5.equipmentSlotPlacement.v1';
@@ -18828,7 +19009,7 @@ body.woodenSwordEquipped .player .sword{
 })();
 </script>
 
-<style id="patch196-equipment-compare-unequip">
+<style id="patch196-equipment-compare-unequip-style">
 /* patch196: equipment compare view, 2-column bag, drag unequip */
 .itemIcon.item-ironSword:before,.tradeIcon.item-ironSword:before,.rewardMiniIcon.item-ironSword:before{content:"";position:absolute;left:50%;top:6%;width:13%;height:64%;transform:translateX(-50%) rotate(36deg);transform-origin:50% 80%;border:1px solid rgba(22,33,48,.85);border-radius:5px 5px 2px 2px;background:linear-gradient(90deg,#6f8997 0 12%,#f8fdff 18% 48%,#a7c6d2 52% 78%,#4d6672 84% 100%);box-shadow:0 0 7px rgba(166,244,255,.38)}
 .itemIcon.item-ironSword:after,.tradeIcon.item-ironSword:after,.rewardMiniIcon.item-ironSword:after{content:"";position:absolute;left:50%;top:56%;width:52%;height:11%;transform:translateX(-50%) rotate(36deg);border-radius:999px;background:linear-gradient(90deg,#5f371d,#ffd36b 48%,#5f371d);box-shadow:0 0 0 1px rgba(40,22,10,.75),0 10px 0 -2px #8c5b2d}
@@ -18865,7 +19046,7 @@ body.woodenSwordEquipped .player .sword{
 @media(max-width:380px){.equipmentComparePanel{grid-template-columns:minmax(168px,1.25fr) minmax(108px,.75fr)!important;gap:5px!important}.equipmentComparePanel .eqEquipRow{grid-template-columns:46px minmax(0,1fr)!important;gap:3px!important}.equipmentComparePanel .eqPane{padding:5px!important}.equipmentComparePanel .eqBagGrid{gap:3px!important}}
 </style>
 
-<script id="patch196-equipment-compare-unequip">
+<script id="patch196-equipment-compare-unequip-script">
 /* patch196: equipment stats beside slots, click-to-compare, iron sword, unequip by dragging to bag */
 (function(){
   const EQUIP_KEY='index5.equipmentState.v2';
@@ -19065,7 +19246,7 @@ body.woodenSwordEquipped .player .sword{
 
 
 <!-- patch199: equipped items move out of bag slots; no E badge anywhere -->
-<style id="patch199-equipped-move-out-of-bag">
+<style id="patch199-equipped-move-out-of-bag-style">
 .equipBadge{display:none!important;visibility:hidden!important;opacity:0!important}
 .equipmentMovePanel199 .eqCard em,.equipmentMovePanel199 .eqFixedCard em{display:none!important}
 .equipmentMovePanel199 .eqBagSlot.empty::after{content:"";position:absolute;inset:0;display:grid;place-items:center;color:rgba(237,247,255,.26);font-size:18px;font-weight:1000}
@@ -19084,7 +19265,7 @@ body.woodenSwordEquipped .player .sword{
 .bagSlotMoveGhost199{position:fixed!important;z-index:99999!important;pointer-events:none!important;margin:0!important;box-sizing:border-box!important;opacity:.96!important;transform:scale(1.04)!important;transform-origin:center!important;filter:drop-shadow(0 16px 28px rgba(0,0,0,.62)) drop-shadow(0 0 12px rgba(107,231,255,.28))!important}
 .bagSlotMoveGhost199 .tradeCard{width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;pointer-events:none!important}
 </style>
-<script id="patch199-equipped-move-out-of-bag">
+<script id="patch199-equipped-move-out-of-bag-script">
 (function(){
   if(window.__patch199EquippedMoveOutOfBag)return;
   window.__patch199EquippedMoveOutOfBag=true;
@@ -21554,12 +21735,12 @@ body.woodenSwordEquipped .player .sword{
 </script>
 
 
-<style id="patch231-disable-browser-zoom">
+<style id="patch231-disable-browser-zoom-style">
 html,body,.phone,.game{
   touch-action:manipulation;
 }
 </style>
-<script id="patch231-disable-browser-zoom">
+<script id="patch231-disable-browser-zoom-script">
 (function(){
   const lockZoom=function(e){
     e.preventDefault();
@@ -21575,7 +21756,7 @@ html,body,.phone,.game{
 </script>
 
 
-<style id="patch232-hide-drag-qty-stronger">
+<style id="patch232-hide-drag-qty-stronger-style">
 .tradeDragGhost .bagQtyBadge,
 .tradeDragGhostExact .bagQtyBadge,
 .bagSlotMoveGhost .bagQtyBadge,
@@ -21597,7 +21778,7 @@ html,body,.phone,.game{
   display:none!important;
 }
 </style>
-<script id="patch232-hide-drag-qty-stronger">
+<script id="patch232-hide-drag-qty-stronger-script">
 (function(){
   const GHOST_SELECTOR=[
     '.tradeDragGhost',
@@ -22868,7 +23049,7 @@ body.weaponInLeftHand.ironSwordEquipped .player .sword:after{
 </script>
 
 
-<style id="patch202-dual-sword-both-hands">
+<style id="patch202-dual-sword-both-hands-style">
 /* patch202: show sword weapons in both hands at the same time */
 .player > .sword{display:none!important}
 .player .dualSword202{
@@ -22991,7 +23172,7 @@ body.leftIron202 .player.attacking .dualSword202.left{
   animation:dualSwordCutLeft202 .54s ease-out!important;
 }
 </style>
-<script id="patch202-dual-sword-both-hands">
+<script id="patch202-dual-sword-both-hands-script">
 (function(){
   if(window.__patch202DualSwordBothHands)return;
   window.__patch202DualSwordBothHands=true;
@@ -23164,7 +23345,7 @@ body.leftIron202 .player.attacking .dualSword202.left{
 </script>
 
 
-<style id="patch204-left-hand-follow-delay">
+<style id="patch204-left-hand-follow-delay-style">
 /* patch204: right hand attacks first, left hand follows 0.3s later */
 body.leftWooden202 .player.attacking .dualSword202.left,
 body.leftIron202 .player.attacking .dualSword202.left{
@@ -23175,7 +23356,7 @@ body.leftIron202 .player.leftFollowAttack204 .dualSword202.left{
   animation:dualSwordCutLeft202 .54s ease-out!important;
 }
 </style>
-<script id="patch204-left-hand-follow-delay">
+<script id="patch204-left-hand-follow-delay-script">
 (function(){
   if(window.__patch204LeftHandFollowDelay)return;
   window.__patch204LeftHandFollowDelay=true;
@@ -23241,7 +23422,7 @@ body.leftIron202 .player.leftFollowAttack204 .dualSword202.left{
 })();
 </script>
 
-<style id="patch205-character-sword-sync">
+<style id="patch205-character-sword-sync-style">
 /* patch205: keep equipped sword visuals anchored to the character hands */
 .player > .sword{display:none!important}
 .player .dualSword202{position:absolute!important;display:none!important;width:20px!important;height:58px!important;overflow:visible!important;border:0!important;background:none!important;z-index:7!important;pointer-events:none!important;filter:drop-shadow(1px 2px 0 #0007)!important;will-change:transform}
@@ -23264,7 +23445,7 @@ body.hasRightWeapon202 .player.attacking .dualSword202.right{animation:dualSword
 body.hasLeftWeapon202 .player.attacking .dualSword202.left{animation:none!important}
 body.hasLeftWeapon202:not(.hasRightWeapon202) .player.attacking .dualSword202.left,body.hasLeftWeapon202 .player.leftFollowAttack204 .dualSword202.left{animation:dualSwordCutLeft205 .54s ease-out!important}
 </style>
-<script id="patch205-character-sword-sync">
+<script id="patch205-character-sword-sync-script">
 (function(){
   if(window.__patch205CharacterSwordSync)return;
   window.__patch205CharacterSwordSync=true;
@@ -23291,7 +23472,7 @@ body.hasLeftWeapon202:not(.hasRightWeapon202) .player.attacking .dualSword202.le
 })();
 </script>
 
-<style id="patch206-sword-unequip-resync">
+<style id="patch206-sword-unequip-resync-style">
 /* patch206: stale equipped-sword cleanup after unequip/re-equip */
 .player > .sword,
 body.woodenSwordEquipped .player > .sword,
@@ -23305,7 +23486,7 @@ body:not(.hasLeftWeapon202) .player .dualSword202.left{
   display:none!important;
 }
 </style>
-<script id="patch206-sword-unequip-resync">
+<script id="patch206-sword-unequip-resync-script">
 (function(){
   if(window.__patch206SwordUnequipResync)return;
   window.__patch206SwordUnequipResync=true;
@@ -23487,7 +23668,7 @@ body:not(.hasLeftWeapon202) .player .dualSword202.left{
 })();
 </script>
 
-<style id="patch207-single-sword-switch-cleanup">
+<style id="patch207-single-sword-switch-cleanup-style">
 /* patch207: when switching swords, never let the previous sword remain on the character */
 .player > .sword,
 body.woodenSwordEquipped .player > .sword,
@@ -23497,7 +23678,7 @@ body.ironSwordEquipped .player > .sword{
   opacity:0!important;
 }
 </style>
-<script id="patch207-single-sword-switch-cleanup">
+<script id="patch207-single-sword-switch-cleanup-script">
 (function(){
   if(window.__patch207SingleSwordSwitchCleanup)return;
   window.__patch207SingleSwordSwitchCleanup=true;
@@ -23610,7 +23791,7 @@ body.ironSwordEquipped .player > .sword{
 })();
 </script>
 
-<style id="patch208-dual-hand-slot-independent-fix">
+<style id="patch208-dual-hand-slot-independent-fix-style">
 /* patch208: keep left/right weapon slots independent after sword switching */
 .player > .sword{
   display:none!important;
@@ -23618,7 +23799,7 @@ body.ironSwordEquipped .player > .sword{
   opacity:0!important;
 }
 </style>
-<script id="patch208-dual-hand-slot-independent-fix">
+<script id="patch208-dual-hand-slot-independent-fix-script">
 (function(){
   if(window.__patch208DualHandSlotIndependentFix)return;
   window.__patch208DualHandSlotIndependentFix=true;
@@ -24118,7 +24299,7 @@ body.ironSwordEquipped .player > .sword{
 </script>
 
 
-<style id="patch211-sword-visual-node-reset">
+<style id="patch211-sword-visual-node-reset-style">
 /* patch211: retire stale legacy sword nodes and redraw only the currently equipped hand weapons */
 .player > .sword,
 .player .dualSword202{
@@ -24237,7 +24418,7 @@ body.ironSwordEquipped .player > .sword{
   100%{transform:rotate(-32deg)}
 }
 </style>
-<script id="patch211-sword-visual-node-reset">
+<script id="patch211-sword-visual-node-reset-script">
 (function(){
   if(window.__patch211SwordVisualNodeReset)return;
   window.__patch211SwordVisualNodeReset=true;
@@ -24946,7 +25127,7 @@ body.ironSwordEquipped .player > .sword{
 })();
 </script>
 
-<style id="patch316-edge-light-weapon-options-left-arm">
+<style id="patch316-edge-light-weapon-options-left-arm-style">
 /* patch316: Edge-safe final override. No heavy DOM observer. */
 body:not(.hasLeftWeapon202) .player .arm.l,
 body:not(.leftWooden202):not(.leftIron202) .player .arm.l{
@@ -24966,7 +25147,7 @@ body.leftIron202 .player .arm.l{
   transform:rotate(-13deg)!important;
 }
 </style>
-<script id="patch316-edge-light-weapon-options-left-arm">
+<script id="patch316-edge-light-weapon-options-left-arm-script">
 (function(){
   if(window.__patch316EdgeLightWeaponOptionsLeftArm)return;
   window.__patch316EdgeLightWeaponOptionsLeftArm=true;
@@ -25265,199 +25446,8 @@ body:not(.hasLeftWeapon202):not(.leftWooden202):not(.leftIron202) .player .arm.l
 </script>
 
 
-<style id="patch322-hide-iron-sword-current-build">
-/* patch322: keep ironSword data for future expansion, but remove it from the current UI/build. */
-[data-item="ironSword"],
-[data-kind="ironSword"],
-.item-ironSword,
-body.rightIron202 .player .charSword211.right,
-body.leftIron202 .player .charSword211.left,
-.player .charSword211[data-weapon="ironSword"],
-.player .charSword211.iron{
-  display:none!important;
-}
-</style>
-<script id="patch322-hide-iron-sword-current-build">
-(function(){
-  if(window.__patch322HideIronSwordCurrentBuild) return;
-  window.__patch322HideIronSwordCurrentBuild = true;
 
-  var HIDDEN_KIND = 'ironSword';
-  var HIDDEN_NAME = '철검';
-  var EQUIP_KEY = 'index5.equipmentState.v2';
-  var PLACE_KEY = 'index5.equipmentSlotPlacement.v1';
-  var hooked = false;
 
-  function readJson(key){
-    try{
-      var raw = localStorage.getItem(key);
-      if(!raw) return {};
-      var parsed = JSON.parse(raw);
-      return parsed && typeof parsed === 'object' ? parsed : {};
-    }catch(_){ return {}; }
-  }
-  function writeJson(key,obj){
-    try{ localStorage.setItem(key, JSON.stringify(obj || {})); }catch(_){ }
-  }
-  function removeFromArray(arr, value){
-    if(!Array.isArray(arr)) return;
-    for(var i = arr.length - 1; i >= 0; i--){
-      if(arr[i] === value) arr.splice(i, 1);
-    }
-  }
-  function stripPanelRows(){
-    try{
-      if(typeof panelData === 'object' && panelData){
-        Object.keys(panelData).forEach(function(key){
-          if(!Array.isArray(panelData[key])) return;
-          panelData[key] = panelData[key].filter(function(row){
-            return !(row && (row[0] === HIDDEN_NAME || row[1] === HIDDEN_NAME || row[2] === HIDDEN_NAME));
-          });
-        });
-      }
-    }catch(_){ }
-  }
-  function stripIronState(){
-    try{
-      var state = readJson(EQUIP_KEY);
-      if(state[HIDDEN_KIND] !== false){
-        state[HIDDEN_KIND] = false;
-        writeJson(EQUIP_KEY, state);
-      }
-      window.__equipmentState = Object.assign({}, window.__equipmentState || {}, {ironSword:false});
-    }catch(_){ }
-    try{
-      var place = readJson(PLACE_KEY);
-      if(place && Object.prototype.hasOwnProperty.call(place, HIDDEN_KIND)){
-        delete place[HIDDEN_KIND];
-        writeJson(PLACE_KEY, place);
-      }
-    }catch(_){ }
-  }
-  function stripIronFromRuntimeData(){
-    try{
-      if(typeof itemDefs === 'object' && itemDefs && itemDefs[HIDDEN_KIND]){
-        itemDefs[HIDDEN_KIND].hidden = true;
-        itemDefs[HIDDEN_KIND].disabled = true;
-        itemDefs[HIDDEN_KIND].buy = null;
-        itemDefs[HIDDEN_KIND].sell = null;
-        itemDefs[HIDDEN_KIND].showInBag = false;
-        itemDefs[HIDDEN_KIND].showInShop = false;
-        itemDefs[HIDDEN_KIND].showInEquipmentBag = false;
-      }
-    }catch(_){ }
-    try{
-      if(typeof inventory === 'object' && inventory){
-        inventory[HIDDEN_KIND] = 0;
-      }
-    }catch(_){ }
-    try{
-      if(typeof bagStock !== 'undefined' && Array.isArray(bagStock)) removeFromArray(bagStock, HIDDEN_KIND);
-    }catch(_){ }
-    stripPanelRows();
-    stripIronState();
-  }
-  function clearIronBodyState(){
-    try{
-      var b = document.body;
-      if(!b) return;
-      var hadRightIron = b.classList.contains('rightIron202');
-      var hadLeftIron = b.classList.contains('leftIron202');
-      b.classList.remove('rightIron202','leftIron202','ironSwordEquipped');
-      if(hadRightIron && !b.classList.contains('rightWooden202')){
-        b.classList.remove('hasRightWeapon202','weaponInRightHand');
-      }
-      if(hadLeftIron && !b.classList.contains('leftWooden202')){
-        b.classList.remove('hasLeftWeapon202','weaponInLeftHand');
-      }
-    }catch(_){ }
-  }
-  function removeNode(node){
-    try{ if(node && node.parentNode) node.parentNode.removeChild(node); }catch(_){ }
-  }
-  function removeIronNodes(root){
-    try{
-      root = root || document;
-      var direct = root.querySelectorAll ? root.querySelectorAll('[data-item="ironSword"],[data-kind="ironSword"],.player .charSword211[data-weapon="ironSword"],.player .charSword211.iron') : [];
-      for(var i=0;i<direct.length;i++){
-        var el = direct[i];
-        var removable = el.closest && el.closest('.eqBagSlot,.bagSlot,.tradeCard,.eqCard,.item,.card,.tradeItem,.rewardMiniCard,.popupItemCard,.shopInfoMiniCard,.tradePopup') || el;
-        removeNode(removable);
-      }
-      var iconOnly = root.querySelectorAll ? root.querySelectorAll('.item-ironSword,.tradeIcon.item-ironSword,.rewardMiniIcon.item-ironSword,.detailIcon.item-ironSword') : [];
-      for(var j=0;j<iconOnly.length;j++){
-        var icon = iconOnly[j];
-        var owner = icon.closest && icon.closest('[data-item="ironSword"],.tradeCard,.eqCard,.item,.card,.popupItemCard,.shopInfoMiniCard');
-        if(owner && /철검|ironSword/.test(owner.textContent || owner.getAttribute('data-item') || '')) removeNode(owner);
-      }
-      var panels = root.querySelectorAll ? root.querySelectorAll('.equipmentMovePanel199,.equipmentSimple88Panel,.equipmentLeftBag24Panel,.equipmentComparePanel,.menuInventoryPanel,.shopPanel,.tradeShop,.tradeShelf,.tradePopup,.shopItemInfoPopupLayer,.mbody,.modal') : [];
-      for(var p=0;p<panels.length;p++){
-        var cards = panels[p].querySelectorAll('.tradeCard,.eqCard,.eqBagSlot,.bagSlot,.item,.card,.popupItemCard,.shopInfoMiniCard');
-        for(var c=0;c<cards.length;c++){
-          var card = cards[c];
-          if((card.textContent || '').indexOf(HIDDEN_NAME) >= 0 || card.getAttribute('data-item') === HIDDEN_KIND){
-            removeNode(card);
-          }
-        }
-      }
-    }catch(_){ }
-    clearIronBodyState();
-  }
-  function refreshHiddenIron(){
-    stripIronFromRuntimeData();
-    clearIronBodyState();
-    removeIronNodes(document);
-    try{ if(typeof playerAbilities !== 'undefined' && typeof getAbilities === 'function') playerAbilities = getAbilities(); }catch(_){ }
-    try{ if(typeof bars === 'function') bars(); }catch(_){ }
-  }
-  function wrapFunction(name){
-    try{
-      var fn = window[name];
-      if(typeof fn !== 'function' || fn.__patch322HideIronSword) return;
-      var wrapped = function(){
-        stripIronFromRuntimeData();
-        var out = fn.apply(this, arguments);
-        setTimeout(refreshHiddenIron, 0);
-        return out;
-      };
-      wrapped.__patch322HideIronSword = true;
-      window[name] = wrapped;
-      try{ eval(name + ' = window[name]'); }catch(_){ }
-    }catch(_){ }
-  }
-  function hookRenderers(){
-    if(hooked) return;
-    hooked = true;
-    [
-      'setupIronSword','setupItems','syncInventoryData','renderInventoryPanel','renderShopPanel',
-      'renderEquipmentComparePanel196','renderEquipmentMovePanel199','renderEquipmentLeftBag24Panel',
-      'renderEquipmentSimple88Panel','renderDecoratedEquipmentPanel','renderPolishedEquipmentPanel',
-      'showShopItemInfoPopup','openPanel','setItemEquipped','syncDualSword202','syncCharSword211'
-    ].forEach(wrapFunction);
-  }
-
-  stripIronFromRuntimeData();
-  hookRenderers();
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ hookRenderers(); refreshHiddenIron(); });
-  }else{
-    refreshHiddenIron();
-  }
-  document.addEventListener('click', function(){ setTimeout(refreshHiddenIron, 0); }, true);
-  document.addEventListener('pointerup', function(){ setTimeout(refreshHiddenIron, 0); }, true);
-  try{
-    var mo = new MutationObserver(function(mutations){
-      var should = false;
-      for(var i=0;i<mutations.length;i++){
-        if(mutations[i].addedNodes && mutations[i].addedNodes.length){ should = true; break; }
-        if(mutations[i].type === 'attributes'){ should = true; break; }
-      }
-      if(should) setTimeout(function(){ hookRenderers(); refreshHiddenIron(); }, 0);
-    });
-    mo.observe(document.body || document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class','data-item','data-kind']});
-  }catch(_){ }
-})();
-</script>
 
 
 <script id="patch323-start-with-wooden-sword">
@@ -25531,6 +25521,1038 @@ body.leftIron202 .player .charSword211.left,
   }else{
     setTimeout(applyStarterWoodenSword, 0);
   }
+})();
+</script>
+
+
+
+<style id="patch099-top-box-height-fit">
+/* patch099: fit the top info box height to the current avatar/profile/menu layout. */
+.top{
+  min-height:72px!important;
+  padding:10px 14px 8px!important;
+  align-items:center!important;
+}
+.avatar-wrap{
+  align-self:center!important;
+}
+.profile{
+  align-self:center!important;
+}
+.menubtn{
+  align-self:center!important;
+}
+.profile .row{
+  min-height:22px!important;
+}
+.profile .gold{
+  margin-top:4px!important;
+}
+@media(max-height:690px){
+  .top{
+    min-height:68px!important;
+    padding:8px 14px 7px!important;
+  }
+  .profile .gold{
+    margin-top:3px!important;
+  }
+}
+</style>
+
+
+<style id="patch100-pc-sword-slash-fix-style">
+/* patch100: PC/fresh-browser fallback so the player always has a visible starter sword animation when no saved weapon visual exists. */
+body.hasRightWeapon202 .player > .sword,
+body.hasLeftWeapon202 .player > .sword{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+}
+</style>
+<script id="patch100-pc-sword-slash-fix-script">
+(function(){
+  if(window.__patch100PcSwordSlashFix)return;
+  window.__patch100PcSwordSlashFix=true;
+
+  var EQUIP_KEY='index5.equipmentState.v2';
+  var PLACE_KEY='index5.equipmentSlotPlacement.v1';
+  var DUAL_KEY='index5.dualWeaponSlots.v2';
+  var REPAIR_KEY='index5.pcStarterSwordRepairApplied.v1';
+
+  function readJson(key){
+    try{
+      var raw=localStorage.getItem(key);
+      if(!raw)return {};
+      var parsed=JSON.parse(raw);
+      return parsed&&typeof parsed==='object'?parsed:{};
+    }catch(_){return {};}
+  }
+  function writeJson(key,obj){
+    try{localStorage.setItem(key,JSON.stringify(obj||{}));}catch(_){ }
+  }
+  function ownsWoodenSword(){
+    try{
+      if(typeof inventory!=='undefined' && inventory){
+        if((inventory.woodenSword||0)<=0)inventory.woodenSword=1;
+        return (inventory.woodenSword||0)>0;
+      }
+    }catch(_){ }
+    return true;
+  }
+  function hasVisibleWeaponNode(){
+    return !!document.querySelector('#player .charSword211.right,#player .charSword211.left,#player .dualSword202.right,#player .dualSword202.left');
+  }
+  function callSwordSync(){
+    try{if(typeof window.syncCharacterSwordVisual211==='function')window.syncCharacterSwordVisual211();}catch(_){ }
+    try{if(typeof window.syncCharacterSwordVisual209==='function')window.syncCharacterSwordVisual209();}catch(_){ }
+    try{if(typeof window.syncDualSword202==='function')window.syncDualSword202();}catch(_){ }
+    try{if(typeof window.applyEquipmentVisualState==='function')window.applyEquipmentVisualState();}catch(_){ }
+  }
+  function seedStarterSwordIfNeeded(){
+    try{
+      var state=readJson(EQUIP_KEY);
+      var place=readJson(PLACE_KEY);
+      var dual=readJson(DUAL_KEY);
+      var alreadyMapped=!!(dual.right||dual.left||state.woodenSword===true||state.ironSword===true);
+
+      if(!alreadyMapped && localStorage.getItem(REPAIR_KEY)!=='1' && ownsWoodenSword()){
+        state.woodenSword=true;
+        state.ironSword=false;
+        place.woodenSword='right';
+        delete place.ironSword;
+        dual.right='woodenSword';
+        dual.left=null;
+        writeJson(EQUIP_KEY,state);
+        writeJson(PLACE_KEY,place);
+        writeJson(DUAL_KEY,dual);
+        try{localStorage.setItem(REPAIR_KEY,'1');}catch(_){ }
+        try{window.__equipmentState=Object.assign({},window.__equipmentState||{},state);}catch(_){ }
+      }
+
+      callSwordSync();
+    }catch(_){ }
+  }
+  function ensurePcSwordSlash(){
+    seedStarterSwordIfNeeded();
+    setTimeout(callSwordSync,0);
+    setTimeout(callSwordSync,80);
+    setTimeout(callSwordSync,220);
+  }
+
+  ensurePcSwordSlash();
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',ensurePcSwordSlash,{once:true});
+  }else{
+    setTimeout(ensurePcSwordSlash,0);
+  }
+  setTimeout(ensurePcSwordSlash,350);
+  setTimeout(ensurePcSwordSlash,900);
+
+  document.addEventListener('click',function(e){
+    if(e.target&&e.target.closest&&e.target.closest('#start,[data-open="field"]')){
+      setTimeout(ensurePcSwordSlash,0);
+      setTimeout(ensurePcSwordSlash,180);
+    }
+  },true);
+
+  try{
+    if(typeof pAtk==='function' && !pAtk.__patch100PcSwordSlashFix){
+      var oldPAtk=pAtk;
+      pAtk=function(){
+        ensurePcSwordSlash();
+        return oldPAtk.apply(this,arguments);
+      };
+      pAtk.__patch100PcSwordSlashFix=true;
+    }
+  }catch(_){ }
+})();
+</script>
+
+
+<style id="patch101-player-weapon-attack-motion-fix-style">
+/* patch101: make the current equipped weapon nodes visibly swing during player attacks.
+   The newer hand-weapon nodes keep their resting transform with !important,
+   so the swing is applied through the independent rotate property. */
+#player .charSword211.right,
+#player .charSword211.left{
+  rotate:0deg;
+  will-change:transform,rotate!important;
+}
+#player.attacking .charSword211.right{
+  animation:playerRightWeaponSwing101 .36s ease-out!important;
+}
+#player.attacking .charSword211.left.onlyLeft,
+#player.leftFollowAttack204 .charSword211.left{
+  animation:playerLeftWeaponSwing101 .42s ease-out!important;
+}
+@keyframes playerRightWeaponSwing101{
+  0%{rotate:-14deg}
+  42%{rotate:48deg}
+  100%{rotate:0deg}
+}
+@keyframes playerLeftWeaponSwing101{
+  0%{rotate:-12deg}
+  42%{rotate:44deg}
+  100%{rotate:0deg}
+}
+/* Legacy fallback: only used if an older weapon node is visible in a stale save. */
+#player.attacking .dualSword202.right{
+  animation:playerRightWeaponSwing101 .36s ease-out!important;
+}
+#player.attacking .dualSword202.left.onlyLeft,
+#player.leftFollowAttack204 .dualSword202.left{
+  animation:playerLeftWeaponSwing101 .42s ease-out!important;
+}
+</style>
+<script id="patch101-player-weapon-attack-motion-fix-script">
+(function(){
+  if(window.__patch101PlayerWeaponAttackMotionFix)return;
+  window.__patch101PlayerWeaponAttackMotionFix=true;
+
+  function syncWeaponNodes(){
+    try{ if(typeof window.syncCharacterSwordVisual211==='function')window.syncCharacterSwordVisual211(); }catch(_){ }
+    try{ if(typeof window.syncCharacterSwordVisual209==='function')window.syncCharacterSwordVisual209(); }catch(_){ }
+    try{ if(typeof window.syncDualSword202==='function')window.syncDualSword202(); }catch(_){ }
+    try{ if(typeof window.applyEquipmentVisualState==='function')window.applyEquipmentVisualState(); }catch(_){ }
+  }
+
+  try{
+    if(typeof window.pAtk==='function' && !window.pAtk.__patch101WeaponSwing){
+      var oldPAtk=window.pAtk;
+      window.pAtk=function(){
+        syncWeaponNodes();
+        return oldPAtk.apply(this,arguments);
+      };
+      window.pAtk.__patch101WeaponSwing=true;
+    }
+  }catch(_){ }
+
+  document.addEventListener('click',function(e){
+    if(e.target && e.target.closest && e.target.closest('#start,[data-open="field"]')){
+      setTimeout(syncWeaponNodes,0);
+      setTimeout(syncWeaponNodes,120);
+    }
+  },true);
+  syncWeaponNodes();
+  setTimeout(syncWeaponNodes,120);
+})();
+</script>
+<style id="patch103-town-card-preserve-craft-smith-style">
+/* patch103: keep existing town facility cards; only add working craft/smith entry behavior */
+#panel .townFacilities .item.craftSmithFacility103{
+  min-width:0;
+  min-height:86px;
+  grid-template-columns:1fr!important;
+  grid-template-rows:1fr auto;
+  align-items:stretch!important;
+  gap:7px!important;
+  padding:10px 9px!important;
+  border-radius:16px!important;
+  cursor:pointer;
+}
+#panel .townFacilities .item.craftSmithFacility103 .iname{
+  font-size:13px;
+  line-height:1.08;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#panel .townFacilities .item.craftSmithFacility103 .idesc{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  min-height:28px;
+  margin-top:4px;
+  overflow:hidden;
+  font-size:10px;
+  line-height:14px;
+}
+#panel .townFacilities .item.craftSmithFacility103 .cnt{
+  justify-self:start;
+  align-self:end;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#00000026;
+  border:1px solid #ffffff1c;
+  font-size:10px;
+  line-height:1;
+  color:#ffd36b!important;
+}
+#panel .townFacilities .item.craftSmithFacility103.craftEntry103 .cnt{color:#6be7ff!important;}
+.craftSmithPanel103{display:grid;gap:12px;color:#edf7ff;}
+.craftSmithWallet103{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:16px;background:linear-gradient(135deg,#16243df2,#0a101dea);border:1px solid #ffffff24;box-shadow:inset 0 1px 0 #fff1;}
+.craftSmithWallet103 b{color:#ffd36b;}
+.craftSmithTabs103{display:flex;gap:7px;overflow-x:auto;}
+.craftSmithTabs103::-webkit-scrollbar{display:none;}
+.craftSmithTab103{flex:0 0 auto;height:30px;padding:0 12px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff24;color:#9db0c7;font-size:11px;font-weight:1000;}
+.craftSmithTab103.active{background:#6be7ff2b;border-color:#6be7ff80;color:#edf7ff;}
+.craftSmithGrid103{display:grid;grid-template-columns:1fr;gap:9px;}
+.craftRecipeCard103,.smithBagCard103,.disassembleCard103{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;padding:10px;border-radius:17px;background:#ffffff10;border:1px solid #ffffff22;text-align:left;color:#edf7ff;}
+.craftRecipeCard103.locked,.smithBagCard103.locked,.disassembleCard103.locked{opacity:.58;}
+.craftRecipeIcon103,.smithCardIcon103{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(#253758,#111a2c);border:1px solid #ffffff26;font-size:20px;box-shadow:inset 0 1px 0 #fff1;}
+.craftRecipeInfo103 b,.smithBagCard103 b,.disassembleCard103 b{display:block;font-size:13px;font-weight:1000;}
+.craftRecipeInfo103 small,.smithBagCard103 small,.disassembleCard103 small{display:block;margin-top:3px;color:#9db0c7;font-size:10px;font-weight:800;line-height:1.35;}
+.craftNeedList103{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.craftNeed103{padding:3px 6px;border-radius:999px;background:#0006;border:1px solid #ffffff1f;font-size:9px;font-weight:900;color:#edf7ff;}
+.craftNeed103.missing{color:#ff9aa4;border-color:#ff6b784d;}
+.craftBtn103,.smithActionBtn103,.disassembleBtn103{height:34px;padding:0 12px;border-radius:12px;background:#ffd36b;color:#0b1322;font-size:11px;font-weight:1000;white-space:nowrap;}
+.craftBtn103:disabled,.smithActionBtn103:disabled,.disassembleBtn103:disabled{background:#ffffff18;color:#9db0c7;}
+.smithStage103{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:stretch;padding:10px;border-radius:20px;background:linear-gradient(135deg,#111b2ef2,#070c15e8);border:1px solid #a6f4ff38;box-shadow:0 10px 28px #0005;}
+.smithAnvil103{min-height:118px;border-radius:17px;background:radial-gradient(circle at 50% 24%,#ffffff22 0 12%,transparent 13%),linear-gradient(#283b58,#101827);border:1px solid #ffffff22;display:grid;place-items:center;text-align:center;}
+.smithAnvil103 i{display:block;font-style:normal;font-size:42px;filter:drop-shadow(0 4px 0 #0006);}
+.smithAnvil103 span{display:block;margin-top:4px;color:#9db0c7;font-size:10px;font-weight:1000;}
+.smithSlot103{display:grid;gap:7px;align-content:start;}
+.smithSlotTop103{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.smithSlotTop103 b{font-size:14px;}
+.smithLevel103{color:#ffd36b;font-weight:1000;}
+.smithRates103{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.smithRate103{padding:7px 5px;border-radius:12px;background:#ffffff10;border:1px solid #ffffff20;text-align:center;}
+.smithRate103 small{display:block;color:#9db0c7;font-size:9px;font-weight:900;}
+.smithRate103 b{display:block;margin-top:2px;font-size:13px;}
+.smithCost103{display:grid;gap:4px;padding:8px;border-radius:13px;background:#0005;border:1px solid #ffffff18;font-size:10px;font-weight:900;color:#9db0c7;}
+.smithCost103 b{color:#edf7ff;}
+.smithBag103{display:grid;gap:8px;}
+.smithBagTitle103,.craftSectionTitle103{display:flex;justify-content:space-between;align-items:end;gap:8px;margin-top:2px;font-size:12px;font-weight:1000;}
+.smithBagTitle103 small,.craftSectionTitle103 small{color:#9db0c7;font-size:10px;}
+.smithBagGrid103{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.smithBagCard103{grid-template-columns:auto 1fr;}
+.smithBagCard103.selected{background:#6be7ff25;border-color:#6be7ff91;}
+.smithBagCard103 .smithCardIcon103{width:34px;height:34px;}
+.disassembleList103{display:grid;gap:8px;}
+.disassembleCard103{grid-template-columns:auto 1fr auto;}
+.craftNote103{padding:9px 10px;border-radius:14px;background:#0005;border:1px dashed #ffffff28;color:#9db0c7;font-size:10px;line-height:1.45;font-weight:800;}
+@media(max-height:690px){.smithStage103{grid-template-columns:72px 1fr}.smithAnvil103{min-height:104px}.smithAnvil103 i{font-size:36px}.craftRecipeCard103,.smithBagCard103,.disassembleCard103{padding:9px}.craftRecipeIcon103{width:34px;height:34px}}
+</style>
+
+<script id="patch103-town-card-preserve-craft-smith-script">
+/* patch103: playable crafting/blacksmith without rewriting existing town card renderer */
+(function(){
+  var CRAFT_TAB_KEY='index5.craftSmith.tab.v103';
+  var EQ_LEVEL_KEY='index5.equipmentEnhanceLevels.v103';
+  var craftState={tab:'equip'};
+  var smithState={kind:'woodenSword'};
+  var ADDONS=[
+    ['제작소','입장','무기, 방어구, 악세사리, 강화석 제작'],
+    ['대장간','입장','장비 강화와 분해']
+  ];
+  function q(s){return document.querySelector(s)}
+  function qa(s){return Array.from(document.querySelectorAll(s))}
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function num(v){v=Number(v);return Number.isFinite(v)?v:0}
+  function safeLog(msg,kind){try{if(typeof log==='function')log(msg,kind||'system')}catch(_){}}
+  function addItem(kind,n){try{inventory[kind]=num(inventory[kind])+Math.max(0,Math.floor(num(n)||0))}catch(_){}}
+  function itemName(kind){try{return itemDefs&&itemDefs[kind]&&itemDefs[kind].name?itemDefs[kind].name:kind}catch(_){return kind}}
+  function itemDesc(kind){try{return itemDefs&&itemDefs[kind]&&itemDefs[kind].desc?itemDefs[kind].desc:''}catch(_){return ''}}
+  function itemIcon103(kind){try{if(itemDefs&&itemDefs[kind]&&itemDefs[kind].icon)return itemDefs[kind].icon}catch(_){}var map={woodenSword:'🗡️',ironSword:'⚔️',leatherArmor:'🥋',accuracyRing:'💍',enhanceStone:'🔶',highEssence:'🔷',lowCatalyst:'🔹',lowShard:'▫️',recipeIronSword:'📜',recipeLeatherArmor:'📜',recipeAccuracyRing:'📜',slimeJelly:'🟢'};return map[kind]||'·'}
+  function has(kind,n){try{return num(inventory[kind])>=num(n)}catch(_){return false}}
+  function spendNeeds(needs){Object.keys(needs||{}).forEach(function(k){inventory[k]=Math.max(0,num(inventory[k])-num(needs[k]))})}
+  function readLevels(){try{var v=JSON.parse(localStorage.getItem(EQ_LEVEL_KEY)||'{}');return v&&typeof v==='object'?v:{}}catch(_){return {}}}
+  function writeLevels(v){try{localStorage.setItem(EQ_LEVEL_KEY,JSON.stringify(v||{}))}catch(_){}}
+  function getEqLevel(kind){return Math.max(0,Math.min(20,num(readLevels()[kind])))}
+  function setEqLevel(kind,lv){var v=readLevels();v[kind]=Math.max(0,Math.min(20,Math.floor(num(lv))));writeLevels(v)}
+  function isSmithEquipment(kind){return ['woodenSword','ironSword','leatherArmor','accuracyRing'].indexOf(kind)>=0}
+  function setupItems103(){
+    try{
+      if(typeof itemDefs==='object'&&itemDefs){
+        if(itemDefs.woodenSword){itemDefs.woodenSword.icon=itemDefs.woodenSword.icon||'🗡️';itemDefs.woodenSword.recipeType='weapon'}
+        if(!itemDefs.ironSword)itemDefs.ironSword={name:'철검',icon:'⚔️',buy:null,sell:4,desc:'제작 가능한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:{pAtk:5,acc:3},equipSlot:['right','left'],slotType:'weapon',equipType:'weapon'};
+        if(!itemDefs.leatherArmor)itemDefs.leatherArmor={name:'가죽갑옷',icon:'🥋',buy:null,sell:6,desc:'제작 가능한 초급 방어구. 물리 방어력 +3, HP +10',stats:{pDef:3,hp:10},equipType:'armor'};
+        if(!itemDefs.accuracyRing)itemDefs.accuracyRing={name:'명중의 반지',icon:'💍',buy:null,sell:null,desc:'마을회관 또는 제작으로 획득. 명중률 +10%, 물리 방어력 +2',stats:{acc:10,pDef:2},equipSlot:['ringL','ringR'],slotType:'armor',equipType:'accessory'};
+        var extra={
+          recipeIronSword:{name:'철검 제작 레시피',icon:'📜',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 무기 제작법',material:true,recipe:true},
+          recipeLeatherArmor:{name:'가죽갑옷 제작 레시피',icon:'📜',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 방어구 제작법',material:true,recipe:true},
+          recipeAccuracyRing:{name:'명중 반지 제작 레시피',icon:'📜',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 악세사리 제작법',material:true,recipe:true},
+          highEssence:{name:'상급 마력핵',icon:'🔷',buy:null,sell:null,desc:'정예급 몬스터가 낮은 확률로 드랍하는 상급 재료',material:true},
+          lowCatalyst:{name:'하급 촉매',icon:'🔹',buy:null,sell:null,desc:'일반 몬스터/부스러기 조합으로 얻는 강화석 하급 재료',material:true},
+          lowShard:{name:'하급 부스러기',icon:'▫️',buy:null,sell:null,desc:'일반 몬스터 처치 또는 분해로 얻는 강화석 하급 부스러기',material:true,shard:true},
+          enhanceStone:{name:'강화석',icon:'🔶',buy:null,sell:null,desc:'대장간 강화에 필요한 소모 아이템',material:true}
+        };
+        Object.keys(extra).forEach(function(k){if(!itemDefs[k])itemDefs[k]=extra[k]});
+      }
+      ['recipeIronSword','recipeLeatherArmor','recipeAccuracyRing','highEssence','lowCatalyst','lowShard','enhanceStone','leatherArmor','ironSword'].forEach(function(k){if(inventory[k]==null)inventory[k]=0});
+      if(typeof bagStock!=='undefined'&&Array.isArray(bagStock))['ironSword','leatherArmor','accuracyRing','enhanceStone','highEssence','lowCatalyst','lowShard','recipeIronSword','recipeLeatherArmor','recipeAccuracyRing'].forEach(function(k){if(!bagStock.includes(k))bagStock.push(k)});
+      ensureTownAddons103();
+    }catch(_){ }
+  }
+  function ensureTownAddons103(){
+    try{
+      if(!panelData||!Array.isArray(panelData.town))return;
+      ADDONS.forEach(function(row){
+        var found=panelData.town.find(function(x){return x&&x[0]===row[0]});
+        if(found){found[1]='입장';found[2]=row[2];}
+      });
+      var names=new Set(panelData.town.map(function(x){return x&&x[0]}));
+      var missing=ADDONS.filter(function(x){return !names.has(x[0])});
+      if(!missing.length)return;
+      var idx=panelData.town.findIndex(function(x){return x&&x[0]==='마을회관'});
+      if(idx<0)idx=panelData.town.length-1;
+      panelData.town.splice(idx+1,0,...missing);
+    }catch(_){ }
+  }
+  function fixTownCards103(){
+    setupItems103();
+    qa('#panel .townFacilities .item').forEach(function(card){
+      var nameEl=card.querySelector('.iname');
+      var cntEl=card.querySelector('.cnt');
+      var descEl=card.querySelector('.idesc');
+      var name=(nameEl&&nameEl.textContent||'').trim();
+      if(name!=='제작소'&&name!=='대장간')return;
+      card.classList.remove('facility','waitingEntry','townCraftEntry','townBlacksmithEntry','tapArmed235');
+      card.classList.add('craftSmithFacility103');
+      card.classList.toggle('craftEntry103',name==='제작소');
+      card.classList.toggle('blacksmithEntry103',name==='대장간');
+      card.removeAttribute('data-facility');
+      card.removeAttribute('data-townhall');
+      card.setAttribute('data-craftsmith103',name==='대장간'?'blacksmith':'craft');
+      if(cntEl)cntEl.textContent='입장하기';
+      if(descEl)descEl.textContent=name==='대장간'?'장비 강화와 분해':'무기, 방어구, 악세사리, 강화석 제작';
+    });
+  }
+  var craftRecipes103={
+    equip:[
+      {key:'craftIronSword',name:'철검',result:'ironSword',qty:1,icon:'⚔️',cost:80,needs:{recipeIronSword:1,highEssence:2,lowCatalyst:4,slimeJelly:8},desc:'무기 제작 · 레시피 필요'},
+      {key:'craftLeatherArmor',name:'가죽갑옷',result:'leatherArmor',qty:1,icon:'🥋',cost:90,needs:{recipeLeatherArmor:1,highEssence:2,lowCatalyst:5,slimeJelly:10},desc:'방어구 제작 · 레시피 필요'},
+      {key:'craftAccuracyRing',name:'명중 반지',result:'accuracyRing',qty:1,icon:'💍',cost:110,needs:{recipeAccuracyRing:1,highEssence:1,lowCatalyst:6},desc:'악세사리 제작 · 레시피 필요'}
+    ],
+    stone:[
+      {key:'craftLowCatalyst',name:'하급 촉매',result:'lowCatalyst',qty:1,icon:'🔹',cost:5,needs:{lowShard:10},desc:'하급 부스러기 10개를 하급 재료로 압축'},
+      {key:'craftEnhanceStone',name:'강화석',result:'enhanceStone',qty:1,icon:'🔶',cost:25,needs:{highEssence:1,lowCatalyst:3},desc:'상급 재료 + 하급 재료 조합'}
+    ]
+  };
+  function canCraft103(recipe){try{if(!recipe||gold<num(recipe.cost))return false;return Object.keys(recipe.needs||{}).every(function(k){return has(k,recipe.needs[k])})}catch(_){return false}}
+  function needsHtml103(recipe){return Object.keys(recipe.needs||{}).map(function(k){var need=recipe.needs[k],own=num(inventory[k]),miss=own<need;return '<span class="craftNeed103 '+(miss?'missing':'')+'">'+esc(itemName(k))+' '+own+'/'+need+'</span>'}).join('')+'<span class="craftNeed103 '+(gold<num(recipe.cost)?'missing':'')+'">골드 '+num(gold)+'/'+num(recipe.cost)+'G</span>'}
+  function recipeCard103(recipe){var ok=canCraft103(recipe);return '<div class="craftRecipeCard103 '+(ok?'':'locked')+'"><div class="craftRecipeIcon103">'+esc(recipe.icon||itemIcon103(recipe.result))+'</div><div class="craftRecipeInfo103"><b>'+esc(recipe.name)+' x'+num(recipe.qty||1)+'</b><small>'+esc(recipe.desc||'제작 가능 아이템')+'</small><div class="craftNeedList103">'+needsHtml103(recipe)+'</div></div><button type="button" class="craftBtn103" data-craft-key103="'+esc(recipe.key)+'" '+(ok?'':'disabled')+'>제작</button></div>'}
+  function materialStatusHtml103(){var keys=['recipeIronSword','recipeLeatherArmor','recipeAccuracyRing','highEssence','lowCatalyst','lowShard','enhanceStone','slimeJelly'];return '<div class="craftSmithGrid103">'+keys.map(function(k){return '<div class="craftRecipeCard103"><div class="craftRecipeIcon103">'+esc(itemIcon103(k))+'</div><div class="craftRecipeInfo103"><b>'+esc(itemName(k))+'</b><small>'+esc(itemDesc(k)||'재료')+'</small></div><b class="smithLevel103">x'+num(inventory[k])+'</b></div>'}).join('')+'</div>'}
+  function renderCraftPanel103(){setupItems103();try{craftState.tab=localStorage.getItem(CRAFT_TAB_KEY)||craftState.tab||'equip'}catch(_){ }if(!craftRecipes103[craftState.tab]&&craftState.tab!=='materials')craftState.tab='equip';var body=craftState.tab==='materials'?materialStatusHtml103():'<div class="craftSmithGrid103">'+(craftRecipes103[craftState.tab]||[]).map(recipeCard103).join('')+'</div>';q('#pTitle').textContent='제작소';q('#pBody').innerHTML='<div class="craftSmithPanel103 craftPanel103"><div class="craftSmithWallet103"><span>제작소</span><b>보유 골드 '+num(gold).toLocaleString()+'G</b></div><div class="craftSmithTabs103"><button class="craftSmithTab103 '+(craftState.tab==='equip'?'active':'')+'" data-craft-tab103="equip">장비 제작</button><button class="craftSmithTab103 '+(craftState.tab==='stone'?'active':'')+'" data-craft-tab103="stone">강화석 제작</button><button class="craftSmithTab103 '+(craftState.tab==='materials'?'active':'')+'" data-craft-tab103="materials">재료 현황</button></div><div class="craftNote103">장비 제작은 보스 드랍 레시피가 필요합니다. 강화석은 별도 레시피 없이 상급 재료와 하급 재료 조합으로 제작합니다.</div>'+body+'</div>';showOverlay('panel')}
+  function findRecipe103(key){var all=[].concat(craftRecipes103.equip,craftRecipes103.stone);return all.find(function(r){return r.key===key})}
+  function craftItem103(key){var recipe=findRecipe103(key);if(!recipe)return;setupItems103();if(!canCraft103(recipe)){safeLog('제작 실패: 재료 또는 골드가 부족합니다.');renderCraftPanel103();return}spendNeeds(recipe.needs);gold-=num(recipe.cost);addItem(recipe.result,recipe.qty||1);try{syncGold();syncInventoryData()}catch(_){}renderCraftPanel103();safeLog('제작 완료: '+recipe.name+' x'+num(recipe.qty||1)+' (-'+num(recipe.cost)+'G)')}
+  var rates103=[{s:100,k:0,d:0},{s:90,k:10,d:0},{s:80,k:20,d:0},{s:70,k:25,d:5},{s:60,k:32,d:8},{s:50,k:40,d:10},{s:45,k:43,d:12},{s:40,k:47,d:13},{s:35,k:51,d:14},{s:30,k:55,d:15},{s:25,k:60,d:15},{s:22,k:63,d:15},{s:19,k:66,d:15},{s:16,k:69,d:15},{s:13,k:72,d:15},{s:10,k:76,d:14},{s:8,k:79,d:13},{s:6,k:82,d:12},{s:5,k:84,d:11},{s:4,k:85,d:11}];
+  function rateForLevel103(lv){return rates103[Math.max(0,Math.min(19,Math.floor(num(lv))))]||rates103[19]}
+  function enhanceGoldCost103(lv){return Math.round(20+Math.pow(num(lv)+1,1.72)*9)}
+  function renderSmithRates103(kind){var lv=getEqLevel(kind),r=rateForLevel103(lv);if(lv>=20)return '<div class="craftNote103">강화 최대 레벨입니다.</div>';return '<div class="smithRates103"><div class="smithRate103"><small>성공</small><b>'+r.s+'%</b></div><div class="smithRate103"><small>유지</small><b>'+r.k+'%</b></div><div class="smithRate103"><small>하락</small><b>'+r.d+'%</b></div></div>'}
+  function ownedSmithEquipment103(){setupItems103();var out=[];['woodenSword','ironSword','leatherArmor','accuracyRing'].forEach(function(k){try{if(num(inventory[k])>0&&isSmithEquipment(k))out.push(k)}catch(_){}});return out}
+  function smithBagCard103(k,selected){return '<button type="button" class="smithBagCard103 '+(selected?'selected':'')+'" data-smith-select103="'+esc(k)+'"><div class="smithCardIcon103">'+esc(itemIcon103(k))+'</div><span><b>'+esc(itemName(k))+' <em class="smithLevel103">+'+getEqLevel(k)+'</em></b><small>'+esc(itemDesc(k)||'장비')+'</small></span></button>'}
+  function renderDisassembleList103(){var keys=['woodenSword','ironSword','leatherArmor','accuracyRing','enhanceStone','recipeIronSword','recipeLeatherArmor','recipeAccuracyRing'];var rows=keys.filter(function(k){return num(inventory[k])>0}).map(function(k){var ret=disassembleReturns103(k)||{},locked=!canDisassemble103(k);var text=Object.keys(ret).map(function(rk){return rk==='gold'?'골드 '+ret[rk]+'G':itemName(rk)+' x'+ret[rk]}).join(' · ');try{if(typeof isItemEquipped==='function'&&isItemEquipped(k))text='장착 중인 장비는 분해 불가'}catch(_){}return '<div class="disassembleCard103 '+(locked?'locked':'')+'"><div class="craftRecipeIcon103">'+esc(itemIcon103(k))+'</div><div><b>'+esc(itemName(k))+' x'+num(inventory[k])+'</b><small>'+esc(text||'분해 불가')+'</small></div><button type="button" class="disassembleBtn103" data-disassemble103="'+esc(k)+'" '+(locked?'disabled':'')+'>분해</button></div>'}).join('');return rows||'<div class="craftNote103">분해 가능한 아이템이 없습니다. 포션류와 슬라임 젤리 같은 잡템은 분해하지 않습니다.</div>'}
+  function renderBlacksmithPanel103(){setupItems103();var owned=ownedSmithEquipment103();if(!owned.includes(smithState.kind))smithState.kind=owned[0]||'woodenSword';var kind=smithState.kind,lv=getEqLevel(kind),item=(itemDefs&&itemDefs[kind])||{name:kind,desc:''};var cost=enhanceGoldCost103(lv),maxed=lv>=20,enoughStone=has('enhanceStone',1),enoughGold=gold>=cost,can=owned.includes(kind)&&!maxed&&enoughStone&&enoughGold;var bag=owned.length?owned.map(function(k){return smithBagCard103(k,k===kind)}).join(''):'<div class="craftNote103">강화할 장비가 없습니다.</div>';q('#pTitle').textContent='대장간';q('#pBody').innerHTML='<div class="craftSmithPanel103 blacksmithPanel103"><div class="craftSmithWallet103"><span>대장간</span><b>골드 '+num(gold).toLocaleString()+'G · 강화석 x'+num(inventory.enhanceStone)+'</b></div><section class="smithStage103"><div class="smithAnvil103"><div><i>⚒️</i><span>모루 슬롯</span></div></div><div class="smithSlot103"><div class="smithSlotTop103"><b>'+esc(item.name)+'</b><span class="smithLevel103">+'+lv+' / 20</span></div><small class="idesc">'+esc(item.desc||'강화 가능 장비')+'</small>'+renderSmithRates103(kind)+'<div class="smithCost103"><span>필요: <b>강화석 x1</b> / 보유 x'+num(inventory.enhanceStone)+'</span><span>강화 비용: <b>'+cost.toLocaleString()+'G</b> / 보유 '+num(gold).toLocaleString()+'G</span></div><button type="button" class="smithActionBtn103" data-smith-enhance103 '+(can?'':'disabled')+'>'+(maxed?'강화 만렙':'강화하기')+'</button></div></section><section class="smithBag103"><div class="smithBagTitle103"><b>장비가방</b><small>무기 · 방어구 · 악세사리</small></div><div class="smithBagGrid103">'+bag+'</div></section><section class="smithBag103"><div class="smithBagTitle103"><b>분해</b><small>잡템은 분해 불가</small></div><div class="disassembleList103">'+renderDisassembleList103()+'</div></section></div>';showOverlay('panel')}
+  function enhanceSelected103(){var kind=smithState.kind;if(!isSmithEquipment(kind)||num(inventory[kind])<=0)return;var lv=getEqLevel(kind);if(lv>=20){safeLog(itemName(kind)+' 강화 실패: 이미 +20입니다.');renderBlacksmithPanel103();return}var cost=enhanceGoldCost103(lv);if(!has('enhanceStone',1)||gold<cost){safeLog('강화 실패: 강화석 또는 골드가 부족합니다.');renderBlacksmithPanel103();return}inventory.enhanceStone=num(inventory.enhanceStone)-1;gold-=cost;var r=rateForLevel103(lv),roll=Math.random()*100,result='유지',next=lv;if(roll<r.s){result='성공';next=lv+1}else if(roll<r.s+r.k){result='유지'}else{result='하락';next=Math.max(0,lv-1)}setEqLevel(kind,next);try{syncGold();syncInventoryData();if(typeof refreshPlayerAbilities==='function')refreshPlayerAbilities(false);if(typeof bars==='function')bars()}catch(_){}renderBlacksmithPanel103();safeLog('대장간 강화 '+result+': '+itemName(kind)+' +'+lv+' → +'+next+' (-강화석 x1, -'+cost+'G)')}
+  function disassembleReturns103(kind){if(kind==='woodenSword')return {lowShard:3,lowCatalyst:1,gold:2};if(kind==='ironSword')return {lowShard:8,lowCatalyst:2,highEssence:1,gold:8};if(kind==='leatherArmor')return {lowShard:7,lowCatalyst:2,highEssence:1,gold:7};if(kind==='accuracyRing')return {lowShard:6,lowCatalyst:2,highEssence:1,gold:6};if(kind==='enhanceStone')return {lowShard:5,lowCatalyst:1,gold:3};if(kind&&/^recipe/.test(kind))return {lowShard:4,gold:2};return null}
+  function canDisassemble103(kind){if(!kind||num(inventory[kind])<=0)return false;if(kind==='slimeJelly'||kind==='hpPotion'||kind==='mpPotion'||kind==='lowShard'||kind==='lowCatalyst'||kind==='highEssence')return false;try{if(typeof isItemEquipped==='function'&&isItemEquipped(kind))return false}catch(_){}return !!disassembleReturns103(kind)}
+  function disassembleItem103(kind){if(!canDisassemble103(kind)){safeLog('분해 실패: 분해할 수 없는 아이템입니다.');renderBlacksmithPanel103();return}var ret=disassembleReturns103(kind);inventory[kind]=num(inventory[kind])-1;Object.keys(ret).forEach(function(k){if(k==='gold')gold+=num(ret[k]);else addItem(k,ret[k])});if(isSmithEquipment(kind)&&getEqLevel(kind)>0&&num(inventory[kind])<=0)setEqLevel(kind,0);try{syncGold();syncInventoryData()}catch(_){}renderBlacksmithPanel103();safeLog('분해 완료: '+itemName(kind)+' → '+Object.keys(ret).map(function(k){return k==='gold'?'골드 '+ret[k]+'G':itemName(k)+' x'+ret[k]}).join(', '))}
+  function rollCraftSmithDrops103(monster){try{if(!monster||!inventory)return;var drops=[];function roll(kind,rate,min,max){if(Math.random()<rate){var n=min+Math.floor(Math.random()*(max-min+1));addItem(kind,n);drops.push(itemName(kind)+' x'+n)}}if(monster.grade==='normal'){roll('lowShard',0.42,1,2);roll('lowCatalyst',0.18,1,1)}else if(monster.grade==='elite'){roll('highEssence',0.15,1,1);roll('lowCatalyst',0.32,1,2);roll('lowShard',0.28,1,3)}else if(monster.grade==='boss'){roll('highEssence',0.30,1,2);roll('lowCatalyst',0.45,1,3);if(Math.random()<0.10){var recipes=['recipeIronSword','recipeLeatherArmor','recipeAccuracyRing'];var k=recipes[Math.floor(Math.random()*recipes.length)];addItem(k,1);drops.push(itemName(k)+' x1')}}if(drops.length){syncInventoryData();safeLog('제작 재료 드랍: '+drops.join(', '),'battle')}}catch(_){}}
+  setupItems103();
+  var prevSync103=typeof syncInventoryData==='function'?syncInventoryData:null;if(prevSync103&&!prevSync103.__patch103CraftSmith){syncInventoryData=function(){setupItems103();var out=prevSync103.apply(this,arguments);try{var order=['ironSword','leatherArmor','accuracyRing','enhanceStone','highEssence','lowCatalyst','lowShard','recipeIronSword','recipeLeatherArmor','recipeAccuracyRing'];order.forEach(function(k){if(num(inventory[k])>0&&itemDefs[k]&&Array.isArray(panelData.inventory)&&!panelData.inventory.some(function(row){return row&&row[0]===itemDefs[k].name}))panelData.inventory.push([itemDefs[k].name,'x'+num(inventory[k]),itemDefs[k].desc||'아이템'])})}catch(_){}return out};syncInventoryData.__patch103CraftSmith=true}
+  var prevOpen103=typeof openPanel==='function'?openPanel:null;if(prevOpen103&&!prevOpen103.__patch103TownPreserve){openPanel=function(id,name){setupItems103();if(id==='craft'||id==='craftWorkshop'){renderCraftPanel103();return}if(id==='blacksmith'){renderBlacksmithPanel103();return}var result=prevOpen103.apply(this,arguments);if(id==='town')requestAnimationFrame(fixTownCards103);return result};openPanel.__patch103TownPreserve=true}
+  var prevDefeat103=typeof defeatCurrentMonster==='function'?defeatCurrentMonster:null;if(prevDefeat103&&!prevDefeat103.__patch103Drops){defeatCurrentMonster=function(){var m=currentMonster;var ret=prevDefeat103.apply(this,arguments);rollCraftSmithDrops103(m);return ret};defeatCurrentMonster.__patch103Drops=true}
+  var prevAbilities103=typeof getAbilities==='function'?getAbilities:null;if(prevAbilities103&&!prevAbilities103.__patch103EnhanceStats){getAbilities=function(){var a=prevAbilities103.apply(this,arguments);try{['woodenSword','ironSword'].forEach(function(k){var equipped=typeof isItemEquipped==='function'?isItemEquipped(k):false;if(equipped){var lv=getEqLevel(k);a.pAtk=(a.pAtk||0)+lv;a.acc=Math.min(98,(a.acc||0)+Math.floor(lv/5))}});if(typeof isItemEquipped==='function'&&isItemEquipped('accuracyRing')){var rlv=getEqLevel('accuracyRing');a.acc=Math.min(98,(a.acc||0)+Math.ceil(rlv/2));a.pDef=(a.pDef||0)+Math.floor(rlv/4)}if(num(inventory.leatherArmor)>0){var alv=getEqLevel('leatherArmor');a.pDef=(a.pDef||0)+3+alv;a.hp=(a.hp||0)+10+alv*2}}catch(_){}return a};getAbilities.__patch103EnhanceStats=true}
+  document.addEventListener('click',function(e){var card=e.target.closest&&e.target.closest('#panel .townFacilities .item.craftSmithFacility103');if(!card)return;e.preventDefault();e.stopImmediatePropagation();var id=card.getAttribute('data-craftsmith103');openPanel(id==='blacksmith'?'blacksmith':'craft',id==='blacksmith'?'대장간':'제작소')},true);
+  document.addEventListener('click',function(e){var tab=e.target.closest&&e.target.closest('[data-craft-tab103]');if(tab){e.preventDefault();craftState.tab=tab.dataset.craftTab103||'equip';try{localStorage.setItem(CRAFT_TAB_KEY,craftState.tab)}catch(_){}renderCraftPanel103();return}var c=e.target.closest&&e.target.closest('[data-craft-key103]');if(c){e.preventDefault();craftItem103(c.dataset.craftKey103);return}var s=e.target.closest&&e.target.closest('[data-smith-select103]');if(s){e.preventDefault();smithState.kind=s.dataset.smithSelect103;renderBlacksmithPanel103();return}if(e.target.closest&&e.target.closest('[data-smith-enhance103]')){e.preventDefault();enhanceSelected103();return}var d=e.target.closest&&e.target.closest('[data-disassemble103]');if(d){e.preventDefault();disassembleItem103(d.dataset.disassemble103);return}},true);
+  requestAnimationFrame(function(){setupItems103();fixTownCards103();try{syncInventoryData();if(typeof playerAbilities!=='undefined'&&typeof getAbilities==='function')playerAbilities=getAbilities();if(typeof bars==='function')bars()}catch(_){}});
+})();
+</script>
+
+
+<style id="patch105-craft-result-card-req-text-style">
+/* patch105: craft UI restored from 104; only target item is an item card, requirements are text counts */
+.craftPanel105{display:grid;gap:12px;color:#edf7ff;}
+.craftList105{display:grid;gap:10px;}
+.craftCard105{display:grid;grid-template-columns:74px 1fr auto;gap:10px;align-items:center;padding:10px;border-radius:18px;background:linear-gradient(180deg,#ffffff12,#ffffff08);border:1px solid #ffffff22;box-shadow:inset 0 1px 0 #ffffff10,0 8px 20px #0003;}
+.craftCard105.locked{opacity:.68;}
+.craftInfo105{display:grid;gap:7px;min-width:0;}
+.craftInfo105 b{display:block;color:#edf7ff;font-size:14px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.craftInfo105 small{display:block;color:#9db0c7;font-size:10px;font-weight:800;line-height:1.38;}
+.craftReqLine105{display:flex;flex-wrap:wrap;gap:5px;margin-top:1px;}
+.craftReq105{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;background:#0006;border:1px solid #ffffff1f;color:#edf7ff;font-size:10px;font-weight:1000;white-space:nowrap;}
+.craftReq105.missing{color:#ff9aa4;border-color:#ff6b784d;background:#2b0d1470;}
+.craftAct105{display:grid;gap:6px;justify-items:end;align-content:center;}
+.craftBtn105{height:36px;padding:0 14px;border-radius:12px;background:#ffd36b;color:#0b1322;border:0;font-size:11px;font-weight:1000;white-space:nowrap;}
+.craftBtn105:disabled{background:#ffffff18;color:#9db0c7;}
+.craftHint105{color:#9db0c7;font-size:9px;font-weight:900;white-space:nowrap;}
+.craftResultCard105{width:72px;height:72px;min-width:72px;min-height:72px;max-width:72px;max-height:72px;padding:4px 4px 5px;border-radius:12px;background:linear-gradient(#ffffff18,#ffffff0a);border:1px solid #ffffff2b;box-shadow:inset 0 1px 0 #ffffff1e,0 4px 10px #0003;display:grid;grid-template-rows:1fr auto auto;place-items:center;row-gap:0;text-align:center;color:#edf7ff;position:relative;overflow:hidden;}
+.craftResultCard105 .rewardMiniIcon{width:48px;height:48px;min-width:48px;min-height:48px;max-width:48px;max-height:48px;margin:0;transform:none;border-radius:12px;background:rgba(0,0,0,.26);border:1px solid #ffffff24;box-shadow:inset 0 1px 0 #ffffff1c,inset 0 -2px 0 #00000035,0 3px 7px #0004;overflow:hidden;}
+.craftResultCard105 b{display:block;width:100%;max-width:100%;margin:0;color:#edf7ff;font-size:8.5px;font-weight:1000;line-height:1;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.craftResultCard105 small{display:block;width:100%;margin:1px 0 0;color:#cfe1f3;font-size:8px;font-weight:900;line-height:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.craftMaterialText105{display:grid;gap:7px;padding:10px;border-radius:15px;background:#ffffff0d;border:1px solid #ffffff1f;}
+.craftMaterialText105 .craftReqLine105{margin:0;}
+@media(max-width:420px){.craftCard105{grid-template-columns:68px 1fr}.craftAct105{grid-column:1 / -1;justify-items:stretch}.craftBtn105{width:100%}.craftHint105{text-align:right}}
+@media(max-height:690px){.craftCard105{padding:9px;gap:8px}.craftResultCard105{width:66px;height:66px;min-width:66px;min-height:66px;max-width:66px;max-height:66px}.craftResultCard105 .rewardMiniIcon{width:44px;height:44px;min-width:44px;min-height:44px;max-width:44px;max-height:44px}.craftResultCard105 b{font-size:8px}}
+
+/* direct-drawn icons used by the result cards */
+.itemIcon.item-leatherArmor,.rewardMiniIcon.item-leatherArmor,.detailIcon.item-leatherArmor,.tradeIcon.item-leatherArmor,
+.itemIcon.item-recipeIronSword,.rewardMiniIcon.item-recipeIronSword,.detailIcon.item-recipeIronSword,.tradeIcon.item-recipeIronSword,
+.itemIcon.item-recipeLeatherArmor,.rewardMiniIcon.item-recipeLeatherArmor,.detailIcon.item-recipeLeatherArmor,.tradeIcon.item-recipeLeatherArmor,
+.itemIcon.item-highEssence,.rewardMiniIcon.item-highEssence,.detailIcon.item-highEssence,.tradeIcon.item-highEssence,
+.itemIcon.item-lowCatalyst,.rewardMiniIcon.item-lowCatalyst,.detailIcon.item-lowCatalyst,.tradeIcon.item-lowCatalyst,
+.itemIcon.item-lowShard,.rewardMiniIcon.item-lowShard,.detailIcon.item-lowShard,.tradeIcon.item-lowShard,
+.itemIcon.item-enhanceStone,.rewardMiniIcon.item-enhanceStone,.detailIcon.item-enhanceStone,.tradeIcon.item-enhanceStone{position:relative;overflow:hidden;}
+.itemIcon.item-leatherArmor:before,.rewardMiniIcon.item-leatherArmor:before,.detailIcon.item-leatherArmor:before,.tradeIcon.item-leatherArmor:before{content:"";position:absolute;left:50%;top:16%;width:48%;height:58%;transform:translateX(-50%);border-radius:9px 9px 12px 12px;background:linear-gradient(180deg,#f8fafc 0 18%,#dfe9f5 18% 24%,#c5d4e8 24% 100%);border:1px solid rgba(70,93,122,.85);clip-path:polygon(18% 0,34% 0,38% 12%,62% 12%,66% 0,82% 0,100% 24%,82% 40%,74% 100%,26% 100%,18% 40%,0 24%);box-shadow:inset 0 3px 0 rgba(255,255,255,.45),0 3px 8px rgba(0,0,0,.25)}
+.itemIcon.item-leatherArmor:after,.rewardMiniIcon.item-leatherArmor:after,.detailIcon.item-leatherArmor:after,.tradeIcon.item-leatherArmor:after{content:"";position:absolute;left:50%;top:25%;width:10%;height:42%;transform:translateX(-50%);background:linear-gradient(180deg,#8aa2c0,#eef4fb 46%,#8aa2c0);border-radius:999px;opacity:.9;box-shadow:0 0 0 1px rgba(102,128,158,.35)}
+.itemIcon.item-highEssence:before,.rewardMiniIcon.item-highEssence:before,.detailIcon.item-highEssence:before,.tradeIcon.item-highEssence:before{content:"";position:absolute;left:50%;top:12%;width:54%;height:68%;transform:translateX(-50%);background:linear-gradient(180deg,#d8fbff 0,#93e9ff 34%,#2c9bff 74%,#15408a 100%);clip-path:polygon(50% 0,88% 20%,100% 54%,66% 100%,34% 100%,0 54%,12% 20%);box-shadow:0 0 0 1px rgba(24,53,95,.9),0 0 10px rgba(107,231,255,.38),inset 0 2px 0 rgba(255,255,255,.34)}
+.itemIcon.item-highEssence:after,.rewardMiniIcon.item-highEssence:after,.detailIcon.item-highEssence:after,.tradeIcon.item-highEssence:after{content:"";position:absolute;left:50%;top:22%;width:18%;height:18%;transform:translateX(-50%) rotate(45deg);background:rgba(255,255,255,.55);opacity:.75;}
+.itemIcon.item-lowCatalyst:before,.rewardMiniIcon.item-lowCatalyst:before,.detailIcon.item-lowCatalyst:before,.tradeIcon.item-lowCatalyst:before{content:"";position:absolute;left:50%;top:18%;width:36%;height:56%;transform:translateX(-50%);background:linear-gradient(180deg,#f2fdff 0 18%,#98edff 18% 56%,#28b6ff 100%);clip-path:polygon(36% 0,64% 0,64% 20%,82% 54%,72% 100%,28% 100%,18% 54%,36% 20%);box-shadow:0 0 0 1px rgba(28,73,104,.9),0 0 8px rgba(67,203,255,.34)}
+.itemIcon.item-lowCatalyst:after,.rewardMiniIcon.item-lowCatalyst:after,.detailIcon.item-lowCatalyst:after,.tradeIcon.item-lowCatalyst:after{content:"";position:absolute;left:50%;top:56%;width:16%;height:10%;transform:translateX(-50%);border-radius:50%;background:rgba(255,255,255,.4);filter:blur(1px);}
+.itemIcon.item-lowShard:before,.rewardMiniIcon.item-lowShard:before,.detailIcon.item-lowShard:before,.tradeIcon.item-lowShard:before{content:"";position:absolute;left:20%;top:46%;width:18%;height:20%;background:linear-gradient(180deg,#eef7ff,#c5d7ec 60%,#8aa1bc);clip-path:polygon(50% 0,100% 34%,78% 100%,0 74%,18% 18%);box-shadow:0 0 0 1px rgba(77,98,120,.8),26px -10px 0 -1px rgba(215,231,248,.95),26px -10px 0 0 rgba(77,98,120,.8),14px 10px 0 -1px rgba(201,218,235,.95),14px 10px 0 0 rgba(77,98,120,.8)}
+.itemIcon.item-lowShard:after,.rewardMiniIcon.item-lowShard:after,.detailIcon.item-lowShard:after,.tradeIcon.item-lowShard:after{content:"";position:absolute;left:52%;top:18%;width:22%;height:16%;transform:rotate(20deg);background:rgba(255,255,255,.45);clip-path:polygon(8% 100%,36% 0,100% 18%,76% 100%);}
+.itemIcon.item-enhanceStone:before,.rewardMiniIcon.item-enhanceStone:before,.detailIcon.item-enhanceStone:before,.tradeIcon.item-enhanceStone:before{content:"";position:absolute;left:50%;top:14%;width:56%;height:66%;transform:translateX(-50%);background:linear-gradient(180deg,#fff1bf 0,#ffcf5f 32%,#ff9a2e 72%,#8e3510 100%);clip-path:polygon(50% 0,92% 24%,82% 78%,50% 100%,18% 78%,8% 24%);box-shadow:0 0 0 1px rgba(104,49,10,.88),0 0 10px rgba(255,180,53,.36),inset 0 2px 0 rgba(255,255,255,.35)}
+.itemIcon.item-enhanceStone:after,.rewardMiniIcon.item-enhanceStone:after,.detailIcon.item-enhanceStone:after,.tradeIcon.item-enhanceStone:after{content:"";position:absolute;left:50%;top:28%;width:22%;height:22%;transform:translateX(-50%) rotate(45deg);background:rgba(255,248,210,.55);opacity:.85;}
+</style>
+
+<script id="patch105-craft-result-card-req-text-script">
+(function(){
+  var CRAFT_TAB_KEY='index5.craftSmith.tab.v105';
+  var craftState={tab:'equip'};
+  function q(s){return document.querySelector(s)}
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function num(v){v=Number(v);return Number.isFinite(v)?v:0}
+  function has(kind,n){try{return num(inventory[kind])>=num(n)}catch(_){return false}}
+  function addItem(kind,n){try{inventory[kind]=num(inventory[kind])+Math.max(0,Math.floor(num(n)||0))}catch(_){} }
+  function spendNeeds(needs){Object.keys(needs||{}).forEach(function(k){inventory[k]=Math.max(0,num(inventory[k])-num(needs[k]))})}
+  function safeLog(msg,kind){try{if(typeof log==='function')log(msg,kind||'system')}catch(_){} }
+  function itemName(kind){try{return itemDefs&&itemDefs[kind]&&itemDefs[kind].name?itemDefs[kind].name:kind}catch(_){return kind}}
+  function itemDesc(kind){try{return itemDefs&&itemDefs[kind]&&itemDefs[kind].desc?itemDefs[kind].desc:''}catch(_){return ''}}
+  function ensureDefs(){
+    try{
+      if(typeof itemDefs!=='object'||!itemDefs)return;
+      if(!itemDefs.ironSword)itemDefs.ironSword={name:'철검',buy:null,sell:4,desc:'제작 가능한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:{pAtk:5,acc:3},equipSlot:['right','left'],slotType:'weapon',equipType:'weapon'};
+      if(!itemDefs.leatherArmor)itemDefs.leatherArmor={name:'천옷',buy:null,sell:6,desc:'제작 가능한 초급 방어구. 물리 방어력 +3, HP +10',stats:{pDef:3,hp:10},equipType:'armor'};
+      if(!itemDefs.recipeIronSword)itemDefs.recipeIronSword={name:'철검 제작 레시피',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 무기 제작법',material:true,recipe:true};
+      if(!itemDefs.recipeLeatherArmor)itemDefs.recipeLeatherArmor={name:'천옷 제작 레시피',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 방어구 제작법',material:true,recipe:true};
+      if(!itemDefs.highEssence)itemDefs.highEssence={name:'상급 마력핵',buy:null,sell:null,desc:'정예급 몬스터가 낮은 확률로 드랍하는 상급 재료',material:true};
+      if(!itemDefs.lowCatalyst)itemDefs.lowCatalyst={name:'하급 촉매',buy:null,sell:null,desc:'일반 몬스터 드랍 또는 부스러기 조합으로 얻는 강화석 재료',material:true};
+      if(!itemDefs.lowShard)itemDefs.lowShard={name:'하급 부스러기',buy:null,sell:null,desc:'일반 몬스터 처치 또는 분해로 얻는 하급 재료',material:true,shard:true};
+      if(!itemDefs.enhanceStone)itemDefs.enhanceStone={name:'강화석',buy:null,sell:null,desc:'대장간 강화에 필요한 소모 아이템',material:true};
+      itemDefs.ironSword.name='철검';
+      itemDefs.leatherArmor.name='천옷';
+      itemDefs.recipeIronSword.name='철검 제작 레시피';
+      itemDefs.recipeLeatherArmor.name='천옷 제작 레시피';
+      ['recipeIronSword','recipeLeatherArmor','highEssence','lowCatalyst','lowShard','enhanceStone','ironSword','leatherArmor'].forEach(function(k){if(inventory&&inventory[k]==null)inventory[k]=0});
+      if(typeof bagStock!=='undefined'&&Array.isArray(bagStock))['ironSword','leatherArmor','enhanceStone','highEssence','lowCatalyst','lowShard','recipeIronSword','recipeLeatherArmor'].forEach(function(k){if(!bagStock.includes(k))bagStock.push(k)});
+    }catch(_){}
+  }
+  var recipes={
+    equip:[
+      {key:'craftIronSword',name:'철검',result:'ironSword',qty:1,cost:80,needs:{recipeIronSword:1,highEssence:2,lowCatalyst:4,slimeJelly:8},desc:'무기 제작 · 레시피 필요'},
+      {key:'craftClothArmor',name:'천옷',result:'leatherArmor',qty:1,cost:90,needs:{recipeLeatherArmor:1,highEssence:2,lowCatalyst:5,slimeJelly:10},desc:'방어구 제작 · 레시피 필요'}
+    ],
+    stone:[
+      {key:'craftLowCatalyst',name:'하급 촉매',result:'lowCatalyst',qty:1,cost:5,needs:{lowShard:10},desc:'하급 부스러기 10개를 하급 재료로 압축'},
+      {key:'craftEnhanceStone',name:'강화석',result:'enhanceStone',qty:1,cost:25,needs:{highEssence:1,lowCatalyst:3},desc:'상급 재료 + 하급 재료 조합'}
+    ]
+  };
+  function canCraft(r){try{return !!r&&gold>=num(r.cost)&&Object.keys(r.needs||{}).every(function(k){return has(k,r.needs[k])})}catch(_){return false}}
+  function resultCard(kind,qty){return '<div class="craftResultCard105 rewardMiniCard popupRewardMiniCard shopInfoMiniCard unifiedItemCheckCard tradeCard bagItemCard"><i class="rewardMiniIcon itemIcon item-'+esc(kind)+'" aria-hidden="true"></i><b>'+esc(itemName(kind))+'</b><small>x'+num(qty||1)+'</small></div>'}
+  function reqLine(r){
+    var parts=Object.keys(r.needs||{}).map(function(k){var need=num(r.needs[k]),own=num(inventory[k]),miss=own<need;return '<span class="craftReq105 '+(miss?'missing':'')+'">'+esc(itemName(k))+' '+own+'/'+need+'</span>'});
+    parts.push('<span class="craftReq105 '+(gold<num(r.cost)?'missing':'')+'">골드 '+num(gold)+'/'+num(r.cost)+'G</span>');
+    return parts.join('');
+  }
+  function card(r){var ok=canCraft(r);return '<div class="craftCard105 '+(ok?'':'locked')+'">'+resultCard(r.result,r.qty)+'<div class="craftInfo105"><b>'+esc(r.name)+' x'+num(r.qty||1)+'</b><small>'+esc(r.desc||'제작 가능 아이템')+'</small><div class="craftReqLine105">'+reqLine(r)+'</div></div><div class="craftAct105"><button type="button" class="craftBtn105" data-craft105-key="'+esc(r.key)+'" '+(ok?'':'disabled')+'>제작</button><span class="craftHint105">'+(ok?'제작 가능':'재료 부족')+'</span></div></div>'}
+  function materialStatus(){var keys=['recipeIronSword','recipeLeatherArmor','highEssence','lowCatalyst','lowShard','enhanceStone','slimeJelly'];return '<div class="craftMaterialText105"><div class="craftReqLine105">'+keys.map(function(k){return '<span class="craftReq105">'+esc(itemName(k))+' '+num(inventory[k])+'</span>'}).join('')+'</div></div>'}
+  function render(){
+    ensureDefs();
+    try{craftState.tab=localStorage.getItem(CRAFT_TAB_KEY)||craftState.tab||'equip'}catch(_){}
+    if(!recipes[craftState.tab]&&craftState.tab!=='materials')craftState.tab='equip';
+    var body=craftState.tab==='materials'?materialStatus():'<div class="craftList105">'+(recipes[craftState.tab]||[]).map(card).join('')+'</div>';
+    if(q('#pTitle'))q('#pTitle').textContent='제작소';
+    if(q('#pBody'))q('#pBody').innerHTML='<div class="craftPanel105"><div class="craftSmithWallet103"><span>제작소</span><b>보유 골드 '+num(gold).toLocaleString()+'G</b></div><div class="craftSmithTabs103"><button class="craftSmithTab103 '+(craftState.tab==='equip'?'active':'')+'" data-craft105-tab="equip">장비 제작</button><button class="craftSmithTab103 '+(craftState.tab==='stone'?'active':'')+'" data-craft105-tab="stone">강화석 제작</button><button class="craftSmithTab103 '+(craftState.tab==='materials'?'active':'')+'" data-craft105-tab="materials">재료 현황</button></div><div class="craftNote103">제작 결과 아이템만 왼쪽 아이템카드로 표시합니다. 레시피와 재료는 아이템명과 보유/필요 수량으로 표시합니다.</div>'+body+'</div>';
+    if(typeof showOverlay==='function')showOverlay('panel');
+  }
+  function findRecipe(key){return [].concat(recipes.equip,recipes.stone).find(function(r){return r.key===key})}
+  function craft(key){var r=findRecipe(key);if(!r)return;ensureDefs();if(!canCraft(r)){safeLog('제작 실패: 재료 또는 골드가 부족합니다.');render();return}spendNeeds(r.needs);gold-=num(r.cost);addItem(r.result,r.qty||1);try{if(typeof syncGold==='function')syncGold();if(typeof syncInventoryData==='function')syncInventoryData()}catch(_){}render();safeLog('제작 완료: '+r.name+' x'+num(r.qty||1)+' (-'+num(r.cost)+'G)')}
+  var prevOpen=typeof openPanel==='function'?openPanel:null;
+  if(prevOpen&&!prevOpen.__patch105CraftReqText){openPanel=function(id,name){ensureDefs();if(id==='craft'||id==='craftWorkshop'){render();return}return prevOpen.apply(this,arguments)};openPanel.__patch105CraftReqText=true}
+  document.addEventListener('click',function(e){var tab=e.target.closest&&e.target.closest('[data-craft105-tab]');if(tab){e.preventDefault();e.stopImmediatePropagation();craftState.tab=tab.dataset.craft105Tab||'equip';try{localStorage.setItem(CRAFT_TAB_KEY,craftState.tab)}catch(_){}render();return}var c=e.target.closest&&e.target.closest('[data-craft105-key]');if(c){e.preventDefault();e.stopImmediatePropagation();craft(c.dataset.craft105Key);return}},true);
+  requestAnimationFrame(function(){ensureDefs();try{if(typeof syncInventoryData==='function')syncInventoryData()}catch(_){}});
+})();
+</script>
+
+
+<style id="patch106-iron-sword-craft-result-card-fix">
+/* patch106: patch322 hides ironSword in the current build; allow it only inside the crafting result card */
+.craftResultCard105 .rewardMiniIcon.item-ironSword,
+.craftResultCard105 .itemIcon.item-ironSword{
+  display:block!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+.craftResultCard105 .rewardMiniIcon.item-ironSword:before,
+.craftResultCard105 .itemIcon.item-ironSword:before{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:6%!important;
+  width:13%!important;
+  height:64%!important;
+  transform:translateX(-50%) rotate(36deg)!important;
+  transform-origin:50% 80%!important;
+  border:1px solid rgba(22,33,48,.85)!important;
+  border-radius:5px 5px 2px 2px!important;
+  background:linear-gradient(90deg,#6f8997 0 12%,#f8fdff 18% 48%,#a7c6d2 52% 78%,#4d6672 84% 100%)!important;
+  box-shadow:0 0 7px rgba(166,244,255,.38)!important;
+}
+.craftResultCard105 .rewardMiniIcon.item-ironSword:after,
+.craftResultCard105 .itemIcon.item-ironSword:after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:56%!important;
+  width:52%!important;
+  height:11%!important;
+  transform:translateX(-50%) rotate(36deg)!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#5f371d,#ffd36b 48%,#5f371d)!important;
+  box-shadow:0 0 0 1px rgba(40,22,10,.75),0 10px 0 -2px #8c5b2d!important;
+}
+</style>
+
+
+<style id="patch108-craft-card-qty-remove-iron-legacy-style">
+/* patch108: remove craft result quantity display and use the previously-made iron sword graphic style */
+.craftResultCard108{width:72px;height:72px;min-width:72px;min-height:72px;max-width:72px;max-height:72px;padding:4px 4px 5px;border-radius:12px;background:linear-gradient(#ffffff18,#ffffff0a);border:1px solid #ffffff2b;box-shadow:inset 0 1px 0 #ffffff1e,0 4px 10px #0003;display:grid;grid-template-rows:1fr auto;place-items:center;row-gap:1px;text-align:center;color:#edf7ff;position:relative;overflow:hidden;}
+.craftResultCard108 .rewardMiniIcon{width:48px;height:48px;min-width:48px;min-height:48px;max-width:48px;max-height:48px;margin:0;transform:none;border-radius:12px;background:rgba(0,0,0,.26);border:1px solid #ffffff24;box-shadow:inset 0 1px 0 #ffffff1c,inset 0 -2px 0 #00000035,0 3px 7px #0004;overflow:hidden;position:relative;display:block;}
+.craftResultCard108 b{display:block;width:100%;max-width:100%;margin:0;color:#edf7ff;font-size:8.5px;font-weight:1000;line-height:1;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
+.craftLegacyIronSword108:before{content:"";position:absolute;left:50%;top:6%;width:13%;height:64%;transform:translateX(-50%) rotate(36deg);transform-origin:50% 80%;border:1px solid rgba(22,33,48,.85);border-radius:5px 5px 2px 2px;background:linear-gradient(90deg,#6f8997 0 12%,#f8fdff 18% 48%,#a7c6d2 52% 78%,#4d6672 84% 100%);box-shadow:0 0 7px rgba(166,244,255,.38)}
+.craftLegacyIronSword108:after{content:"";position:absolute;left:50%;top:56%;width:52%;height:11%;transform:translateX(-50%) rotate(36deg);border-radius:999px;background:linear-gradient(90deg,#5f371d,#ffd36b 48%,#5f371d);box-shadow:0 0 0 1px rgba(40,22,10,.75),0 10px 0 -2px #8c5b2d}
+@media(max-height:690px){.craftResultCard108{width:66px;height:66px;min-width:66px;min-height:66px;max-width:66px;max-height:66px}.craftResultCard108 .rewardMiniIcon{width:44px;height:44px;min-width:44px;min-height:44px;max-width:44px;max-height:44px}.craftResultCard108 b{font-size:8px}}
+</style>
+
+<script id="patch108-craft-card-qty-remove-iron-legacy-script">
+(function(){
+  var CRAFT_TAB_KEY='index5.craftSmith.tab.v108';
+  var craftState={tab:'equip'};
+  function q(s){return document.querySelector(s)}
+  function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function num(v){v=Number(v);return Number.isFinite(v)?v:0}
+  function has(kind,n){try{return num(inventory[kind])>=num(n)}catch(_){return false}}
+  function addItem(kind,n){try{inventory[kind]=num(inventory[kind])+Math.max(0,Math.floor(num(n)||0))}catch(_){} }
+  function spendNeeds(needs){Object.keys(needs||{}).forEach(function(k){inventory[k]=Math.max(0,num(inventory[k])-num(needs[k]))})}
+  function safeLog(msg,kind){try{if(typeof log==='function')log(msg,kind||'system')}catch(_){} }
+  function itemName(kind){try{return itemDefs&&itemDefs[kind]&&itemDefs[kind].name?itemDefs[kind].name:kind}catch(_){return kind}}
+  function ensureDefs(){
+    try{
+      if(typeof itemDefs!=='object'||!itemDefs)return;
+      if(!itemDefs.ironSword)itemDefs.ironSword={name:'철검',buy:null,sell:4,desc:'제작 가능한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:{pAtk:5,acc:3},equipSlot:['right','left'],slotType:'weapon',equipType:'weapon'};
+      if(!itemDefs.leatherArmor)itemDefs.leatherArmor={name:'천옷',buy:null,sell:6,desc:'제작 가능한 초급 방어구. 물리 방어력 +3, HP +10',stats:{pDef:3,hp:10},equipType:'armor'};
+      if(!itemDefs.recipeIronSword)itemDefs.recipeIronSword={name:'철검 제작 레시피',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 무기 제작법',material:true,recipe:true};
+      if(!itemDefs.recipeLeatherArmor)itemDefs.recipeLeatherArmor={name:'천옷 제작 레시피',buy:null,sell:null,desc:'보스 몬스터가 낮은 확률로 드랍하는 방어구 제작법',material:true,recipe:true};
+      if(!itemDefs.highEssence)itemDefs.highEssence={name:'상급 마력핵',buy:null,sell:null,desc:'정예급 몬스터가 낮은 확률로 드랍하는 상급 재료',material:true};
+      if(!itemDefs.lowCatalyst)itemDefs.lowCatalyst={name:'하급 촉매',buy:null,sell:null,desc:'일반 몬스터 드랍 또는 부스러기 조합으로 얻는 강화석 재료',material:true};
+      if(!itemDefs.lowShard)itemDefs.lowShard={name:'하급 부스러기',buy:null,sell:null,desc:'일반 몬스터 처치 또는 분해로 얻는 하급 재료',material:true,shard:true};
+      if(!itemDefs.enhanceStone)itemDefs.enhanceStone={name:'강화석',buy:null,sell:null,desc:'대장간 강화에 필요한 소모 아이템',material:true};
+      itemDefs.ironSword.name='철검';
+      itemDefs.leatherArmor.name='천옷';
+      itemDefs.recipeIronSword.name='철검 제작 레시피';
+      itemDefs.recipeLeatherArmor.name='천옷 제작 레시피';
+      ['recipeIronSword','recipeLeatherArmor','highEssence','lowCatalyst','lowShard','enhanceStone','ironSword','leatherArmor'].forEach(function(k){if(inventory&&inventory[k]==null)inventory[k]=0});
+    }catch(_){}
+  }
+  var recipes={
+    equip:[
+      {key:'craftIronSword',name:'철검',result:'ironSword',qty:1,cost:80,needs:{recipeIronSword:1,highEssence:2,lowCatalyst:4,slimeJelly:8},desc:'무기 제작 · 레시피 필요'},
+      {key:'craftClothArmor',name:'천옷',result:'leatherArmor',qty:1,cost:90,needs:{recipeLeatherArmor:1,highEssence:2,lowCatalyst:5,slimeJelly:10},desc:'방어구 제작 · 레시피 필요'}
+    ],
+    stone:[
+      {key:'craftLowCatalyst',name:'하급 촉매',result:'lowCatalyst',qty:1,cost:5,needs:{lowShard:10},desc:'하급 부스러기 10개를 하급 재료로 압축'},
+      {key:'craftEnhanceStone',name:'강화석',result:'enhanceStone',qty:1,cost:25,needs:{highEssence:1,lowCatalyst:3},desc:'상급 재료 + 하급 재료 조합'}
+    ]
+  };
+  function canCraft(r){try{return !!r&&gold>=num(r.cost)&&Object.keys(r.needs||{}).every(function(k){return has(k,r.needs[k])})}catch(_){return false}}
+  function resultIcon(kind){
+    if(kind==='ironSword') return '<i class="rewardMiniIcon craftLegacyIronSword108" aria-hidden="true"></i>';
+    return '<i class="rewardMiniIcon itemIcon item-'+esc(kind)+'" aria-hidden="true"></i>';
+  }
+  function resultCard(kind){
+    return '<div class="craftResultCard108">'+resultIcon(kind)+'<b>'+esc(itemName(kind))+'</b></div>';
+  }
+  function reqLine(r){
+    var parts=Object.keys(r.needs||{}).map(function(k){var need=num(r.needs[k]),own=num(inventory[k]),miss=own<need;return '<span class="craftReq105 '+(miss?'missing':'')+'">'+esc(itemName(k))+' '+own+'/'+need+'</span>'});
+    parts.push('<span class="craftReq105 '+(gold<num(r.cost)?'missing':'')+'">골드 '+num(gold)+'/'+num(r.cost)+'G</span>');
+    return parts.join('');
+  }
+  function card(r){
+    var ok=canCraft(r);
+    return '<div class="craftCard105 '+(ok?'':'locked')+'">'+
+      resultCard(r.result)+
+      '<div class="craftInfo105"><b>'+esc(r.name)+'</b><small>'+esc(r.desc||'제작 가능 아이템')+'</small><div class="craftReqLine105">'+reqLine(r)+'</div></div>'+
+      '<div class="craftAct105"><button type="button" class="craftBtn105" data-craft108-key="'+esc(r.key)+'" '+(ok?'':'disabled')+'>제작</button><span class="craftHint105">'+(ok?'제작 가능':'재료 부족')+'</span></div>'+
+    '</div>';
+  }
+  function materialStatus(){
+    var keys=['recipeIronSword','recipeLeatherArmor','highEssence','lowCatalyst','lowShard','enhanceStone','slimeJelly'];
+    return '<div class="craftMaterialText105"><div class="craftReqLine105">'+keys.map(function(k){return '<span class="craftReq105">'+esc(itemName(k))+' '+num(inventory[k])+'</span>'}).join('')+'</div></div>';
+  }
+  function render(){
+    ensureDefs();
+    try{craftState.tab=localStorage.getItem(CRAFT_TAB_KEY)||craftState.tab||'equip'}catch(_){}
+    if(!recipes[craftState.tab]&&craftState.tab!=='materials')craftState.tab='equip';
+    var body=craftState.tab==='materials'?materialStatus():'<div class="craftList105">'+(recipes[craftState.tab]||[]).map(card).join('')+'</div>';
+    if(q('#pTitle'))q('#pTitle').textContent='제작소';
+    if(q('#pBody'))q('#pBody').innerHTML='<div class="craftPanel105"><div class="craftSmithWallet103"><span>제작소</span><b>보유 골드 '+num(gold).toLocaleString()+'G</b></div><div class="craftSmithTabs103"><button class="craftSmithTab103 '+(craftState.tab==='equip'?'active':'')+'" data-craft108-tab="equip">장비 제작</button><button class="craftSmithTab103 '+(craftState.tab==='stone'?'active':'')+'" data-craft108-tab="stone">강화석 제작</button><button class="craftSmithTab103 '+(craftState.tab==='materials'?'active':'')+'" data-craft108-tab="materials">재료 현황</button></div><div class="craftNote103">제작 결과 아이템카드에는 수량을 표시하지 않습니다. 철검 카드는 기존에 쓰던 철검 그래픽 형태로 표시합니다.</div>'+body+'</div>';
+    if(typeof showOverlay==='function')showOverlay('panel');
+  }
+  function findRecipe(key){return [].concat(recipes.equip,recipes.stone).find(function(r){return r.key===key})}
+  function craft(key){var r=findRecipe(key);if(!r)return;ensureDefs();if(!canCraft(r)){safeLog('제작 실패: 재료 또는 골드가 부족합니다.');render();return}spendNeeds(r.needs);gold-=num(r.cost);addItem(r.result,r.qty||1);try{if(typeof syncGold==='function')syncGold();if(typeof syncInventoryData==='function')syncInventoryData()}catch(_){}render();safeLog('제작 완료: '+r.name+' x'+num(r.qty||1)+' (-'+num(r.cost)+'G)')}
+  var prevOpen=typeof openPanel==='function'?openPanel:null;
+  if(prevOpen&&!prevOpen.__patch108CraftCardQtyRemove){
+    openPanel=function(id,name){ensureDefs();if(id==='craft'||id==='craftWorkshop'){render();return}return prevOpen.apply(this,arguments)};
+    openPanel.__patch108CraftCardQtyRemove=true;
+  }
+  document.addEventListener('click',function(e){
+    var tab=e.target.closest&&e.target.closest('[data-craft108-tab]');
+    if(tab){e.preventDefault();e.stopImmediatePropagation();craftState.tab=tab.dataset.craft108Tab||'equip';try{localStorage.setItem(CRAFT_TAB_KEY,craftState.tab)}catch(_){}render();return}
+    var c=e.target.closest&&e.target.closest('[data-craft108-key]');
+    if(c){e.preventDefault();e.stopImmediatePropagation();craft(c.dataset.craft108Key);return}
+  },true);
+})();
+</script>
+
+
+<style id="patch110-restore-iron-sword-style">
+/* patch110: restore iron sword globally */
+.item-ironSword,
+.rewardMiniIcon.item-ironSword,
+.tradeIcon.item-ironSword,
+.detailIcon.item-ironSword,
+[data-item="ironSword"],
+[data-kind="ironSword"],
+body.rightIron202 .player .charSword211.right,
+body.leftIron202 .player .charSword211.left,
+.player .charSword211[data-weapon="ironSword"],
+.player .charSword211.iron{
+  display:initial;
+}
+</style>
+<script id="patch110-restore-iron-sword-script">
+(function(){
+  if(window.__patch110RestoreIronSword) return;
+  window.__patch110RestoreIronSword = true;
+  function num(v){ v=Number(v); return Number.isFinite(v)?v:0; }
+  function ensure(){
+    try{
+      if(typeof itemDefs==='object' && itemDefs){
+        if(!itemDefs.ironSword){
+          itemDefs.ironSword={name:'철검',buy:null,sell:4,desc:'제작 가능한 초급 무기. 물리 공격력 +5, 명중률 +3%',stats:{pAtk:5,acc:3},equipSlot:['right','left'],slotType:'weapon',equipType:'weapon'};
+        }
+        itemDefs.ironSword.hidden=false;
+        itemDefs.ironSword.disabled=false;
+        itemDefs.ironSword.showInBag=true;
+        itemDefs.ironSword.showInShop=true;
+        itemDefs.ironSword.showInEquipmentBag=true;
+        itemDefs.ironSword.name='철검';
+      }
+    }catch(_){ }
+    try{
+      if(typeof inventory==='object' && inventory && inventory.ironSword==null) inventory.ironSword=0;
+    }catch(_){ }
+    try{
+      if(typeof bagStock!=='undefined' && Array.isArray(bagStock) && !bagStock.includes('ironSword')) bagStock.push('ironSword');
+    }catch(_){ }
+    try{
+      if(typeof syncInventoryData==='function') syncInventoryData();
+    }catch(_){ }
+    try{
+      if(typeof playerAbilities !== 'undefined' && typeof getAbilities==='function') playerAbilities=getAbilities();
+      if(typeof bars==='function') bars();
+    }catch(_){ }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ensure);
+  else ensure();
+})();
+</script>
+
+
+<script id="patch111-passive-runtime-diagnostics">
+/* patch111: passive runtime diagnostics only; no UI, balance, storage, or gameplay mutation */
+(function(){
+  if(window.__index5PassiveRuntimeDiagnostics)return;
+  window.__index5PassiveRuntimeDiagnostics=true;
+  window.__index5RuntimeErrors=window.__index5RuntimeErrors||[];
+  function record(type,detail){
+    try{
+      window.__index5RuntimeErrors.push({
+        type:type,
+        message:String(detail&&detail.message||detail&&detail.reason&&detail.reason.message||detail||''),
+        time:Date.now()
+      });
+      if(window.__index5RuntimeErrors.length>20)window.__index5RuntimeErrors.shift();
+    }catch(_){}
+  }
+  window.addEventListener('error',function(e){record('error',e&&e.error||e&&e.message);});
+  window.addEventListener('unhandledrejection',function(e){record('unhandledrejection',e);});
+  window.__index5HealthCheck=function(){
+    var required=['start','toggle','logbox','lines','pBody','overlay','mTitle'];
+    var missing=[];
+    for(var i=0;i<required.length;i++){
+      if(!document.getElementById(required[i]))missing.push(required[i]);
+    }
+    return {
+      ok:missing.length===0 && window.__index5RuntimeErrors.length===0,
+      missing:missing,
+      runtimeErrors:window.__index5RuntimeErrors.slice()
+    };
+  };
+})();
+</script>
+
+
+
+<script id="patch114-healthcheck-v2">
+/* patch114: correct passive health-check targets only; no UI, storage, balance, or gameplay mutation */
+(function(){
+  if(window.__index5HealthCheckV2)return;
+  window.__index5HealthCheckV2=true;
+  var previous=window.__index5HealthCheck;
+  function duplicateIds(){
+    var seen={};
+    var dup=[];
+    try{
+      document.querySelectorAll('[id]').forEach(function(node){
+        var id=node.id;
+        if(!id)return;
+        if(seen[id] && dup.indexOf(id)<0)dup.push(id);
+        seen[id]=true;
+      });
+    }catch(_){}
+    return dup;
+  }
+  window.__index5HealthCheck=function(){
+    var required=[
+      'start','toggle','logbox','lines',
+      'pBody','pTitle','menu','panel','menugrid',
+      'player','slime','hpText','hpBar','mpText','mpBar',
+      'xpText','xpBar','goldText','eText','eBar'
+    ];
+    var missing=[];
+    for(var i=0;i<required.length;i++){
+      if(!document.getElementById(required[i]))missing.push(required[i]);
+    }
+    var runtimeErrors=[];
+    try{runtimeErrors=(window.__index5RuntimeErrors||[]).slice();}catch(_){}
+    var storage=null;
+    try{
+      storage=window.__index5StorageAvailabilityReport?window.__index5StorageAvailabilityReport():null;
+    }catch(_){}
+    var preflight=null;
+    try{
+      preflight=window.__index5StoragePreflightReport?window.__index5StoragePreflightReport():null;
+    }catch(_){}
+    var duplicates=duplicateIds();
+    return {
+      ok:missing.length===0 && duplicates.length===0 && runtimeErrors.length===0,
+      missing:missing,
+      duplicateIds:duplicates,
+      runtimeErrors:runtimeErrors,
+      storage:storage,
+      storagePreflight:preflight,
+      previousCheckAvailable:typeof previous==='function'
+    };
+  };
+})();
+</script>
+
+<script id="patch115-extension-guardrails">
+/* patch115: passive extension guardrails only; no UI, balance, storage, timer, or gameplay mutation */
+(function(){
+  if(window.__index5ExtensionGuardrails)return;
+  window.__index5ExtensionGuardrails=true;
+
+  var root=window.__index5Ext||{};
+  var registry=root.registry||{};
+  var reports=root.reports||[];
+  var wrapped=root.wrapped||{};
+
+  function own(obj,key){return Object.prototype.hasOwnProperty.call(obj,key);}
+  function msg(err){
+    try{return String(err&&err.message||err&&err.reason&&err.reason.message||err||'');}
+    catch(_){return 'unknown';}
+  }
+  function push(kind,id,detail){
+    try{
+      reports.push({kind:String(kind||''),id:String(id||''),detail:msg(detail),time:Date.now()});
+      if(reports.length>80)reports.splice(0,reports.length-80);
+    }catch(_){ }
+  }
+  function duplicateIds(){
+    var seen={};
+    var dup=[];
+    try{
+      document.querySelectorAll('[id]').forEach(function(node){
+        var id=node.id;
+        if(!id)return;
+        if(seen[id] && dup.indexOf(id)<0)dup.push(id);
+        seen[id]=true;
+      });
+    }catch(e){push('diagnostic','duplicateIds',e);}
+    return dup;
+  }
+  function typeOfGlobal(name){
+    try{return typeof window[name];}
+    catch(e){push('diagnostic','global:'+name,e);return 'error';}
+  }
+
+  root.version='115.0';
+  root.registry=registry;
+  root.reports=reports;
+  root.wrapped=wrapped;
+  root.critical={
+    functions:['openPanel','renderInventoryPanel','getAbilities','syncInventoryData','bars','log','defeatCurrentMonster','startFight','stopFight'],
+    storageKeys:[
+      'index5.equipmentState.v2',
+      'index5.equipmentSlotPlacement.v1',
+      'index5.dualWeaponSlots.v2',
+      'index5.autoPotionSlots.v1',
+      'index5.equipmentEnhanceLevels.v103',
+      'index5.townFacilityOrder.v1',
+      'index5.mainMenuCardOrder.v1',
+      'index5.bagSlotOrder.v1'
+    ],
+    uiSelectors:['.phone','.top','.game','.player','.slime','.player-status','.enemy','.logbox','.dock','.overlay','.modal']
+  };
+
+  root.registerPatch=function(id,meta){
+    id=String(id||'');
+    if(!id){push('patch','empty-id','');return false;}
+    if(own(registry,id)){
+      push('patch-duplicate',id,'already registered');
+      return false;
+    }
+    registry[id]={id:id,meta:meta||{},time:Date.now()};
+    return true;
+  };
+
+  root.hasPatch=function(id){
+    return own(registry,String(id||''));
+  };
+
+  root.safeJsonParse=function(text,fallback,label){
+    if(text==null || text==='')return fallback;
+    try{return JSON.parse(text);}
+    catch(e){push('json',label||'',e);return fallback;}
+  };
+
+  root.readStorageJson=function(key,fallback){
+    try{return root.safeJsonParse(localStorage.getItem(key),fallback,key);}
+    catch(e){push('storage-read',key,e);return fallback;}
+  };
+
+  root.writeStorageJson=function(key,value){
+    try{localStorage.setItem(key,JSON.stringify(value));return true;}
+    catch(e){push('storage-write',key,e);return false;}
+  };
+
+  root.removeStorage=function(key){
+    try{localStorage.removeItem(key);return true;}
+    catch(e){push('storage-remove',key,e);return false;}
+  };
+
+  root.wrapOnce=function(functionName,patchId,factory){
+    functionName=String(functionName||'');
+    patchId=String(patchId||'');
+    var wrapKey=functionName+'::'+patchId;
+    if(!functionName || !patchId || typeof factory!=='function'){
+      push('wrap-rejected',wrapKey,'invalid arguments');
+      return false;
+    }
+    if(own(wrapped,wrapKey)){
+      push('wrap-duplicate',wrapKey,'already wrapped');
+      return false;
+    }
+    if(typeof window[functionName]!=='function'){
+      push('wrap-missing',wrapKey,'target is not a function');
+      return false;
+    }
+    try{
+      var original=window[functionName];
+      var next=factory(original);
+      if(typeof next!=='function'){
+        push('wrap-rejected',wrapKey,'factory did not return a function');
+        return false;
+      }
+      next.__index5WrappedBy=patchId;
+      next.__index5Original=original;
+      window[functionName]=next;
+      wrapped[wrapKey]={functionName:functionName,patchId:patchId,time:Date.now()};
+      return true;
+    }catch(e){
+      push('wrap-error',wrapKey,e);
+      return false;
+    }
+  };
+
+  root.createUiSnapshot=function(selectors){
+    var list=selectors&&selectors.length?selectors:root.critical.uiSelectors;
+    var props=['display','position','left','right','top','bottom','width','height','transform','zIndex','pointerEvents','opacity','visibility','overflow','overflowX','overflowY','padding','margin','fontSize','lineHeight','borderRadius'];
+    var snap={time:Date.now(),items:{}};
+    try{
+      for(var i=0;i<list.length;i++){
+        var sel=list[i];
+        var node=document.querySelector(sel);
+        if(!node){snap.items[sel]=null;continue;}
+        var rect=node.getBoundingClientRect();
+        var cs=getComputedStyle(node);
+        var item={rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height},style:{}};
+        for(var j=0;j<props.length;j++)item.style[props[j]]=cs.getPropertyValue(props[j]);
+        snap.items[sel]=item;
+      }
+    }catch(e){push('ui-snapshot','create',e);}
+    return snap;
+  };
+
+  root.compareUiSnapshot=function(before,selectors){
+    var after=root.createUiSnapshot(selectors);
+    var diff=[];
+    try{
+      var items=(before&&before.items)||{};
+      var keys={};
+      Object.keys(items).forEach(function(k){keys[k]=true;});
+      Object.keys(after.items||{}).forEach(function(k){keys[k]=true;});
+      Object.keys(keys).forEach(function(sel){
+        var a=items[sel];
+        var b=after.items[sel];
+        if(!a || !b){
+          if(a!==b)diff.push({selector:sel,type:'presence',before:!!a,after:!!b});
+          return;
+        }
+        ['x','y','width','height'].forEach(function(p){
+          var av=a.rect&&a.rect[p];
+          var bv=b.rect&&b.rect[p];
+          if(Math.abs((av||0)-(bv||0))>.5)diff.push({selector:sel,type:'rect',prop:p,before:av,after:bv});
+        });
+        Object.keys(a.style||{}).forEach(function(p){
+          var av=a.style[p];
+          var bv=b.style&&b.style[p];
+          if(av!==bv)diff.push({selector:sel,type:'style',prop:p,before:av,after:bv});
+        });
+      });
+    }catch(e){push('ui-snapshot','compare',e);}
+    return {ok:diff.length===0,diff:diff,after:after};
+  };
+
+  root.preflight=function(){
+    var globals={};
+    for(var i=0;i<root.critical.functions.length;i++){
+      globals[root.critical.functions[i]]=typeOfGlobal(root.critical.functions[i]);
+    }
+    var storage={available:null,preflight:null};
+    try{storage.available=window.__index5StorageAvailabilityReport?window.__index5StorageAvailabilityReport():null;}catch(e){push('preflight','storage-availability',e);}
+    try{storage.preflight=window.__index5StoragePreflightReport?window.__index5StoragePreflightReport():null;}catch(e){push('preflight','storage-preflight',e);}
+    var dup=duplicateIds();
+    return {
+      ok:dup.length===0,
+      duplicateIds:dup,
+      globals:globals,
+      registeredPatches:Object.keys(registry),
+      wrapped:Object.keys(wrapped),
+      reports:reports.slice(),
+      storage:storage
+    };
+  };
+
+  root.registerPatch('patch115-extension-guardrails',{passive:true,ui:false,logic:false,storageMutation:false});
+  window.__index5Ext=root;
+  window.__index5ExtensionPreflight=root.preflight;
+  window.__index5CreateUiSnapshot=root.createUiSnapshot;
+  window.__index5CompareUiSnapshot=root.compareUiSnapshot;
+  window.__index5SafeWrapOnce=root.wrapOnce;
 })();
 </script>
 
